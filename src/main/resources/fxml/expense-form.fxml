@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        fx:id="rootPane"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.mycompany.lazar_app.controller.ExpenseFormController"
+        prefWidth="1100"
+        prefHeight="720"
+        style="-fx-background-color: #f4f7fb;">
+
+    <!-- ===================================================== -->
+    <!-- HEADER -->
+    <!-- ===================================================== -->
+
+    <top>
+
+        <VBox
+                spacing="8"
+                style="
+                    -fx-background-color: white;
+                    -fx-border-color: transparent transparent #e5e7eb transparent;
+                ">
+
+            <padding>
+                <Insets
+                        top="22"
+                        right="32"
+                        bottom="22"
+                        left="32"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT">
+
+                <VBox spacing="5">
+
+                    <Label
+                            fx:id="formTitleLabel"
+                            style="
+                                -fx-font-size: 26px;
+                                -fx-font-weight: bold;
+                                -fx-text-fill: #172033;
+                            "/>
+
+                    <Label
+                            fx:id="formSubtitleLabel"
+                            style="
+                                -fx-font-size: 13px;
+                                -fx-text-fill: #6b7280;
+                            "/>
+
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <VBox
+                        alignment="CENTER_RIGHT"
+                        spacing="3">
+
+                    <Label
+                            fx:id="expenseCodeTitleLabel"
+                            style="
+                                -fx-font-size: 11px;
+                                -fx-text-fill: #9ca3af;
+                            "/>
+
+                    <Label
+                            fx:id="expenseCodeLabel"
+                            style="
+                                -fx-font-size: 14px;
+                                -fx-font-weight: bold;
+                                -fx-text-fill: #2563eb;
+                            "/>
+
+                </VBox>
+
+            </HBox>
+
+        </VBox>
+
+    </top>
+
+
+    <!-- ===================================================== -->
+    <!-- FORM -->
+    <!-- ===================================================== -->
+
+    <center>
+
+        <ScrollPane
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                style="
+                    -fx-background: #f4f7fb;
+                    -fx-background-color: #f4f7fb;
+                ">
+
+            <content>
+
+                <VBox
+                        spacing="20"
+                        maxWidth="1050">
+
+                    <padding>
+                        <Insets
+                                top="28"
+                                right="35"
+                                bottom="30"
+                                left="35"/>
+                    </padding>
+
+
+                    <!-- ================================================= -->
+                    <!-- EXPENSE INFORMATION -->
+                    <!-- ================================================= -->
+
+                    <VBox
+                            spacing="20"
+                            style="
+                                -fx-background-color: white;
+                                -fx-background-radius: 14;
+                                -fx-border-radius: 14;
+                                -fx-border-color: #e5e7eb;
+                                -fx-padding: 26;
+                            ">
+
+                        <VBox spacing="5">
+
+                            <Label
+                                    fx:id="informationTitleLabel"
+                                    style="
+                                        -fx-font-size: 18px;
+                                        -fx-font-weight: bold;
+                                        -fx-text-fill: #1f2937;
+                                    "/>
+
+                            <Label
+                                    fx:id="informationSubtitleLabel"
+                                    style="
+                                        -fx-font-size: 12px;
+                                        -fx-text-fill: #9ca3af;
+                                    "/>
+
+                        </VBox>
+
+                        <Separator/>
+
+                        <GridPane
+                                hgap="22"
+                                vgap="18">
+
+                            <columnConstraints>
+
+                                <ColumnConstraints
+                                        percentWidth="50"
+                                        hgrow="ALWAYS"/>
+
+                                <ColumnConstraints
+                                        percentWidth="50"
+                                        hgrow="ALWAYS"/>
+
+                            </columnConstraints>
+
+
+                            <!-- TITLE -->
+
+                            <VBox
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"
+                                    spacing="7">
+
+                                <Label
+                                        fx:id="titleLabel"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <TextField
+                                        fx:id="titleField"
+                                        prefHeight="42"/>
+
+                            </VBox>
+
+
+                            <!-- CATEGORY -->
+
+                            <VBox
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"
+                                    spacing="7">
+
+                                <Label
+                                        fx:id="categoryLabel"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <ComboBox
+                                        fx:id="categoryComboBox"
+                                        maxWidth="Infinity"
+                                        prefHeight="42"/>
+
+                            </VBox>
+
+
+                            <!-- AMOUNT -->
+
+                            <VBox
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1"
+                                    spacing="7">
+
+                                <Label
+                                        fx:id="amountLabel"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <TextField
+                                        fx:id="amountField"
+                                        prefHeight="42"/>
+
+                            </VBox>
+
+
+                            <!-- DATE -->
+
+                            <VBox
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"
+                                    spacing="7">
+
+                                <Label
+                                        fx:id="expenseDateLabel"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <DatePicker
+                                        fx:id="expenseDatePicker"
+                                        maxWidth="Infinity"
+                                        prefHeight="42"/>
+
+                            </VBox>
+
+
+                            <!-- PAYMENT METHOD -->
+
+                            <VBox
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="2"
+                                    spacing="7">
+
+                                <Label
+                                        fx:id="paymentMethodLabel"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <ComboBox
+                                        fx:id="paymentMethodComboBox"
+                                        maxWidth="Infinity"
+                                        prefHeight="42"/>
+
+                            </VBox>
+
+
+                            <!-- STATUS -->
+
+                            <VBox
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="2"
+                                    spacing="7">
+
+                                <Label
+                                        fx:id="statusLabel"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <ComboBox
+                                        fx:id="statusComboBox"
+                                        maxWidth="Infinity"
+                                        prefHeight="42"/>
+
+                            </VBox>
+
+                        </GridPane>
+
+                    </VBox>
+
+
+                    <!-- ================================================= -->
+                    <!-- PAYMENT DETAILS -->
+                    <!-- ================================================= -->
+
+                    <VBox
+                            spacing="20"
+                            style="
+                                -fx-background-color: white;
+                                -fx-background-radius: 14;
+                                -fx-border-radius: 14;
+                                -fx-border-color: #e5e7eb;
+                                -fx-padding: 26;
+                            ">
+
+                        <VBox spacing="5">
+
+                            <Label
+                                    fx:id="paymentDetailsTitleLabel"
+                                    style="
+                                        -fx-font-size: 18px;
+                                        -fx-font-weight: bold;
+                                    "/>
+
+                            <Label
+                                    fx:id="paymentDetailsSubtitleLabel"
+                                    style="
+                                        -fx-font-size: 12px;
+                                        -fx-text-fill: #9ca3af;
+                                    "/>
+
+                        </VBox>
+
+                        <Separator/>
+
+                        <GridPane
+                                hgap="22"
+                                vgap="18">
+
+                            <columnConstraints>
+
+                                <ColumnConstraints
+                                        percentWidth="50"
+                                        hgrow="ALWAYS"/>
+
+                                <ColumnConstraints
+                                        percentWidth="50"
+                                        hgrow="ALWAYS"/>
+
+                            </columnConstraints>
+
+
+                            <!-- BENEFICIARY -->
+
+                            <VBox
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="0"
+                                    spacing="7">
+
+                                <Label
+                                        fx:id="beneficiaryLabel"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <TextField
+                                        fx:id="beneficiaryField"
+                                        prefHeight="42"/>
+
+                            </VBox>
+
+
+                            <!-- REFERENCE NUMBER -->
+
+                            <VBox
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="0"
+                                    spacing="7">
+
+                                <Label
+                                        fx:id="referenceNumberLabel"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <TextField
+                                        fx:id="referenceNumberField"
+                                        prefHeight="42"/>
+
+                            </VBox>
+
+                        </GridPane>
+
+
+                        <!-- NOTES -->
+
+                        <VBox spacing="7">
+
+                            <Label
+                                    fx:id="notesLabel"
+                                    style="-fx-font-weight: bold;"/>
+
+                            <TextArea
+                                    fx:id="notesArea"
+                                    prefRowCount="4"
+                                    wrapText="true"/>
+
+                        </VBox>
+
+                    </VBox>
+
+
+                    <!-- ================================================= -->
+                    <!-- VALIDATION -->
+                    <!-- ================================================= -->
+
+                    <Label
+                            fx:id="validationLabel"
+                            text=""
+                            visible="false"
+                            managed="false"
+                            wrapText="true"
+                            style="
+                                -fx-background-color: #fef2f2;
+                                -fx-border-color: #fecaca;
+                                -fx-border-radius: 8;
+                                -fx-background-radius: 8;
+                                -fx-padding: 12;
+                                -fx-text-fill: #b91c1c;
+                                -fx-font-weight: bold;
+                            "/>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </center>
+
+
+    <!-- ===================================================== -->
+    <!-- FOOTER -->
+    <!-- ===================================================== -->
+
+    <bottom>
+
+        <HBox
+                alignment="CENTER_RIGHT"
+                spacing="12"
+                style="
+                    -fx-background-color: white;
+                    -fx-border-color: #e5e7eb transparent transparent transparent;
+                ">
+
+            <padding>
+                <Insets
+                        top="16"
+                        right="32"
+                        bottom="16"
+                        left="32"/>
+            </padding>
+
+            <Button
+                    fx:id="cancelButton"
+                    onAction="#handleCancel"
+                    prefWidth="110"
+                    prefHeight="42"
+                    style="
+                        -fx-background-color: white;
+                        -fx-border-color: #d1d5db;
+                        -fx-border-radius: 8;
+                        -fx-background-radius: 8;
+                    "/>
+
+            <Button
+                    fx:id="saveButton"
+                    onAction="#handleSave"
+                    prefWidth="150"
+                    prefHeight="42"
+                    defaultButton="true"
+                    style="
+                        -fx-background-color: #2563eb;
+                        -fx-text-fill: white;
+                        -fx-font-weight: bold;
+                        -fx-background-radius: 8;
+                    "/>
+
+        </HBox>
+
+    </bottom>
+
+</BorderPane>

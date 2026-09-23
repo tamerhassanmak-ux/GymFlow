@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.mycompany.lazar_app.controller.SuperAdminSetupController"
+    prefWidth="500"
+    spacing="16"
+    style="-fx-background-color: white;">
+
+    <padding>
+        <Insets
+            top="30"
+            right="32"
+            bottom="30"
+            left="32"/>
+    </padding>
+
+    <Label
+        text="🔐 إعداد السوبر أدمن"
+        style="
+            -fx-font-size: 24px;
+            -fx-font-weight: bold;
+            -fx-text-fill: #1F2937;
+        "/>
+
+    <Label
+        text="أنشئ كلمة مرور السوبر أدمن لحماية إعدادات قاعدة البيانات والعمليات الحساسة."
+        wrapText="true"
+        style="-fx-text-fill: #6B7280;"/>
+
+    <Label
+        text="كلمة المرور"
+        style="-fx-font-weight: bold;"/>
+
+    <PasswordField
+        fx:id="passwordField"
+        promptText="8 أحرف على الأقل"
+        prefHeight="42"/>
+
+    <Label
+        text="تأكيد كلمة المرور"
+        style="-fx-font-weight: bold;"/>
+
+    <PasswordField
+        fx:id="confirmPasswordField"
+        promptText="أعد إدخال كلمة المرور"
+        prefHeight="42"/>
+
+    <Label
+        fx:id="messageLabel"
+        wrapText="true"
+        style="-fx-text-fill: #DC2626;"/>
+
+    <HBox alignment="CENTER_RIGHT">
+
+        <Button
+            text="حفظ كلمة المرور"
+            defaultButton="true"
+            onAction="#handleSave"
+            style="
+                -fx-background-color: #F97316;
+                -fx-text-fill: white;
+                -fx-font-weight: bold;
+                -fx-background-radius: 8;
+                -fx-padding: 10 22;
+            "/>
+
+    </HBox>
+
+</VBox>

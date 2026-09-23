@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.lazar_app.controller.DatabaseAuthController"
+      prefWidth="460" spacing="18"
+      style="-fx-background-color: white;">
+    <padding><Insets top="28" right="30" bottom="28" left="30"/></padding>
+
+    <Label text="🔒 Super Admin"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+    <Label text="Authentication is required to change database configuration."
+           wrapText="true"
+           style="-fx-text-fill: #6B7280;"/>
+
+    <PasswordField fx:id="passwordField"
+                   promptText="Super Admin Password"
+                   prefHeight="42"/>
+
+    <Label fx:id="messageLabel" wrapText="true"
+           style="-fx-text-fill: #DC2626;"/>
+
+    <HBox spacing="10">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+        <Button text="Verify" onAction="#handleVerify"
+                defaultButton="true"
+                style="-fx-background-color: #F97316; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>

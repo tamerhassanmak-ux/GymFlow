@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox
+        prefWidth="720"
+        prefHeight="680"
+        spacing="18"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.mycompany.lazar_app.controller.MembershipPlanFormController">
+
+    <padding>
+        <Insets top="30" right="35" bottom="30" left="35"/>
+    </padding>
+
+    <children>
+
+        <Label
+                fx:id="titleLabel"
+                text="Membership Plan"
+                styleClass="page-title"/>
+
+        <Separator/>
+
+        <GridPane
+                hgap="20"
+                vgap="10">
+
+            <columnConstraints>
+
+                <ColumnConstraints
+                        percentWidth="50"/>
+
+                <ColumnConstraints
+                        percentWidth="50"/>
+
+            </columnConstraints>
+
+            <children>
+
+                <!-- ========================================== -->
+                <!-- CODE / STATUS -->
+                <!-- ========================================== -->
+
+                <Label
+                        fx:id="codeLabel"
+                        text="Code"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="0"/>
+
+                <Label
+                        fx:id="statusLabel"
+                        text="Status"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="0"/>
+
+                <TextField
+                        fx:id="codeField"
+                        prefHeight="42"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="1"/>
+
+                <ComboBox
+                        fx:id="statusComboBox"
+                        maxWidth="Infinity"
+                        prefHeight="42"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="1"/>
+
+
+                <!-- ========================================== -->
+                <!-- ARABIC / ENGLISH NAME -->
+                <!-- ========================================== -->
+
+                <Label
+                        fx:id="nameArLabel"
+                        text="Arabic Name"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="2"/>
+
+                <Label
+                        fx:id="nameEnLabel"
+                        text="English Name"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="2"/>
+
+                <TextField
+                        fx:id="nameArField"
+                        prefHeight="42"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="3"/>
+
+                <TextField
+                        fx:id="nameEnField"
+                        prefHeight="42"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="3"/>
+
+
+                <!-- ========================================== -->
+                <!-- DURATION / MAX SESSIONS -->
+                <!-- ========================================== -->
+
+                <Label
+                        fx:id="durationLabel"
+                        text="Duration (Months)"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="4"/>
+
+                <Label
+                        fx:id="maxSessionsLabel"
+                        text="Max Sessions"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="4"/>
+
+                <TextField
+                        fx:id="durationField"
+                        prefHeight="42"
+                        promptText="Example: 1"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="5"/>
+
+                <TextField
+                        fx:id="maxSessionsField"
+                        prefHeight="42"
+                        promptText="Example: 12"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="5"/>
+
+
+                <!-- ========================================== -->
+                <!-- PRICE -->
+                <!-- ========================================== -->
+
+                <Label
+                        fx:id="priceLabel"
+                        text="Price"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="6"/>
+
+                <TextField
+                        fx:id="priceField"
+                        prefHeight="42"
+                        promptText="Example: 500"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="7"/>
+
+            </children>
+
+        </GridPane>
+
+
+        <!-- ============================================== -->
+        <!-- DESCRIPTION -->
+        <!-- ============================================== -->
+
+        <VBox
+                spacing="8"
+                VBox.vgrow="ALWAYS">
+
+            <Label
+                    fx:id="descriptionLabel"
+                    text="Description"/>
+
+            <TextArea
+                    fx:id="descriptionArea"
+                    wrapText="true"
+                    prefHeight="140"
+                    VBox.vgrow="ALWAYS"/>
+
+        </VBox>
+
+
+        <Separator/>
+
+
+        <!-- ============================================== -->
+        <!-- ACTIONS -->
+        <!-- ============================================== -->
+
+        <HBox
+                spacing="12"
+                alignment="CENTER_RIGHT">
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button
+                    fx:id="cancelButton"
+                    text="Cancel"
+                    prefWidth="120"
+                    prefHeight="42"
+                    onAction="#cancel"/>
+
+            <Button
+                    fx:id="saveButton"
+                    text="Save"
+                    prefWidth="150"
+                    prefHeight="42"
+                    onAction="#save"
+                    styleClass="primary-button"/>
+
+        </HBox>
+
+    </children>
+
+</VBox>

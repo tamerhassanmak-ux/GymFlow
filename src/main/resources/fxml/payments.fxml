@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane
+        prefHeight="700.0"
+        prefWidth="950.0"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.mycompany.lazar_app.controller.PaymentsController"
+        style="-fx-background-color: #F5F7FA;">
+
+    <children>
+
+        <VBox spacing="20"
+              AnchorPane.topAnchor="0.0"
+              AnchorPane.rightAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0">
+
+            <padding>
+                <Insets top="25" right="30" bottom="25" left="30"/>
+            </padding>
+
+            <!-- ================= HEADER ================= -->
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+
+                <VBox spacing="5">
+
+                    <Label
+                            text="%payments.title"
+                            style="-fx-font-size: 26px;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #1F2937;"/>
+
+                    <Label
+                            text="%payments.subtitle"
+                            style="-fx-font-size: 13px;
+                                   -fx-text-fill: #6B7280;"/>
+
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button
+                        text="%payments.newPayment"
+                        mnemonicParsing="false"
+                        onAction="#openNewPayment"
+                        style="-fx-background-color: #F97316;
+                               -fx-text-fill: white;
+                               -fx-font-size: 14px;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 8;
+                               -fx-padding: 10 20;
+                               -fx-cursor: hand;"/>
+
+            </HBox>
+
+            <!-- ================= STATISTICS ================= -->
+
+            <HBox spacing="15">
+
+                <VBox spacing="8"
+                      prefWidth="210"
+                      HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 10;
+                             -fx-padding: 18;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8,0,0,2);">
+
+                    <Label text="%payments.stats.total"
+                           style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
+
+                    <Label fx:id="totalPaymentsLabel"
+                           text="0.00 EGP"
+                           style="-fx-font-size: 23px;
+                                  -fx-font-weight: bold;
+                                  -fx-text-fill: #111827;"/>
+
+                </VBox>
+
+                <VBox spacing="8"
+                      prefWidth="210"
+                      HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 10;
+                             -fx-padding: 18;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8,0,0,2);">
+
+                    <Label text="%payments.stats.month"
+                           style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
+
+                    <Label fx:id="monthPaymentsLabel"
+                           text="0.00 EGP"
+                           style="-fx-font-size: 23px;
+                                  -fx-font-weight: bold;
+                                  -fx-text-fill: #F97316;"/>
+
+                </VBox>
+
+                <VBox spacing="8"
+                      prefWidth="210"
+                      HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 10;
+                             -fx-padding: 18;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8,0,0,2);">
+
+                    <Label text="%payments.stats.paid"
+                           style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
+
+                    <Label fx:id="paidPaymentsLabel"
+                           text="0.00 EGP"
+                           style="-fx-font-size: 23px;
+                                  -fx-font-weight: bold;
+                                  -fx-text-fill: #16A34A;"/>
+
+                </VBox>
+
+                <VBox spacing="8"
+                      prefWidth="210"
+                      HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 10;
+                             -fx-padding: 18;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8,0,0,2);">
+
+                    <Label text="%payments.stats.pending"
+                           style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
+
+                    <Label fx:id="pendingPaymentsLabel"
+                           text="0.00 EGP"
+                           style="-fx-font-size: 23px;
+                                  -fx-font-weight: bold;
+                                  -fx-text-fill: #DC2626;"/>
+
+                </VBox>
+
+            </HBox>
+
+            <!-- ================= FILTERS ================= -->
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+
+                <TextField
+                        fx:id="searchField"
+                        promptText="%payments.search"
+                        prefHeight="40"
+                        prefWidth="280"/>
+
+                <ComboBox
+                        fx:id="paymentMethodFilter"
+                        promptText="%payments.paymentMethod"
+                        prefHeight="40"
+                        prefWidth="160"/>
+
+                <ComboBox
+                        fx:id="statusFilter"
+                        promptText="%payments.status"
+                        prefHeight="40"
+                        prefWidth="130"/>
+
+                <Button
+                        text="%common.search"
+                        mnemonicParsing="false"
+                        onAction="#searchPayments"
+                        prefHeight="40"
+                        style="-fx-background-color: #1F2937;
+                               -fx-text-fill: white;
+                               -fx-background-radius: 7;
+                               -fx-padding: 0 20;
+                               -fx-cursor: hand;"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button
+                        text="%common.refresh"
+                        mnemonicParsing="false"
+                        onAction="#refreshPayments"
+                        prefHeight="40"
+                        style="-fx-background-color: white;
+                               -fx-text-fill: #374151;
+                               -fx-border-color: #D1D5DB;
+                               -fx-border-radius: 7;
+                               -fx-background-radius: 7;
+                               -fx-padding: 0 18;
+                               -fx-cursor: hand;"/>
+
+            </HBox>
+
+            <!-- ================= TABLE ================= -->
+
+            <VBox spacing="15"
+                  VBox.vgrow="ALWAYS"
+                  style="-fx-background-color: white;
+                         -fx-background-radius: 10;
+                         -fx-padding: 20;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8,0,0,2);">
+
+                <HBox alignment="CENTER_LEFT">
+
+                    <Label
+                            text="%payments.history"
+                            style="-fx-font-size: 17px;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #1F2937;"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label
+                            fx:id="transactionsCountLabel"
+                            text="0"
+                            style="-fx-font-size: 12px;
+                                   -fx-text-fill: #6B7280;"/>
+
+                </HBox>
+
+                <TableView
+                        fx:id="paymentsTable"
+                        VBox.vgrow="ALWAYS">
+
+                    <columns>
+
+                        <TableColumn
+                                fx:id="idColumn"
+                                text="%payments.table.id"
+                                prefWidth="100"/>
+
+                        <TableColumn
+                                fx:id="memberColumn"
+                                text="%payments.table.member"
+                                prefWidth="170"/>
+
+                        <TableColumn
+                                fx:id="membershipColumn"
+                                text="%payments.table.membership"
+                                prefWidth="130"/>
+
+                        <TableColumn
+                                fx:id="amountColumn"
+                                text="%payments.table.amount"
+                                prefWidth="110"/>
+
+                        <TableColumn
+                                fx:id="paymentMethodColumn"
+                                text="%payments.table.paymentMethod"
+                                prefWidth="140"/>
+
+                        <TableColumn
+                                fx:id="dateColumn"
+                                text="%payments.table.date"
+                                prefWidth="120"/>
+
+                        <TableColumn
+                                fx:id="statusColumn"
+                                text="%payments.table.status"
+                                prefWidth="100"/>
+
+                        <TableColumn
+                                fx:id="actionsColumn"
+                                text="%payments.table.actions"
+                                prefWidth="150"/>
+
+                    </columns>
+
+                </TableView>
+
+            </VBox>
+
+        </VBox>
+
+    </children>
+
+</AnchorPane>

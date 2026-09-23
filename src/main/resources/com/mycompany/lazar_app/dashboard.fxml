@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+    prefHeight="700.0"
+    prefWidth="1200.0"
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.mycompany.lazar_app.DashboardController">
+
+    <!-- ===================================================== -->
+    <!-- SIDEBAR                                               -->
+    <!-- ===================================================== -->
+
+    <left>
+
+        <VBox
+            minWidth="250.0"
+            prefWidth="250.0"
+            maxWidth="250.0"
+            spacing="8.0"
+            styleClass="sidebar">
+
+            <padding>
+                <Insets
+                    top="15.0"
+                    right="15.0"
+                    bottom="12.0"
+                    left="15.0"/>
+            </padding>
+
+            <children>
+
+                <!-- ================================================= -->
+                <!-- GYM / CLIENT LOGO                                 -->
+                <!-- ================================================= -->
+
+                <VBox
+                    alignment="CENTER"
+                    spacing="4.0">
+
+                    <ImageView
+                        fitHeight="120.0"
+                        fitWidth="205.0"
+                        pickOnBounds="true"
+                        preserveRatio="true"
+                        smooth="true"
+                        cache="true">
+
+                        <image>
+                            <Image url="@images/logo.png"/>
+                        </image>
+
+                    </ImageView>
+
+                </VBox>
+
+
+                <!-- ================================================= -->
+                <!-- NAVIGATION                                        -->
+                <!-- ================================================= -->
+
+                <Button
+                    fx:id="dashboardButton"
+                    text="%nav.dashboard"
+                    mnemonicParsing="false"
+                    onAction="#openDashboard"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="membersButton"
+                    text="%nav.members"
+                    mnemonicParsing="false"
+                    onAction="#openMembers"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="membershipsButton"
+                    text="%nav.memberships"
+                    mnemonicParsing="false"
+                    onAction="#openMemberships"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="membershipPlansButton"
+                    text="%nav.membershipPlans"
+                    mnemonicParsing="false"
+                    onAction="#openMembershipPlans"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="checkInButton"
+                    text="%nav.checkin"
+                    mnemonicParsing="false"
+                    onAction="#openCheckIn"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="paymentsButton"
+                    text="%nav.payments"
+                    mnemonicParsing="false"
+                    onAction="#openPayments"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="expensesButton"
+                    text="%nav.expenses"
+                    mnemonicParsing="false"
+                    onAction="#openExpenses"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="reportsButton"
+                    text="%nav.reports"
+                    mnemonicParsing="false"
+                    onAction="#openReports"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="settingsButton"
+                    text="%nav.settings"
+                    mnemonicParsing="false"
+                    onAction="#openSettings"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
+                    fx:id="languageButton"
+                    text="%language.switch"
+                    mnemonicParsing="false"
+                    onAction="#switchLanguage"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+
+                <!-- ================================================= -->
+                <!-- PUSH FOOTER DOWN                                  -->
+                <!-- ================================================= -->
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+
+                <!-- ================================================= -->
+                <!-- GYM FLOW / MAKSOFT FOOTER                         -->
+                <!-- ================================================= -->
+
+                <VBox
+                    alignment="CENTER"
+                    spacing="4.0">
+
+                    <Separator
+                        maxWidth="210.0"
+                        opacity="0.25"/>
+
+                    <!-- GYM FLOW SYSTEM LOGO -->
+
+                    <ImageView
+                        fitWidth="145.0"
+                        fitHeight="60.0"
+                        preserveRatio="true"
+                        smooth="true"
+                        cache="true">
+
+                        <image>
+                            <Image url="@images/systemlogo.png"/>
+                        </image>
+
+                    </ImageView>
+
+
+                    <!-- SYSTEM NAME -->
+
+                    <Label
+                        text="GYM FLOW"
+                        style="
+                            -fx-text-fill: white;
+                            -fx-font-size: 16px;
+                            -fx-font-weight: bold;
+                        "/>
+
+
+                    <!-- SYSTEM TYPE -->
+
+                    <Label
+                        text="Gym Management System"
+                        style="
+                            -fx-text-fill: #94A3B8;
+                            -fx-font-size: 9px;
+                        "/>
+
+
+                    <!-- MAKSOFT -->
+
+                    <Label
+                        text="Powered by MAKSOFT"
+                        style="
+                            -fx-text-fill: #CBD5E1;
+                            -fx-font-size: 10px;
+                            -fx-font-weight: bold;
+                            -fx-padding: 3 0 0 0;
+                        "/>
+
+
+                    <!-- COPYRIGHT -->
+
+                    <Label
+                        text="© 2026 MAKSOFT • All Rights Reserved"
+                        style="
+                            -fx-text-fill: #64748B;
+                            -fx-font-size: 8px;
+                        "/>
+
+                </VBox>
+
+            </children>
+
+        </VBox>
+
+    </left>
+
+
+    <!-- ===================================================== -->
+    <!-- DYNAMIC CONTENT AREA                                  -->
+    <!-- ===================================================== -->
+
+    <center>
+
+        <StackPane
+            fx:id="contentArea"
+            styleClass="content-area"/>
+
+    </center>
+
+</BorderPane>

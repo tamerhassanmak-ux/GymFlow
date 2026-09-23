@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane
+        prefHeight="700.0"
+        prefWidth="950.0"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.mycompany.lazar_app.controller.SettingsController"
+        style="-fx-background-color: #F5F7FA;">
+
+    <children>
+
+        <VBox
+                spacing="20"
+                AnchorPane.topAnchor="0.0"
+                AnchorPane.rightAnchor="0.0"
+                AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0">
+
+            <padding>
+                <Insets top="25" right="30" bottom="25" left="30"/>
+            </padding>
+
+            <!-- ================= HEADER ================= -->
+
+            <HBox alignment="CENTER_LEFT">
+
+                <VBox spacing="5">
+
+                    <Label
+                            fx:id="titleLabel"
+                            text="Settings"
+                            style="-fx-font-size: 26px;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #1F2937;"/>
+
+                    <Label
+                            fx:id="subtitleLabel"
+                            text="Manage application and gym settings"
+                            style="-fx-font-size: 13px;
+                                   -fx-text-fill: #6B7280;"/>
+
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button
+                        fx:id="saveChangesButton"
+                        text="Save Changes"
+                        style="-fx-background-color: #F97316;
+                               -fx-text-fill: white;
+                               -fx-font-weight: bold;
+                               -fx-font-size: 14px;
+                               -fx-background-radius: 8;
+                               -fx-padding: 10 22;
+                               -fx-cursor: hand;"/>
+
+            </HBox>
+
+
+            <!-- ================= MAIN CONTENT ================= -->
+
+            <ScrollPane
+                    fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    pannable="true"
+                    VBox.vgrow="ALWAYS"
+                    style="-fx-background-color: transparent; -fx-background: transparent;">
+                <content>
+
+            <HBox
+                    spacing="20">
+
+
+                <!-- ================= LEFT SIDE ================= -->
+
+                <VBox
+                        spacing="20"
+                        HBox.hgrow="ALWAYS">
+
+
+                    <!-- ================= GENERAL SETTINGS ================= -->
+
+                    <VBox
+                            spacing="15"
+                            style="-fx-background-color: white;
+                                   -fx-background-radius: 10;
+                                   -fx-padding: 20;
+                                   -fx-effect: dropshadow(
+                                       gaussian,
+                                       rgba(0,0,0,0.06),
+                                       8,0,0,2
+                                   );">
+
+                        <Label
+                                fx:id="generalTitleLabel"
+                                text="General Information"
+                                style="-fx-font-size: 17px;
+                                       -fx-font-weight: bold;
+                                       -fx-text-fill: #1F2937;"/>
+
+                        <Separator/>
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    fx:id="gymNameLabel"
+                                    text="Gym Name"
+                                    style="-fx-font-weight: bold;
+                                           -fx-text-fill: #374151;"/>
+
+                            <TextField
+                                    fx:id="gymNameField"
+                                    text="Lazar Gym"
+                                    promptText="Enter gym name"
+                                    prefHeight="38"/>
+
+                        </VBox>
+
+
+                        <HBox spacing="15">
+
+                            <VBox
+                                    spacing="6"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="phoneLabel"
+                                        text="Phone"
+                                        style="-fx-font-weight: bold;
+                                               -fx-text-fill: #374151;"/>
+
+                                <TextField
+                                        fx:id="phoneField"
+                                        promptText="+20 10 0000 0000"
+                                        prefHeight="38"/>
+
+                            </VBox>
+
+
+                            <VBox
+                                    spacing="6"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="emailLabel"
+                                        text="Email"
+                                        style="-fx-font-weight: bold;
+                                               -fx-text-fill: #374151;"/>
+
+                                <TextField
+                                        fx:id="emailField"
+                                        promptText="info@lazargym.com"
+                                        prefHeight="38"/>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    fx:id="addressLabel"
+                                    text="Address"
+                                    style="-fx-font-weight: bold;
+                                           -fx-text-fill: #374151;"/>
+
+                            <TextField
+                                    fx:id="addressField"
+                                    promptText="Enter gym address"
+                                    prefHeight="38"/>
+
+                        </VBox>
+
+                    </VBox>
+
+
+                    <!-- ================= REGIONAL SETTINGS ================= -->
+
+                    <VBox
+                            spacing="15"
+                            style="-fx-background-color: white;
+                                   -fx-background-radius: 10;
+                                   -fx-padding: 20;
+                                   -fx-effect: dropshadow(
+                                       gaussian,
+                                       rgba(0,0,0,0.06),
+                                       8,0,0,2
+                                   );">
+
+                        <Label
+                                fx:id="regionalTitleLabel"
+                                text="Regional Settings"
+                                style="-fx-font-size: 17px;
+                                       -fx-font-weight: bold;
+                                       -fx-text-fill: #1F2937;"/>
+
+                        <Separator/>
+
+
+                        <HBox spacing="15">
+
+                            <VBox
+                                    spacing="6"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="languageLabel"
+                                        text="Language"
+                                        style="-fx-font-weight: bold;
+                                               -fx-text-fill: #374151;"/>
+
+                                <ComboBox
+                                        fx:id="languageComboBox"
+                                        promptText="English"
+                                        prefHeight="38"
+                                        maxWidth="Infinity"/>
+
+                            </VBox>
+
+
+                            <VBox
+                                    spacing="6"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="currencyLabel"
+                                        text="Currency"
+                                        style="-fx-font-weight: bold;
+                                               -fx-text-fill: #374151;"/>
+
+                                <ComboBox
+                                        fx:id="currencyComboBox"
+                                        promptText="EGP"
+                                        prefHeight="38"
+                                        maxWidth="Infinity"/>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <HBox spacing="15">
+
+                            <VBox
+                                    spacing="6"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="dateFormatLabel"
+                                        text="Date Format"
+                                        style="-fx-font-weight: bold;
+                                               -fx-text-fill: #374151;"/>
+
+                                <ComboBox
+                                        fx:id="dateFormatComboBox"
+                                        promptText="DD/MM/YYYY"
+                                        prefHeight="38"
+                                        maxWidth="Infinity"/>
+
+                            </VBox>
+
+
+                            <VBox
+                                    spacing="6"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="timeZoneLabel"
+                                        text="Time Zone"
+                                        style="-fx-font-weight: bold;
+                                               -fx-text-fill: #374151;"/>
+
+                                <ComboBox
+                                        fx:id="timeZoneComboBox"
+                                        promptText="Africa/Cairo"
+                                        prefHeight="38"
+                                        maxWidth="Infinity"/>
+
+                            </VBox>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- ================= MEMBERSHIP SETTINGS ================= -->
+
+                    <VBox
+                            spacing="15"
+                            style="-fx-background-color: white;
+                                   -fx-background-radius: 10;
+                                   -fx-padding: 20;">
+
+                        <Label
+                                fx:id="membershipSettingsTitleLabel"
+                                text="Membership Settings"
+                                style="-fx-font-size: 17px;
+                                       -fx-font-weight: bold;
+                                       -fx-text-fill: #1F2937;"/>
+
+                        <Separator/>
+
+                        <HBox spacing="15">
+
+                            <VBox
+                                    spacing="6"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="defaultMembershipLabel"
+                                        text="Default Membership"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <ComboBox
+                                        fx:id="defaultMembershipComboBox"
+                                        promptText="Monthly"
+                                        maxWidth="Infinity"/>
+
+                            </VBox>
+
+
+                            <VBox
+                                    spacing="6"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        fx:id="gracePeriodLabel"
+                                        text="Grace Period"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <TextField
+                                        fx:id="gracePeriodField"
+                                        promptText="Days"/>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <CheckBox
+                                fx:id="autoExpireCheckBox"
+                                text="Automatically mark expired memberships"/>
+
+                        <CheckBox
+                                fx:id="renewBeforeExpiryCheckBox"
+                                text="Allow membership renewal before expiry"
+                                selected="true"/>
+
+                    </VBox>
+
+                </VBox>
+
+
+                <!-- ================= RIGHT SIDE ================= -->
+
+                <VBox
+                        spacing="20"
+                        prefWidth="310">
+
+
+                    <!-- ================= NOTIFICATIONS ================= -->
+
+                    <VBox
+                            spacing="15"
+                            style="-fx-background-color: white;
+                                   -fx-background-radius: 10;
+                                   -fx-padding: 20;
+                                   -fx-effect: dropshadow(
+                                       gaussian,
+                                       rgba(0,0,0,0.06),
+                                       8,0,0,2
+                                   );">
+
+                        <Label
+                                fx:id="notificationsTitleLabel"
+                                text="Notifications"
+                                style="-fx-font-size: 17px;
+                                       -fx-font-weight: bold;
+                                       -fx-text-fill: #1F2937;"/>
+
+                        <Separator/>
+
+                        <CheckBox
+                                fx:id="expiryAlertsCheckBox"
+                                text="Membership expiry alerts"
+                                selected="true"/>
+
+                        <CheckBox
+                                fx:id="paymentRemindersCheckBox"
+                                text="Payment reminders"
+                                selected="true"/>
+
+                        <CheckBox
+                                fx:id="newMemberNotificationCheckBox"
+                                text="New member notification"/>
+
+                        <CheckBox
+                                fx:id="expenseNotificationsCheckBox"
+                                text="Expense notifications"/>
+
+                        <VBox spacing="6">
+
+                            <Label
+                                    fx:id="expiryWarningLabel"
+                                    text="Expiry Warning"
+                                    style="-fx-font-weight: bold;"/>
+
+                            <TextField
+                                    fx:id="expiryWarningField"
+                                    promptText="3 days before expiry"/>
+
+                        </VBox>
+
+                    </VBox>
+
+
+                    <!-- ================= APPEARANCE ================= -->
+
+                    <VBox
+                            spacing="15"
+                            style="-fx-background-color: white;
+                                   -fx-background-radius: 10;
+                                   -fx-padding: 20;">
+
+                        <Label
+                                fx:id="appearanceTitleLabel"
+                                text="Appearance"
+                                style="-fx-font-size: 17px;
+                                       -fx-font-weight: bold;
+                                       -fx-text-fill: #1F2937;"/>
+
+                        <Separator/>
+
+                        <HBox alignment="CENTER_LEFT">
+
+                            <VBox spacing="3">
+
+                                <Label
+                                        fx:id="darkModeLabel"
+                                        text="Dark Mode"
+                                        style="-fx-font-weight: bold;"/>
+
+                                <Label
+                                        fx:id="darkModeDescriptionLabel"
+                                        text="Use dark application theme"
+                                        style="-fx-font-size: 11px;
+                                               -fx-text-fill: #6B7280;"/>
+
+                            </VBox>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <ToggleButton
+                                    fx:id="darkModeToggle"
+                                    text="OFF"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <!-- ================= SECURITY ================= -->
+
+                    <VBox
+                            spacing="15"
+                            style="-fx-background-color: white;
+                                   -fx-background-radius: 10;
+                                   -fx-padding: 20;">
+
+                        <Label
+                                fx:id="securityTitleLabel"
+                                text="Security"
+                                style="-fx-font-size: 17px;
+                                       -fx-font-weight: bold;
+                                       -fx-text-fill: #1F2937;"/>
+
+                        <Separator/>
+
+                        <PasswordField
+                                fx:id="currentPasswordField"
+                                promptText="Current Password"/>
+
+                        <PasswordField
+                                fx:id="newPasswordField"
+                                promptText="New Password"/>
+
+                        <PasswordField
+                                fx:id="confirmPasswordField"
+                                promptText="Confirm Password"/>
+
+                        <Button
+                                fx:id="changePasswordButton"
+                                text="Change Password"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: #1F2937;
+                                       -fx-text-fill: white;
+                                       -fx-background-radius: 7;
+                                       -fx-padding: 9;
+                                       -fx-cursor: hand;"/>
+
+                        <Separator/>
+
+                        <Label
+                                text="System Administration"
+                                style="-fx-font-size: 12px;
+                                       -fx-font-weight: bold;
+                                       -fx-text-fill: #6B7280;"/>
+
+                        <Button
+                                fx:id="databaseConfigurationButton"
+                                text="Database Configuration 🔒"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: #1F2937;
+                                       -fx-text-fill: white;
+                                       -fx-font-weight: bold;
+                                       -fx-background-radius: 7;
+                                       -fx-padding: 10;
+                                       -fx-cursor: hand;"/>
+
+                    </VBox>
+
+
+                    <!-- ================= DATABASE / BACKUP ================= -->
+
+                    <VBox
+                            spacing="15"
+                            style="-fx-background-color: white;
+                                   -fx-background-radius: 10;
+                                   -fx-padding: 20;">
+
+                        <Label
+                                fx:id="backupTitleLabel"
+                                text="Data &amp; Backup"
+                                style="-fx-font-size: 17px;
+                                       -fx-font-weight: bold;
+                                       -fx-text-fill: #1F2937;"/>
+
+                        <Separator/>
+
+                        <Label
+                                fx:id="lastBackupLabel"
+                                text="Last backup: Today, 10:30 AM"
+                                style="-fx-font-size: 12px;
+                                       -fx-text-fill: #6B7280;"/>
+
+                        <Button
+                                fx:id="backupDatabaseButton"
+                                text="Backup Database"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: #F97316;
+                                       -fx-text-fill: white;
+                                       -fx-font-weight: bold;
+                                       -fx-background-radius: 7;
+                                       -fx-padding: 9;
+                                       -fx-cursor: hand;"/>
+
+                        <Button
+                                fx:id="restoreBackupButton"
+                                text="Restore Backup"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: white;
+                                       -fx-text-fill: #374151;
+                                       -fx-border-color: #D1D5DB;
+                                       -fx-border-radius: 7;
+                                       -fx-background-radius: 7;
+                                       -fx-padding: 9;
+                                       -fx-cursor: hand;"/>
+
+                    </VBox>
+
+                </VBox>
+
+            </HBox>
+
+                </content>
+            </ScrollPane>
+
+        </VBox>
+
+    </children>
+
+</AnchorPane>

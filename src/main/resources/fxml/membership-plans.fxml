@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        prefWidth="1200.0"
+        prefHeight="760.0"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.mycompany.lazar_app.controller.MembershipPlansController">
+
+    <top>
+        <VBox spacing="20.0">
+            <padding>
+                <Insets top="25" right="30" bottom="15" left="30"/>
+            </padding>
+
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <VBox spacing="5">
+                        <Label fx:id="titleLabel" text="Membership Plans" styleClass="page-title"/>
+                        <Label fx:id="subtitleLabel" text="Manage membership plans" styleClass="page-subtitle"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Button fx:id="addPlanButton"
+                            text="+ Add Plan"
+                            prefHeight="42"
+                            onAction="#addPlan"
+                            styleClass="primary-button"/>
+                </HBox>
+
+                <HBox spacing="15">
+                    <VBox spacing="6" prefWidth="200" styleClass="dashboard-card">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                        <Label text="Total Plans"/>
+                        <Label fx:id="totalPlansLabel" text="0" styleClass="card-value"/>
+                    </VBox>
+
+                    <VBox spacing="6" prefWidth="200" styleClass="dashboard-card">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                        <Label text="Active"/>
+                        <Label fx:id="activePlansLabel" text="0" styleClass="card-value"/>
+                    </VBox>
+
+                    <VBox spacing="6" prefWidth="200" styleClass="dashboard-card">
+                        <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+                        <Label text="Inactive"/>
+                        <Label fx:id="inactivePlansLabel" text="0" styleClass="card-value"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField"
+                               prefWidth="350"
+                               prefHeight="40"
+                               promptText="Search..."/>
+
+                    <ComboBox fx:id="statusFilter"
+                              prefWidth="160"
+                              prefHeight="40"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label fx:id="plansCountLabel" text="Results: 0"/>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox>
+            <padding>
+                <Insets top="5" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <children>
+                <TableView fx:id="plansTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="idColumn" text="#" prefWidth="50"/>
+                        <TableColumn fx:id="codeColumn" text="Code" prefWidth="115"/>
+                        <TableColumn fx:id="nameArColumn" text="Arabic Name" prefWidth="155"/>
+                        <TableColumn fx:id="nameEnColumn" text="English Name" prefWidth="155"/>
+                        <TableColumn fx:id="durationColumn" text="Duration" prefWidth="100"/>
+                        <TableColumn fx:id="maxSessionsColumn" text="Sessions" prefWidth="100"/>
+                        <TableColumn fx:id="priceColumn" text="Price" prefWidth="115"/>
+                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+                        <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="250"/>
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </center>
+
+</BorderPane>

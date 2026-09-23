@@ -1,0 +1,58 @@
+
+/* =========================================================
+   GYMFLOW DARK THEME - append to app.css
+   ========================================================= */
+.dark-theme {
+    -fx-background-color: #0B1220;
+}
+.dark-theme .content-area,
+.dark-theme .members-page,
+.dark-theme .members-container,
+.dark-theme .member-modal,
+.dark-theme .scroll-pane,
+.dark-theme .scroll-pane > .viewport {
+    -fx-background-color: #0B1220;
+}
+.dark-theme .dashboard-card,
+.dark-theme .form-container,
+.dark-theme .table-card {
+    -fx-background-color: #111827;
+}
+.dark-theme .page-title,
+.dark-theme .card-value,
+.dark-theme .form-label,
+.dark-theme .label {
+    -fx-text-fill: #E5E7EB;
+}
+.dark-theme .page-subtitle,
+.dark-theme .card-title,
+.dark-theme .table-footer-text {
+    -fx-text-fill: #94A3B8;
+}
+.dark-theme .text-field,
+.dark-theme .password-field,
+.dark-theme .combo-box,
+.dark-theme .date-picker,
+.dark-theme .text-area,
+.dark-theme .text-area .content {
+    -fx-background-color: #172033;
+    -fx-text-fill: #F8FAFC;
+    -fx-prompt-text-fill: #64748B;
+    -fx-border-color: #334155;
+}
+.dark-theme .table-view,
+.dark-theme .table-view .virtual-flow,
+.dark-theme .table-row-cell {
+    -fx-background-color: #111827;
+}
+.dark-theme .table-view .column-header-background,
+.dark-theme .table-view .corner {
+    -fx-background-color: #172033;
+}
+.dark-theme .table-view .column-header .label,
+.dark-theme .table-view .table-cell {
+    -fx-text-fill: #E5E7EB;
+}
+.dark-theme .table-row-cell:hover {
+    -fx-background-color: #1E293B;
+}

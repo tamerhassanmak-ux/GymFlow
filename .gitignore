@@ -1,0 +1,44 @@
+# Maven
+target/
+
+# Build / installers
+build/
+dist/
+
+# NetBeans
+nbproject/private/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Databases - NEVER COMMIT CUSTOMER DATA
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+data/
+
+# Environment / secrets
+.env
+.env.*
+*.properties.local
+
+# Logs
+*.log
+
+# Backups
+*.backup
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Generated reports
+*.pdf

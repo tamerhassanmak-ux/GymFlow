@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox
+        prefWidth="1100.0"
+        prefHeight="800.0"
+        minWidth="700.0"
+        minHeight="600.0"
+        spacing="20.0"
+        styleClass="members-page"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.mycompany.lazar_app.controller.AddMembershipController">
+
+    <padding>
+        <Insets
+                top="30.0"
+                right="40.0"
+                bottom="30.0"
+                left="40.0"/>
+    </padding>
+
+
+    <children>
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
+
+        <VBox spacing="6.0">
+
+            <children>
+
+                <Label
+                        fx:id="titleLabel"
+                        text="New Membership"
+                        styleClass="page-title"/>
+
+                <Label
+                        fx:id="subtitleLabel"
+                        text="Register a new membership for a gym member"
+                        styleClass="page-subtitle"/>
+
+            </children>
+
+        </VBox>
+
+
+        <Separator/>
+
+
+        <!-- ================================================= -->
+        <!-- MEMBER + PLAN -->
+        <!-- ================================================= -->
+
+        <GridPane
+                hgap="24.0"
+                vgap="10.0">
+
+            <columnConstraints>
+
+                <ColumnConstraints
+                        percentWidth="50.0"
+                        hgrow="ALWAYS"/>
+
+                <ColumnConstraints
+                        percentWidth="50.0"
+                        hgrow="ALWAYS"/>
+
+            </columnConstraints>
+
+
+            <children>
+
+                <Label
+                        fx:id="memberLabel"
+                        text="Member"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="0"/>
+
+                <Label
+                        fx:id="planLabel"
+                        text="Membership Plan"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="0"/>
+
+                
+                <TextField
+                 fx:id="memberSearchField"
+                 maxWidth="Infinity"
+                 prefHeight="44.0"
+                 promptText="بحث بالاسم أو الباركود"/>
+                
+
+                <ComboBox
+                        fx:id="memberComboBox"
+                        maxWidth="Infinity"
+                        prefHeight="44.0"
+                        promptText="Select member"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="1"/>
+
+
+                <ComboBox
+                        fx:id="planComboBox"
+                        maxWidth="Infinity"
+                        prefHeight="44.0"
+                        promptText="Select membership plan"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="1"/>
+
+            </children>
+
+        </GridPane>
+
+
+        <!-- ================================================= -->
+        <!-- DATES -->
+        <!-- ================================================= -->
+
+        <GridPane
+                hgap="24.0"
+                vgap="10.0">
+
+            <columnConstraints>
+
+                <ColumnConstraints
+                        percentWidth="50.0"
+                        hgrow="ALWAYS"/>
+
+                <ColumnConstraints
+                        percentWidth="50.0"
+                        hgrow="ALWAYS"/>
+
+            </columnConstraints>
+
+
+            <children>
+
+                <Label
+                        fx:id="startDateLabel"
+                        text="Start Date"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="0"/>
+
+                <Label
+                        fx:id="endDateLabel"
+                        text="End Date"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="0"/>
+
+
+                <DatePicker
+                        fx:id="startDatePicker"
+                        maxWidth="Infinity"
+                        prefHeight="44.0"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="1"/>
+
+
+                <DatePicker
+                        fx:id="endDatePicker"
+                        maxWidth="Infinity"
+                        prefHeight="44.0"
+                        editable="false"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="1"/>
+
+            </children>
+
+        </GridPane>
+
+
+        <!-- ================================================= -->
+        <!-- PRICE + DISCOUNT -->
+        <!-- ================================================= -->
+
+        <GridPane
+                hgap="24.0"
+                vgap="10.0">
+
+            <columnConstraints>
+
+                <ColumnConstraints
+                        percentWidth="50.0"
+                        hgrow="ALWAYS"/>
+
+                <ColumnConstraints
+                        percentWidth="50.0"
+                        hgrow="ALWAYS"/>
+
+            </columnConstraints>
+
+
+            <children>
+
+                <Label
+                        fx:id="priceLabel"
+                        text="Plan Price"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="0"/>
+
+                <Label
+                        fx:id="discountLabel"
+                        text="Discount"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="0"/>
+
+
+                <TextField
+                        fx:id="priceField"
+                        maxWidth="Infinity"
+                        prefHeight="44.0"
+                        editable="false"
+                        text="0.00"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="1"/>
+
+
+                <TextField
+                        fx:id="discountField"
+                        maxWidth="Infinity"
+                        prefHeight="44.0"
+                        text="0"
+                        GridPane.columnIndex="1"
+                        GridPane.rowIndex="1"/>
+
+            </children>
+
+        </GridPane>
+
+
+        <!-- ================================================= -->
+        <!-- FINAL PRICE -->
+        <!-- ================================================= -->
+
+        <VBox
+                spacing="8.0"
+                styleClass="dashboard-card">
+
+            <padding>
+
+                <Insets
+                        top="18.0"
+                        right="20.0"
+                        bottom="18.0"
+                        left="20.0"/>
+
+            </padding>
+
+
+            <children>
+
+                <Label
+                        fx:id="finalPriceTitleLabel"
+                        text="Final Price"
+                        styleClass="card-title"/>
+
+                <Label
+                        fx:id="finalPriceLabel"
+                        text="0.00 EGP"
+                        styleClass="card-value"/>
+
+            </children>
+
+        </VBox>
+
+
+        <!-- ================================================= -->
+        <!-- NOTES -->
+        <!-- ================================================= -->
+
+        <VBox
+                spacing="8.0"
+                VBox.vgrow="ALWAYS">
+
+            <children>
+
+                <Label
+                        fx:id="notesLabel"
+                        text="Notes"/>
+
+                <TextArea
+                        fx:id="notesArea"
+                        prefHeight="120.0"
+                        maxHeight="Infinity"
+                        promptText="Optional notes"
+                        wrapText="true"
+                        VBox.vgrow="ALWAYS"/>
+
+            </children>
+
+        </VBox>
+
+
+        <Separator/>
+
+
+        <!-- ================================================= -->
+        <!-- ACTION BUTTONS -->
+        <!-- ================================================= -->
+
+        <HBox
+                fx:id="buttonsContainer"
+                alignment="CENTER_RIGHT"
+                spacing="12.0">
+
+            <children>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+
+                <Button
+                        fx:id="cancelButton"
+                        text="Cancel"
+                        prefWidth="130.0"
+                        prefHeight="44.0"
+                        mnemonicParsing="false"
+                        onAction="#cancel"/>
+
+
+                <Button
+                        fx:id="saveButton"
+                        text="Save Membership"
+                        prefWidth="180.0"
+                        prefHeight="44.0"
+                        mnemonicParsing="false"
+                        onAction="#saveMembership"
+                        styleClass="primary-button"/>
+
+            </children>
+
+        </HBox>
+
+    </children>
+
+</VBox>

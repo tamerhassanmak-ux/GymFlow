@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+        prefWidth="1400.0"
+        prefHeight="820.0"
+        minWidth="850.0"
+        minHeight="600.0"
+        maxWidth="Infinity"
+        maxHeight="Infinity"
+        styleClass="member-modal,member-modal-wide"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.mycompany.lazar_app.controller.AddMemberController">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <top>
+
+        <VBox
+                spacing="3.0"
+                styleClass="member-modal-header">
+
+            <padding>
+                <Insets
+                        top="14.0"
+                        right="38.0"
+                        bottom="12.0"
+                        left="38.0"/>
+            </padding>
+
+            <Label
+                    text="%addMember.title"
+                    styleClass="member-modal-title"/>
+
+            <Label
+                    text="%addMember.subtitle"
+                    styleClass="member-modal-subtitle"/>
+
+        </VBox>
+
+    </top>
+
+
+    <!-- =====================================================
+         SCROLLABLE MAIN CONTENT
+         ===================================================== -->
+
+    <center>
+
+        <ScrollPane
+                fitToWidth="true"
+                fitToHeight="true"
+                hbarPolicy="AS_NEEDED"
+                vbarPolicy="AS_NEEDED"
+                pannable="true"
+                maxWidth="Infinity"
+                maxHeight="Infinity"
+                BorderPane.alignment="CENTER"
+                styleClass="member-form-scroll">
+
+            <content>
+
+                <HBox
+                        spacing="24.0"
+                        alignment="TOP_LEFT"
+                        styleClass="member-modal-body">
+
+                    <padding>
+                        <Insets
+                                top="12.0"
+                                right="38.0"
+                                bottom="16.0"
+                                left="38.0"/>
+                    </padding>
+
+
+                    <!-- =================================================
+                         LEFT SIDE - MEMBER FORM
+                         ================================================= -->
+
+                    <VBox
+                            spacing="9.0"
+                            HBox.hgrow="ALWAYS">
+
+
+                        <!-- =============================================
+                             PHOTO + MEMBER CODE + NAME
+                             ============================================= -->
+
+                        <HBox
+                                spacing="20.0"
+                                alignment="TOP_LEFT">
+
+
+                            <!-- MEMBER PHOTO -->
+
+                            <VBox
+                                    spacing="6.0"
+                                    alignment="TOP_CENTER">
+
+                                <StackPane
+                                        prefWidth="115.0"
+                                        prefHeight="88.0"
+                                        minWidth="115.0"
+                                        minHeight="88.0"
+                                        maxWidth="115.0"
+                                        maxHeight="88.0"
+                                        styleClass="member-photo-container">
+
+                                    <Label
+                                            fx:id="photoPlaceholderLabel"
+                                            text="PHOTO"
+                                            styleClass="member-photo-placeholder"/>
+
+                                    <ImageView
+                                            fx:id="memberImageView"
+                                            fitWidth="111.0"
+                                            fitHeight="84.0"
+                                            preserveRatio="true"/>
+
+                                </StackPane>
+
+
+                                <Button
+                                        text="%addMember.uploadPhoto"
+                                        mnemonicParsing="false"
+                                        onAction="#uploadPhoto"
+                                        prefWidth="115.0"
+                                        prefHeight="36.0"
+                                        styleClass="secondary-button"/>
+
+                            </VBox>
+
+
+                            <!-- MEMBER CODE + NAME -->
+
+                            <VBox
+                                    spacing="7.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <!-- MEMBER CODE -->
+
+                                <VBox spacing="4.0" maxWidth="Infinity">
+
+                                    <Label
+                                            text="%addMember.memberCode"
+                                            styleClass="form-label"/>
+
+                                    <TextField
+                                            fx:id="memberCodeField"
+                                            editable="false"
+                                            focusTraversable="false"
+                                            prefHeight="38.0"
+                                            maxWidth="Infinity"
+                                            styleClass="form-input,member-code-field"/>
+
+                                </VBox>
+
+
+                                <!-- FULL NAME -->
+
+                                <VBox spacing="4.0" maxWidth="Infinity">
+
+                                    <Label
+                                            text="%addMember.name"
+                                            styleClass="form-label"/>
+
+                                    <TextField
+                                            fx:id="nameField"
+                                            promptText="%addMember.namePlaceholder"
+                                            prefHeight="38.0"
+                                            maxWidth="Infinity"
+                                            styleClass="form-input"/>
+
+                                </VBox>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <!-- =============================================
+                             PHONE + WHATSAPP
+                             ============================================= -->
+
+                        <HBox spacing="16.0" maxWidth="Infinity" fillHeight="true">
+
+
+                            <!-- PHONE -->
+
+                            <VBox
+                                    spacing="4.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="%addMember.phone"
+                                        styleClass="form-label"/>
+
+                                <TextField
+                                        fx:id="phoneField"
+                                        promptText="%addMember.phonePlaceholder"
+                                        prefHeight="38.0"
+                                        maxWidth="Infinity"
+                                        styleClass="form-input"/>
+
+                            </VBox>
+
+
+                            <!-- WHATSAPP -->
+
+                            <VBox
+                                    spacing="4.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="%addMember.whatsapp"
+                                        styleClass="form-label"/>
+
+                                <TextField
+                                        fx:id="whatsappField"
+                                        promptText="%addMember.whatsappPlaceholder"
+                                        prefHeight="38.0"
+                                        maxWidth="Infinity"
+                                        styleClass="form-input"/>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <!-- =============================================
+                             EMAIL
+                             ============================================= -->
+
+                        <VBox spacing="4.0" maxWidth="Infinity">
+
+                            <Label
+                                    text="%addMember.email"
+                                    styleClass="form-label"/>
+
+                            <TextField
+                                    fx:id="emailField"
+                                    promptText="%addMember.emailPlaceholder"
+                                    prefHeight="38.0"
+                                    maxWidth="Infinity"
+                                    styleClass="form-input"/>
+
+                        </VBox>
+
+
+                        <!-- =============================================
+                             GENDER + BIRTH DATE + MEMBERSHIP
+                             ============================================= -->
+
+                        <HBox spacing="16.0" maxWidth="Infinity" fillHeight="true">
+
+
+                            <!-- GENDER -->
+
+                            <VBox
+                                    spacing="4.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="%addMember.gender"
+                                        styleClass="form-label"/>
+
+                                <ComboBox
+                                        fx:id="genderComboBox"
+                                        promptText="%addMember.selectGender"
+                                        prefHeight="40.0"
+                                        maxWidth="Infinity"
+                                        styleClass="form-combo"/>
+
+                            </VBox>
+
+
+                            <!-- BIRTH DATE -->
+
+                            <VBox
+                                    spacing="4.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="%addMember.birthDate"
+                                        styleClass="form-label"/>
+
+                                <DatePicker
+                                        fx:id="birthDatePicker"
+                                        promptText="%addMember.selectDate"
+                                        prefHeight="40.0"
+                                        maxWidth="Infinity"
+                                        styleClass="form-input"/>
+
+                            </VBox>
+
+
+                            <!-- MEMBERSHIP PLAN -->
+
+                            <VBox
+                                    spacing="4.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="%addMember.membership"
+                                        styleClass="form-label"/>
+
+                                <ComboBox
+                                        fx:id="membershipComboBox"
+                                        promptText="%addMember.selectMembership"
+                                        prefHeight="40.0"
+                                        maxWidth="Infinity"
+                                        styleClass="form-combo"/>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <!-- =============================================
+                             START + END + STATUS
+                             ============================================= -->
+
+                        <HBox spacing="16.0" maxWidth="Infinity" fillHeight="true">
+
+
+                            <!-- START DATE -->
+
+                            <VBox
+                                    spacing="4.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="%addMember.startDate"
+                                        styleClass="form-label"/>
+
+                                <DatePicker
+                                        fx:id="startDatePicker"
+                                        promptText="%addMember.selectDate"
+                                        prefHeight="40.0"
+                                        maxWidth="Infinity"
+                                        styleClass="form-input"/>
+
+                            </VBox>
+
+
+                            <!-- END DATE -->
+
+                            <VBox
+                                    spacing="4.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="%addMember.endDate"
+                                        styleClass="form-label"/>
+
+                                <DatePicker
+                                        fx:id="endDatePicker"
+                                        promptText="%addMember.selectDate"
+                                        prefHeight="40.0"
+                                        maxWidth="Infinity"
+                                        styleClass="form-input"/>
+
+                            </VBox>
+
+
+                            <!-- STATUS -->
+
+                            <VBox
+                                    spacing="4.0"
+                                    HBox.hgrow="ALWAYS">
+
+                                <Label
+                                        text="%addMember.status"
+                                        styleClass="form-label"/>
+
+                                <ComboBox
+                                        fx:id="statusComboBox"
+                                        promptText="%addMember.selectStatus"
+                                        prefHeight="40.0"
+                                        maxWidth="Infinity"
+                                        styleClass="form-combo"/>
+
+                            </VBox>
+
+                        </HBox>
+
+
+                        <!-- =============================================
+                             NOTES
+                             ============================================= -->
+
+                        <VBox spacing="4.0" maxWidth="Infinity">
+
+                            <Label
+                                    text="%addMember.notes"
+                                    styleClass="form-label"/>
+
+                            <TextArea
+                                    fx:id="notesField"
+                                    promptText="%addMember.notesPlaceholder"
+                                    prefHeight="70.0"
+                                    minHeight="70.0"
+                                    maxHeight="70.0"
+                                    wrapText="true"
+                                    styleClass="member-notes"/>
+
+                        </VBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         DIVIDER
+                         ================================================= -->
+
+                    <Separator orientation="VERTICAL"/>
+
+
+                    <!-- =================================================
+                         RIGHT SIDE
+                         ================================================= -->
+
+                    <VBox
+                            prefWidth="490.0"
+                            minWidth="430.0"
+                            maxWidth="490.0"
+                            spacing="10.0">
+
+
+                        <!-- =============================================
+                             MEMBER QR CODE
+                             ============================================= -->
+
+                        <VBox
+                                spacing="6.0"
+                                alignment="TOP_LEFT"
+                                styleClass="member-preview-card,qr-section-card">
+
+                            <Label
+                                    text="%addMember.qrTitle"
+                                    styleClass="member-preview-title"/>
+
+
+                            <VBox
+                                    spacing="5.0"
+                                    alignment="CENTER">
+
+                                <StackPane
+                                        prefWidth="135.0"
+                                        prefHeight="135.0"
+                                        minWidth="135.0"
+                                        minHeight="135.0"
+                                        maxWidth="135.0"
+                                        maxHeight="135.0"
+                                        styleClass="qr-preview-box">
+
+                                    <ImageView
+                                            fx:id="qrCodeImageView"
+                                            fitWidth="120.0"
+                                            fitHeight="120.0"
+                                            preserveRatio="true"/>
+
+                                    <Label
+                                            fx:id="qrPlaceholderLabel"
+                                            text="QR"
+                                            styleClass="qr-placeholder"/>
+
+                                </StackPane>
+
+
+                                <Label
+                                        fx:id="qrCodeLabel"
+                                        text="LZR-000000"
+                                        styleClass="qr-member-code"/>
+
+                            </VBox>
+
+                        </VBox>
+
+
+                        <!-- =============================================
+                             MEMBERSHIP CARD PREVIEW
+                             ============================================= -->
+
+                        <VBox
+                                spacing="7.0"
+                                styleClass="member-preview-card">
+
+                            <Label
+                                    text="%addMember.cardPreview"
+                                    styleClass="member-preview-title"/>
+
+
+                            <!-- =========================================
+                                 MEMBERSHIP CARD
+                                 ========================================= -->
+
+                            <HBox
+                                    fx:id="membershipCard"
+                                    prefHeight="220.0"
+                                    minHeight="220.0"
+                                    maxHeight="220.0"
+                                    spacing="14.0"
+                                    alignment="CENTER_LEFT"
+                                    styleClass="gym-member-card">
+
+
+                                <!-- BRAND + PHOTO -->
+
+                                <VBox
+                                        spacing="7.0"
+                                        alignment="CENTER">
+
+                                    <VBox
+                                            spacing="0.0"
+                                            alignment="CENTER">
+
+                                        <Label
+                                                text="LAZAR"
+                                                styleClass="gym-card-brand"/>
+
+                                        <Label
+                                                text="GYM"
+                                                styleClass="gym-card-brand-small"/>
+
+                                    </VBox>
+
+
+                                    <StackPane
+                                            prefWidth="88.0"
+                                            prefHeight="98.0"
+                                            minWidth="88.0"
+                                            minHeight="98.0"
+                                            maxWidth="88.0"
+                                            maxHeight="98.0"
+                                            styleClass="gym-card-photo">
+
+                                        <Label
+                                                fx:id="cardPhotoPlaceholder"
+                                                text="PHOTO"
+                                                styleClass="gym-card-photo-text"/>
+
+                                        <ImageView
+                                                fx:id="cardMemberImageView"
+                                                fitWidth="84.0"
+                                                fitHeight="94.0"
+                                                preserveRatio="true"/>
+
+                                    </StackPane>
+
+                                </VBox>
+
+
+                                <!-- MEMBER INFORMATION -->
+
+                                <VBox
+                                        spacing="7.0"
+                                        alignment="CENTER_LEFT"
+                                        HBox.hgrow="ALWAYS">
+
+                                    <Label
+                                            text="%addMember.memberCard"
+                                            styleClass="gym-card-type"/>
+
+                                    <Label
+                                            fx:id="cardMemberNameLabel"
+                                            text="Member Name"
+                                            wrapText="true"
+                                            styleClass="gym-card-member-name"/>
+
+                                    <Label
+                                            fx:id="cardMemberCodeLabel"
+                                            text="LZR-000000"
+                                            styleClass="gym-card-member-code"/>
+
+                                    <Label
+                                            fx:id="cardMembershipLabel"
+                                            text="Membership"
+                                            styleClass="gym-card-membership"/>
+
+                                    <Region VBox.vgrow="ALWAYS"/>
+
+                                    <Label
+                                            text="FITNESS  â€¢  HEALTH  â€¢  BETTER YOU"
+                                            styleClass="gym-card-slogan"/>
+
+                                </VBox>
+
+
+                                <!-- CARD QR -->
+
+                                <VBox
+                                        spacing="5.0"
+                                        alignment="CENTER">
+
+                                    <Label
+                                            text="STRONGER&#10;EVERY DAY"
+                                            styleClass="gym-card-motto"/>
+
+                                    <Region VBox.vgrow="ALWAYS"/>
+
+
+                                    <StackPane
+                                            prefWidth="94.0"
+                                            prefHeight="94.0"
+                                            minWidth="94.0"
+                                            minHeight="94.0"
+                                            maxWidth="94.0"
+                                            maxHeight="94.0"
+                                            styleClass="gym-card-qr">
+
+                                        <ImageView
+                                                fx:id="cardQrImageView"
+                                                fitWidth="85.0"
+                                                fitHeight="85.0"
+                                                preserveRatio="true"/>
+
+                                        <Label
+                                                fx:id="cardQrPlaceholder"
+                                                text="QR"
+                                                styleClass="gym-card-qr-text"/>
+
+                                    </StackPane>
+
+                                </VBox>
+
+                            </HBox>
+
+
+                            <!-- =========================================
+                                 PRINT BUTTONS
+                                 ========================================= -->
+
+                            <HBox spacing="10.0" maxWidth="Infinity">
+
+                                <Button
+                                        text="%addMember.printCard"
+                                        mnemonicParsing="false"
+                                        onAction="#printMemberCard"
+                                        prefHeight="40.0"
+                                        maxWidth="Infinity"
+                                        HBox.hgrow="ALWAYS"
+                                        styleClass="primary-button"/>
+
+
+                                <Button
+                                        text="%addMember.printQr"
+                                        mnemonicParsing="false"
+                                        onAction="#printQrCode"
+                                        prefHeight="40.0"
+                                        maxWidth="Infinity"
+                                        HBox.hgrow="ALWAYS"
+                                        styleClass="secondary-button"/>
+
+                            </HBox>
+
+                        </VBox>
+
+                    </VBox>
+
+                </HBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </center>
+
+
+    <!-- =====================================================
+         FIXED FOOTER
+         ===================================================== -->
+
+    <bottom>
+
+        <HBox
+                alignment="CENTER_RIGHT"
+                spacing="12.0"
+                minHeight="62.0"
+                prefHeight="62.0"
+                maxHeight="62.0"
+                styleClass="member-modal-footer">
+
+            <padding>
+                <Insets
+                        top="9.0"
+                        right="38.0"
+                        bottom="9.0"
+                        left="38.0"/>
+            </padding>
+
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+
+            <Button
+                    text="%common.cancel"
+                    mnemonicParsing="false"
+                    onAction="#cancel"
+                    prefHeight="40.0"
+                    prefWidth="130.0"
+                    styleClass="secondary-button"/>
+
+
+            <Button
+                    text="%addMember.save"
+                    mnemonicParsing="false"
+                    onAction="#saveMember"
+                    prefHeight="40.0"
+                    prefWidth="170.0"
+                    styleClass="primary-button"/>
+
+        </HBox>
+
+    </bottom>
+
+</BorderPane>

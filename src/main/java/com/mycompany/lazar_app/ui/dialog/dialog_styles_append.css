@@ -1,0 +1,95 @@
+
+
+/* ============================================================
+   GYMFLOW — PROFESSIONAL NATIVE DIALOGS / ALERTS
+   ============================================================ */
+
+.gymflow-native-dialog {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.gymflow-native-dialog > .content,
+.gymflow-native-dialog > .header-panel,
+.gymflow-native-dialog > .button-bar {
+    -fx-background-color: white;
+}
+
+.gymflow-native-dialog > .header-panel {
+    -fx-padding: 22 24 12 24;
+    -fx-background-radius: 20 20 0 0;
+}
+
+.gymflow-native-dialog > .header-panel .label {
+    -fx-font-size: 17px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0F172A;
+}
+
+.gymflow-native-dialog > .content {
+    -fx-padding: 8 24 22 24;
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+}
+
+.gymflow-native-dialog > .button-bar {
+    -fx-padding: 14 24 20 24;
+    -fx-background-radius: 0 0 20 20;
+    -fx-border-color: #E2E8F0 transparent transparent transparent;
+}
+
+.gymflow-native-dialog .button {
+    -fx-min-height: 42px;
+    -fx-padding: 0 20 0 20;
+    -fx-background-radius: 11px;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+}
+
+.gymflow-dialog-info > .header-panel {
+    -fx-border-color: #0EA5E9 transparent transparent transparent;
+    -fx-border-width: 4 0 0 0;
+}
+
+.gymflow-dialog-warning > .header-panel,
+.gymflow-dialog-confirm > .header-panel {
+    -fx-border-color: #F97316 transparent transparent transparent;
+    -fx-border-width: 4 0 0 0;
+}
+
+.gymflow-dialog-error > .header-panel {
+    -fx-border-color: #EF4444 transparent transparent transparent;
+    -fx-border-width: 4 0 0 0;
+}
+
+.gymflow-dialog-form > .header-panel {
+    -fx-border-color: #0F172A transparent transparent transparent;
+    -fx-border-width: 4 0 0 0;
+}
+
+.gymflow-native-dialog .combo-box,
+.gymflow-native-dialog .text-field,
+.gymflow-native-dialog .text-area {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.gymflow-native-dialog .combo-box:focused,
+.gymflow-native-dialog .text-field:focused,
+.gymflow-native-dialog .text-area:focused {
+    -fx-border-color: #F97316;
+    -fx-border-width: 1.5px;
+}
+
+.gymflow-native-dialog .dialog-pane {
+    -fx-background-radius: 20px;
+}
+
+.gymflow-native-dialog:rtl .label,
+.gymflow-native-dialog:rtl .text-field,
+.gymflow-native-dialog:rtl .text-area {
+    -fx-alignment: CENTER-RIGHT;
+}

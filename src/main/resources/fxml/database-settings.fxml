@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.lazar_app.controller.DatabaseSettingsController"
+            prefWidth="1000" prefHeight="700"
+            style="-fx-background-color: #F5F7FA;">-->
+            
+  <BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.lazar_app.controller.DatabaseSettingsController"
+            prefWidth="1000"
+            prefHeight="700"
+            minWidth="800"
+            minHeight="600"
+            style="-fx-background-color: #F5F7FA;">
+    <top>
+        <VBox spacing="5" style="-fx-background-color: white;">
+            <padding><Insets top="22" right="30" bottom="22" left="30"/></padding>
+            <Label text="Database Configuration 🔒"
+                   style="-fx-font-size: 25px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+            <Label text="Super Admin protected system configuration"
+                   style="-fx-text-fill: #6B7280;"/>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+            <content>
+                <VBox spacing="18">
+                    <padding><Insets top="28" right="35" bottom="28" left="35"/></padding>
+
+                    <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
+                        <Label text="Database Engine" style="-fx-font-size: 17px; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="databaseTypeCombo" maxWidth="Infinity" prefHeight="42"/>
+                    </VBox>
+
+                    <VBox fx:id="sqlitePane" spacing="10"
+                          style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
+                        <Label text="SQLite Database File" style="-fx-font-size: 17px; -fx-font-weight: bold;"/>
+                        <HBox spacing="10">
+                            <TextField fx:id="sqlitePathField" HBox.hgrow="ALWAYS"/>
+                            <Button text="Browse" onAction="#handleBrowse"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox fx:id="serverPane" spacing="14"
+                          style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
+                        <Label text="Server Connection" style="-fx-font-size: 17px; -fx-font-weight: bold;"/>
+                        <HBox spacing="12">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Host"/>
+                                <TextField fx:id="hostField"/>
+                            </VBox>
+                            <VBox spacing="5" prefWidth="160">
+                                <Label text="Port"/>
+                                <TextField fx:id="portField"/>
+                            </VBox>
+                        </HBox>
+                        <VBox spacing="5">
+                            <Label text="Database Name"/>
+                            <TextField fx:id="databaseNameField"/>
+                        </VBox>
+                        <HBox spacing="12">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Username"/>
+                                <TextField fx:id="usernameField"/>
+                            </VBox>
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Password"/>
+                                <PasswordField fx:id="passwordField"/>
+                            </VBox>
+                        </HBox>
+                        <CheckBox fx:id="encryptCheckBox" text="Encrypt connection"/>
+                    </VBox>
+
+                    <Label fx:id="statusLabel" wrapText="true"/>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT"
+              style="-fx-background-color: white; -fx-padding: 18 30;">
+            <Button text="Test Connection" onAction="#handleTestConnection"/>
+            <Button text="Save &amp; Apply" onAction="#handleSave"
+                    style="-fx-background-color: #F97316; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

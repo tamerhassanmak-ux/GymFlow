@@ -1,0 +1,2082 @@
+/* =========================================================
+   LAZAR GYM MANAGEMENT
+   Professional Arabic / English Theme
+   ========================================================= */
+
+
+/* =========================================================
+   ROOT + TYPOGRAPHY
+   ========================================================= */
+
+.root {
+    /*
+     * Noto Sans Arabic = Arabic UI
+     * Noto Sans        = English / Numbers
+     * Arial            = Safe fallback
+     */
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+    -fx-font-size: 13px;
+
+    -fx-background-color: #F5F7FB;
+    -fx-font-smoothing-type: lcd;
+}
+
+
+/* All common controls inherit a consistent font */
+
+.label,
+.button,
+.text-field,
+.password-field,
+.text-area,
+.combo-box,
+.date-picker,
+.check-box,
+.toggle-button,
+.table-view,
+.list-view,
+.tooltip {
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    -fx-background-color: #111827;
+    -fx-padding: 25 15;
+    -fx-spacing: 8;
+}
+
+
+/* Brand */
+
+.sidebar-title {
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+}
+
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   ========================================================= */
+
+.sidebar-button {
+    -fx-background-color: transparent;
+
+    -fx-text-fill: #CBD5E1;
+
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-padding: 11 16;
+
+    -fx-background-radius: 8;
+
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+
+    -fx-cursor: hand;
+}
+
+
+/* Hover */
+
+.sidebar-button:hover {
+    -fx-background-color: #1F2937;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* Active page */
+
+.sidebar-button-active {
+    -fx-background-color: #F97316;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-weight: bold;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(249, 115, 22, 0.20),
+        8,
+        0,
+        0,
+        2
+    );
+}
+
+
+.sidebar-button-active:hover {
+    -fx-background-color: #EA580C;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+.sidebar-button:pressed {
+    -fx-opacity: 0.90;
+}
+
+
+.sidebar-button:focused {
+    -fx-border-color: transparent;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content-area {
+    -fx-background-color: #F5F7FB;
+    -fx-padding: 30;
+}
+
+
+/* =========================================================
+   PAGE TITLES
+   ========================================================= */
+
+.page-title {
+    -fx-font-size: 27px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+
+.page-subtitle {
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #64748B;
+}
+
+
+/* =========================================================
+   DASHBOARD CARDS
+   ========================================================= */
+
+.dashboard-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 14;
+
+    -fx-padding: 20;
+
+    -fx-spacing: 8;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.07),
+        12,
+        0,
+        0,
+        3
+    );
+}
+
+
+.dashboard-card:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.11),
+        16,
+        0,
+        0,
+        4
+    );
+}
+
+
+.card-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #64748B;
+}
+
+
+.card-value {
+    /*
+     * Noto Sans first because KPI values
+     * are mainly numbers.
+     */
+    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Arial";
+
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+
+/* =========================================================
+   GENERAL BUTTONS
+   ========================================================= */
+
+.primary-button {
+    -fx-background-color: #F97316;
+
+    -fx-background-radius: 8;
+
+    -fx-border-color: transparent;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+
+    -fx-padding: 10 18;
+
+    -fx-cursor: hand;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(249, 115, 22, 0.16),
+        6,
+        0,
+        0,
+        2
+    );
+}
+
+
+.primary-button:hover {
+    -fx-background-color: #EA580C;
+}
+
+
+.primary-button:pressed {
+    -fx-background-color: #C2410C;
+    -fx-opacity: 0.95;
+}
+
+
+.secondary-button {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 8;
+
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+
+    -fx-text-fill: #334155;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+
+    -fx-padding: 10 18;
+
+    -fx-cursor: hand;
+}
+
+
+.secondary-button:hover {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #94A3B8;
+}
+
+
+.secondary-button:pressed {
+    -fx-background-color: #F1F5F9;
+}
+
+
+/* =========================================================
+   FORM CONTAINER
+   ========================================================= */
+
+.form-container {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 12;
+
+    -fx-padding: 30;
+
+    -fx-spacing: 12;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.05),
+        10,
+        0,
+        0,
+        2
+    );
+}
+
+
+/* =========================================================
+   FORM LABEL
+   ========================================================= */
+
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.text-field,
+.password-field,
+.combo-box,
+.date-picker {
+    -fx-background-color: #F8FAFC;
+
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1;
+
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+
+    -fx-padding: 8;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+
+    -fx-text-fill: #0F172A;
+
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+
+.text-field:hover,
+.password-field:hover,
+.combo-box:hover,
+.date-picker:hover {
+    -fx-border-color: #CBD5E1;
+}
+
+
+.text-field:focused,
+.password-field:focused,
+.combo-box:focused,
+.date-picker:focused {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #F97316;
+    -fx-border-width: 1.5;
+}
+
+
+/* =========================================================
+   TEXT AREA
+   ========================================================= */
+
+.text-area {
+    -fx-background-color: #F8FAFC;
+
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1;
+
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+
+    -fx-font-size: 13px;
+
+    -fx-text-fill: #0F172A;
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+
+.text-area .content {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 8;
+}
+
+
+.text-area:focused {
+    -fx-border-color: #F97316;
+    -fx-border-width: 1.5;
+}
+
+
+.text-area:focused .content {
+    -fx-background-color: #FFFFFF;
+}
+
+
+/* =========================================================
+   MEMBERS PAGE
+   ========================================================= */
+
+.members-page,
+.members-container {
+    -fx-background-color: #F5F7FB;
+}
+
+
+/* =========================================================
+   MEMBERS TOOLBAR
+   ========================================================= */
+
+.members-toolbar {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 12;
+
+    -fx-padding: 14 16;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.05),
+        10,
+        0,
+        0,
+        2
+    );
+}
+
+
+.members-toolbar .text-field {
+    -fx-background-color: #F8FAFC;
+
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1;
+
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+
+    -fx-padding: 10 14;
+
+    -fx-font-size: 13px;
+
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+
+.members-toolbar .text-field:hover {
+    -fx-border-color: #CBD5E1;
+}
+
+
+.members-toolbar .text-field:focused {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #F97316;
+    -fx-border-width: 1.5;
+}
+
+
+.members-count {
+    -fx-text-fill: #64748B;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+
+/* =========================================================
+   TABLE CARD
+   ========================================================= */
+
+.table-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 12;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.06),
+        12,
+        0,
+        0,
+        2
+    );
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-view {
+    -fx-background-color: transparent;
+
+    -fx-border-color: transparent;
+
+    -fx-background-radius: 12;
+
+    -fx-padding: 0;
+}
+
+
+/* Table Header Background */
+
+.table-view .column-header-background {
+    -fx-background-color: #F8FAFC;
+
+    -fx-background-radius: 12 12 0 0;
+}
+
+
+/* Table Header */
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #E2E8F0
+        transparent;
+
+    -fx-border-width: 0 0 1 0;
+
+    -fx-padding: 12 10;
+}
+
+
+/* Header text */
+
+.table-view .column-header .label {
+    -fx-text-fill: #475569;
+
+    -fx-font-size: 12px;
+
+    -fx-font-weight: bold;
+
+    -fx-alignment: CENTER_LEFT;
+}
+
+
+/* =========================================================
+   TABLE CELLS
+   ========================================================= */
+
+.table-view .table-cell {
+    -fx-border-color: transparent;
+
+    -fx-padding: 13 10;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+
+    -fx-text-fill: #334155;
+}
+
+
+/* =========================================================
+   TABLE ROWS
+   ========================================================= */
+
+.table-row-cell {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #F1F5F9
+        transparent;
+
+    -fx-border-width: 0 0 1 0;
+}
+
+
+.table-row-cell:hover {
+    -fx-background-color: #FFF7ED;
+}
+
+
+.table-row-cell:selected {
+    -fx-background-color: #FFEDD5;
+}
+
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #111827;
+}
+
+
+.table-view .virtual-flow {
+    -fx-background-color: #FFFFFF;
+}
+
+
+.table-view .corner {
+    -fx-background-color: #F8FAFC;
+}
+
+
+/* =========================================================
+   TABLE FOOTER
+   ========================================================= */
+
+.table-footer-text {
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 11px;
+}
+
+
+/* =========================================================
+   MEMBERSHIP SCREEN
+   ========================================================= */
+
+.stat-description {
+    -fx-font-size: 11px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #94A3B8;
+}
+
+
+.members-page .combo-box {
+    -fx-background-color: #F8FAFC;
+
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1;
+
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+
+    -fx-padding: 4 8;
+}
+
+
+.members-page .combo-box:hover {
+    -fx-border-color: #CBD5E1;
+}
+
+
+.members-page .combo-box:focused {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #F97316;
+}
+
+
+/* =========================================================
+   ADD MEMBER MODAL
+   ========================================================= */
+
+.member-modal {
+    -fx-background-color: #F8FAFC;
+}
+
+
+/* =========================================================
+   MODAL HEADER
+   ========================================================= */
+
+.member-modal-header {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        transparent
+        transparent
+        #E2E8F0
+        transparent;
+
+    -fx-border-width: 0 0 1 0;
+}
+
+
+.member-modal-title {
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+
+.member-modal-subtitle {
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #64748B;
+}
+
+
+/* =========================================================
+   MODAL BODY
+   ========================================================= */
+
+.member-modal-body {
+    -fx-background-color: #F8FAFC;
+}
+
+
+/* =========================================================
+   MODAL INPUT
+   ========================================================= */
+
+.form-input {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 1;
+
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+
+    -fx-padding: 0 12;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+
+    -fx-text-fill: #0F172A;
+
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+
+.form-input:hover {
+    -fx-border-color: #94A3B8;
+}
+
+
+.form-input:focused {
+    -fx-border-color: #F97316;
+    -fx-border-width: 1.5;
+}
+
+
+/* =========================================================
+   MODAL COMBO BOX
+   ========================================================= */
+
+.form-combo {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 1;
+
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+
+    -fx-text-fill: #0F172A;
+}
+
+
+.form-combo:hover {
+    -fx-border-color: #94A3B8;
+}
+
+
+.form-combo:focused {
+    -fx-border-color: #F97316;
+    -fx-border-width: 1.5;
+}
+
+
+/* =========================================================
+   MODAL FOOTER
+   ========================================================= */
+
+.member-modal-footer {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color:
+        #E2E8F0
+        transparent
+        transparent
+        transparent;
+
+    -fx-border-width: 1 0 0 0;
+}
+
+
+/* =========================================================
+   CHECK BOX
+   ========================================================= */
+
+.check-box {
+    -fx-font-size: 13px;
+    -fx-text-fill: #334155;
+}
+
+
+.check-box .box {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 4;
+
+    -fx-background-radius: 4;
+}
+
+
+.check-box:selected .box {
+    -fx-background-color: #F97316;
+    -fx-border-color: #F97316;
+}
+
+
+.check-box:selected .mark {
+    -fx-background-color: #FFFFFF;
+}
+
+
+/* =========================================================
+   TOGGLE BUTTON
+   ========================================================= */
+
+.toggle-button {
+    -fx-background-color: #E2E8F0;
+
+    -fx-background-radius: 8;
+
+    -fx-text-fill: #475569;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-cursor: hand;
+}
+
+
+.toggle-button:selected {
+    -fx-background-color: #F97316;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+/* =========================================================
+   CHARTS
+   ========================================================= */
+
+.chart {
+    -fx-padding: 8;
+}
+
+
+.chart-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+
+/* =========================================================
+   CHART GRID
+   ========================================================= */
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #E2E8F0;
+    -fx-stroke-dash-array: 3 3;
+}
+
+
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+
+/* =========================================================
+   CHART AXIS
+   ========================================================= */
+
+.axis {
+    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Arial";
+
+    -fx-tick-label-fill: #64748B;
+
+    -fx-font-size: 10px;
+}
+
+
+.axis-label {
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+
+    -fx-text-fill: #64748B;
+
+    -fx-font-size: 10px;
+    -fx-font-weight: normal;
+}
+
+
+.axis-tick-mark {
+    -fx-stroke: #CBD5E1;
+}
+
+
+.axis-minor-tick-mark {
+    -fx-stroke: #E2E8F0;
+}
+
+
+/* =========================================================
+   BAR CHART
+   ========================================================= */
+
+/* Revenue */
+
+.default-color0.chart-bar {
+    -fx-bar-fill: #F97316;
+}
+
+
+/* Expenses */
+
+.default-color1.chart-bar {
+    -fx-bar-fill: #F59E0B;
+}
+
+
+/* =========================================================
+   LINE CHART
+   ========================================================= */
+
+.default-color0.chart-series-line {
+    -fx-stroke: #F97316;
+    -fx-stroke-width: 2.5px;
+}
+
+
+.default-color0.chart-line-symbol {
+    -fx-background-color: #FFFFFF, #F97316;
+
+    -fx-background-insets: 0, 2;
+
+    -fx-background-radius: 7;
+
+    -fx-padding: 5;
+}
+
+
+/* =========================================================
+   PIE CHART
+   ========================================================= */
+
+.default-color0.chart-pie {
+    -fx-pie-color: #F97316;
+}
+
+
+.default-color1.chart-pie {
+    -fx-pie-color: #F59E0B;
+}
+
+
+.default-color2.chart-pie {
+    -fx-pie-color: #38BDF8;
+}
+
+
+.default-color3.chart-pie {
+    -fx-pie-color: #22C55E;
+}
+
+
+/* Pie text */
+
+.chart-pie-label {
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+
+    -fx-fill: #475569;
+
+    -fx-font-size: 10px;
+    -fx-font-weight: normal;
+}
+
+
+.chart-pie-label-line {
+    -fx-stroke: #CBD5E1;
+}
+
+
+/* =========================================================
+   CHART LEGEND
+   ========================================================= */
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 8 0 0 0;
+}
+
+
+.chart-legend-item {
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+
+    -fx-text-fill: #64748B;
+
+    -fx-font-size: 10px;
+    -fx-font-weight: normal;
+}
+
+
+/* =========================================================
+   SCROLL PANE
+   ========================================================= */
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+
+/* =========================================================
+   SCROLL BAR
+   ========================================================= */
+
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+
+.scroll-bar .thumb {
+    -fx-background-color: #CBD5E1;
+    -fx-background-radius: 10;
+}
+
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #94A3B8;
+}
+
+
+/* =========================================================
+   SEPARATOR
+   ========================================================= */
+
+.separator .line {
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1 0 0 0;
+}
+
+
+/* =========================================================
+   TOOLTIP
+   ========================================================= */
+
+.tooltip {
+    -fx-background-color: #111827;
+
+    -fx-background-radius: 7;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-size: 11px;
+    -fx-font-weight: normal;
+
+    -fx-padding: 7 10;
+}
+
+
+/* =========================================================
+   ARABIC TYPOGRAPHY
+   Optional style class: arabic
+   ========================================================= */
+
+.arabic {
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+}
+
+
+.arabic .page-title {
+    -fx-font-size: 27px;
+}
+
+
+.arabic .sidebar-button {
+    -fx-font-size: 14px;
+}
+
+
+.arabic .table-view .column-header .label {
+    -fx-font-size: 12px;
+}
+
+
+/* =========================================================
+   ENGLISH TYPOGRAPHY
+   Optional style class: english
+   ========================================================= */
+
+.english {
+    -fx-font-family: "Noto Sans", "Arial";
+}
+
+
+.english .page-title {
+    -fx-font-size: 27px;
+}
+
+
+.english .sidebar-button {
+    -fx-font-size: 13px;
+}
+
+
+.english .table-view .column-header .label {
+    -fx-font-size: 12px;
+}
+
+/* =========================================================
+   ADD MEMBER - WIDE COMPACT LAYOUT
+   ========================================================= */
+
+.member-modal-wide {
+    -fx-background-color: #F8FAFC;
+}
+
+
+/* ---------- Photo ---------- */
+
+.member-photo-container {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+
+    -fx-background-radius: 10;
+
+    -fx-alignment: center;
+}
+
+.member-photo-placeholder {
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+
+/* ---------- Member Code ---------- */
+
+.member-code-field {
+    -fx-background-color: #FFFFFF;
+
+    -fx-font-family: "Noto Sans", "Arial";
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #0F172A;
+}
+
+
+/* ---------- Notes ---------- */
+
+.member-notes {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 1;
+
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+
+    -fx-font-size: 13px;
+}
+
+.member-notes .content {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8;
+}
+
+
+/* =========================================================
+   RIGHT PREVIEW CARDS
+   ========================================================= */
+
+.member-preview-card {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 12;
+
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+
+    -fx-padding: 12;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.04),
+        8,
+        0,
+        0,
+        2
+    );
+}
+
+.member-preview-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+
+/* =========================================================
+   QR
+   ========================================================= */
+
+.qr-section-card {
+    -fx-pref-height: 220px;
+}
+
+.qr-preview-box {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1;
+    -fx-border-radius: 9;
+
+    -fx-background-radius: 9;
+
+    -fx-padding: 6;
+}
+
+.qr-placeholder {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #CBD5E1;
+}
+
+.qr-member-code {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #0F172A;
+
+    -fx-background-color: #F1F5F9;
+    -fx-background-radius: 7;
+
+    -fx-padding: 5 28;
+}
+
+
+/* =========================================================
+   PROFESSIONAL GYM MEMBER CARD
+   ========================================================= */
+
+.gym-member-card {
+    -fx-background-color:
+        linear-gradient(
+            to bottom right,
+            #07111F 0%,
+            #0F2134 55%,
+            #13283D 100%
+        );
+
+    -fx-background-radius: 14;
+
+    -fx-padding: 18;
+
+    -fx-border-color: rgba(255, 255, 255, 0.08);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.22),
+        12,
+        0,
+        0,
+        4
+    );
+}
+
+
+/* ---------- Brand ---------- */
+
+.gym-card-brand {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+.gym-card-brand-small {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+
+    -fx-text-fill: #F97316;
+}
+
+
+/* ---------- Photo ---------- */
+
+.gym-card-photo {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 10;
+
+    -fx-border-color: #F97316;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+
+    -fx-padding: 2;
+}
+
+.gym-card-photo-text {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-text-fill: #94A3B8;
+
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+
+/* ---------- Member Data ---------- */
+
+.gym-card-type {
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #94A3B8;
+}
+
+.gym-card-member-name {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+.gym-card-member-code {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #FFFFFF;
+}
+
+.gym-card-membership {
+    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Arial";
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-background-color: rgba(249, 115, 22, 0.42);
+
+    -fx-background-radius: 8;
+
+    -fx-padding: 5 20;
+}
+
+
+/* ---------- QR ---------- */
+
+.gym-card-qr {
+    -fx-background-color: #FFFFFF;
+
+    -fx-background-radius: 8;
+
+    -fx-padding: 4;
+}
+
+.gym-card-qr-text {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #CBD5E1;
+}
+
+
+/* ---------- Small Card Text ---------- */
+
+.gym-card-motto {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-text-alignment: CENTER;
+}
+
+.gym-card-slogan {
+    -fx-font-family: "Noto Sans", "Arial";
+
+    -fx-font-size: 8px;
+
+    -fx-text-fill: #CBD5E1;
+}
+/* =========================================================
+   ADD MEMBER - RESPONSIVE SCROLLABLE FORM
+   ========================================================= */
+
+.member-form-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.member-form-scroll > .viewport {
+    -fx-background-color: #F8FAFC;
+}
+
+.member-form-scroll > .corner {
+    -fx-background-color: #F8FAFC;
+}
+
+
+/* Vertical scrollbar */
+
+.member-form-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+.member-form-scroll .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+.member-form-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #CBD5E1;
+    -fx-background-radius: 10px;
+}
+
+.member-form-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #94A3B8;
+}
+
+.member-form-scroll .scroll-bar .increment-button,
+.member-form-scroll .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 2px;
+}
+
+
+/* Notes */
+
+.member-notes {
+    -fx-pref-height: 70px;
+    -fx-min-height: 70px;
+    -fx-max-height: 70px;
+
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 1;
+
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+
+    -fx-font-size: 13px;
+    -fx-padding: 0;
+}
+
+.member-notes:focused {
+    -fx-border-color: #F97316;
+    -fx-border-width: 1.5;
+}
+
+.member-notes .content {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8;
+    -fx-padding: 7 9;
+}
+
+
+/* Fixed header/footer sizing */
+
+.member-modal-wide .member-modal-header {
+    -fx-min-height: 72px;
+    -fx-pref-height: 72px;
+}
+
+.member-modal-wide .member-modal-footer {
+    -fx-min-height: 62px;
+    -fx-pref-height: 62px;
+    -fx-max-height: 62px;
+}
+
+/* =========================================================
+   MEMBER TABLE ACTION BUTTONS
+   ========================================================= */
+
+.member-actions {
+    -fx-alignment: center;
+    -fx-spacing: 6px;
+}
+
+
+/* VIEW */
+
+.member-view-button {
+    -fx-background-color: #0F172A;
+    -fx-text-fill: white;
+
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 6px;
+
+    -fx-padding: 6px 12px;
+
+    -fx-cursor: hand;
+}
+
+.member-view-button:hover {
+    -fx-background-color: #1E293B;
+}
+
+
+/* EDIT */
+
+.member-edit-button {
+    -fx-background-color: #F97316;
+    -fx-text-fill: white;
+
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 6px;
+
+    -fx-padding: 6px 12px;
+
+    -fx-cursor: hand;
+}
+
+.member-edit-button:hover {
+    -fx-background-color: #EA580C;
+}
+
+
+/* DELETE */
+
+.member-delete-button {
+    -fx-background-color: #FEF2F2;
+    -fx-text-fill: #DC2626;
+
+    -fx-border-color: #FECACA;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 6px;
+
+    -fx-padding: 6px 12px;
+
+    -fx-cursor: hand;
+}
+
+.member-delete-button:hover {
+    -fx-background-color: #FEE2E2;
+}
+/* ============================================================
+   MEMBER DETAILS
+   ============================================================ */
+
+.member-details-root {
+    -fx-background-color: #f5f7fb;
+}
+
+
+/* HEADER */
+
+.member-details-header {
+    -fx-background-color: linear-gradient(
+        to right,
+        #101827,
+        #172235
+    );
+
+    -fx-border-color: transparent transparent rgba(255,255,255,0.08) transparent;
+}
+
+
+.member-details-name {
+    -fx-font-size: 26px;
+    -fx-font-weight: 800;
+    -fx-text-fill: white;
+}
+
+
+.member-details-code {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #9caec5;
+}
+
+
+.member-details-photo-container {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-background-radius: 56px;
+
+    -fx-border-color: rgba(255,255,255,0.16);
+    -fx-border-radius: 56px;
+    -fx-border-width: 2px;
+}
+
+
+.member-details-photo-container .image-view {
+    -fx-background-radius: 52px;
+}
+
+
+.member-details-photo-placeholder {
+    -fx-font-size: 44px;
+    -fx-text-fill: #c7d2e1;
+}
+
+
+/* BADGES */
+
+.member-membership-badge {
+    -fx-background-color: rgba(255, 153, 51, 0.15);
+
+    -fx-border-color: rgba(255, 153, 51, 0.45);
+    -fx-border-radius: 14px;
+
+    -fx-background-radius: 14px;
+
+    -fx-padding: 5px 12px;
+
+    -fx-text-fill: #ffad5c;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+
+.member-status-badge {
+    -fx-padding: 5px 12px;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+
+.member-status-active {
+    -fx-background-color: #e8f8ef;
+    -fx-text-fill: #16834b;
+    -fx-border-color: #bce9cf;
+    -fx-border-radius: 14px;
+}
+
+
+.member-status-expired {
+    -fx-background-color: #fff0f0;
+    -fx-text-fill: #c43d3d;
+    -fx-border-color: #f2c5c5;
+    -fx-border-radius: 14px;
+}
+
+
+.member-status-inactive {
+    -fx-background-color: #eef1f5;
+    -fx-text-fill: #657084;
+    -fx-border-color: #dce1e8;
+    -fx-border-radius: 14px;
+}
+
+
+.member-status-suspended {
+    -fx-background-color: #fff5df;
+    -fx-text-fill: #a86a00;
+    -fx-border-color: #f3d99f;
+    -fx-border-radius: 14px;
+}
+
+
+/* QR */
+
+.member-details-qr-panel {
+    -fx-padding: 10px 12px;
+}
+
+
+.member-details-small-title {
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #8493a8;
+}
+
+
+.member-details-qr-box {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-padding: 6px;
+}
+
+
+.member-details-qr-placeholder {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #7d8795;
+}
+
+
+/* SCROLL */
+
+.member-details-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+
+.member-details-scroll > .viewport {
+    -fx-background-color: #f5f7fb;
+}
+
+
+/* KPI */
+
+.member-kpi-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14px;
+
+    -fx-border-color: #e7eaf0;
+    -fx-border-radius: 14px;
+
+    -fx-padding: 18px 20px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.05),
+        12,
+        0.1,
+        0,
+        3
+    );
+}
+
+
+.member-kpi-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #8792a5;
+}
+
+
+.member-kpi-value {
+    -fx-font-size: 25px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #172033;
+}
+
+
+.member-kpi-date {
+    -fx-font-size: 19px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #172033;
+}
+
+
+.member-kpi-unit {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #7c8799;
+}
+
+
+.member-kpi-description {
+    -fx-font-size: 11px;
+    -fx-text-fill: #9aa4b3;
+}
+
+
+/* INFO CARDS */
+
+.member-info-card {
+    -fx-background-color: white;
+
+    -fx-background-radius: 14px;
+
+    -fx-border-color: #e6e9ef;
+    -fx-border-radius: 14px;
+
+    -fx-padding: 22px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(15, 23, 42, 0.04),
+        12,
+        0.1,
+        0,
+        3
+    );
+}
+
+
+.member-info-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #172033;
+}
+
+
+.member-info-separator {
+    -fx-background-color: #edf0f4;
+}
+
+
+.member-field-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #8a94a5;
+
+    -fx-min-width: 110px;
+}
+
+
+.member-field-value {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #283448;
+}
+
+
+.member-notes-value {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4c596c;
+
+    -fx-background-color: #f8f9fb;
+    -fx-background-radius: 10px;
+
+    -fx-padding: 14px;
+}
+
+
+/* FOOTER */
+
+.member-details-footer {
+    -fx-background-color: white;
+
+    -fx-border-color: #e7eaf0 transparent transparent transparent;
+}
+
+
+.member-details-edit-button {
+    -fx-background-color: #f28b32;
+    -fx-background-radius: 8px;
+
+    -fx-text-fill: white;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 10px 20px;
+
+    -fx-cursor: hand;
+}
+
+
+.member-details-edit-button:hover {
+    -fx-opacity: 0.88;
+}
+
+
+.member-details-close-button {
+    -fx-background-color: #eef1f5;
+    -fx-background-radius: 8px;
+
+    -fx-text-fill: #354154;
+
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+
+    -fx-padding: 10px 20px;
+
+    -fx-cursor: hand;
+}
+
+
+.member-details-close-button:hover {
+    -fx-background-color: #e1e5eb;
+}
+/* =========================================================
+   GYMFLOW - PROFESSIONAL APP DIALOG SYSTEM
+   ========================================================= */
+.app-dialog {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(15, 23, 42, 0.08);
+    -fx-border-width: 1;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.28), 34, 0.12, 0, 12);
+}
+.app-dialog > .content.label { -fx-padding: 0; }
+.app-dialog .button-bar { -fx-padding: 4 24 22 24; }
+.app-dialog-body { -fx-padding: 24 24 12 24; }
+.app-dialog-header { -fx-alignment: CENTER_LEFT; }
+.app-dialog-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0F172A;
+}
+.app-dialog-message {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: #64748B;
+    -fx-line-spacing: 2px;
+}
+.app-dialog-icon {
+    -fx-min-width: 50px; -fx-pref-width: 50px; -fx-max-width: 50px;
+    -fx-min-height: 50px; -fx-pref-height: 50px; -fx-max-height: 50px;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 25;
+    -fx-font-size: 25px;
+    -fx-font-weight: 900;
+}
+.app-dialog-icon-success { -fx-background-color: #ECFDF5; -fx-text-fill: #16A34A; }
+.app-dialog-icon-info    { -fx-background-color: #EFF6FF; -fx-text-fill: #2563EB; }
+.app-dialog-icon-warning { -fx-background-color: #FFF7ED; -fx-text-fill: #F97316; }
+.app-dialog-icon-error,
+.app-dialog-icon-danger  { -fx-background-color: #FEF2F2; -fx-text-fill: #DC2626; }
+.app-dialog-details {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 12;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12;
+    -fx-padding: 14 16;
+}
+.app-dialog-detail-row {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #334155;
+}
+.app-dialog-primary-button,
+.app-dialog-danger-button,
+.app-dialog-secondary-button {
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 800;
+    -fx-padding: 9 20;
+    -fx-cursor: hand;
+}
+.app-dialog-primary-button { -fx-background-color: #F97316; -fx-text-fill: #FFFFFF; }
+.app-dialog-primary-button:hover { -fx-background-color: #EA580C; }
+.app-dialog-danger-button { -fx-background-color: #DC2626; -fx-text-fill: #FFFFFF; }
+.app-dialog-danger-button:hover { -fx-background-color: #B91C1C; }
+.app-dialog-secondary-button {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #334155;
+    -fx-border-color: #E2E8F0;
+}
+.app-dialog-secondary-button:hover { -fx-background-color: #E2E8F0; }
+.app-dialog .header-panel { -fx-background-color: transparent; }
+
+
+/* ============================================================
+   GYMFLOW — PROFESSIONAL NATIVE DIALOGS / ALERTS
+   ============================================================ */
+
+.gymflow-native-dialog {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.gymflow-native-dialog > .content,
+.gymflow-native-dialog > .header-panel,
+.gymflow-native-dialog > .button-bar {
+    -fx-background-color: white;
+}
+
+.gymflow-native-dialog > .header-panel {
+    -fx-padding: 22 24 12 24;
+    -fx-background-radius: 20 20 0 0;
+}
+
+.gymflow-native-dialog > .header-panel .label {
+    -fx-font-size: 17px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0F172A;
+}
+
+.gymflow-native-dialog > .content {
+    -fx-padding: 8 24 22 24;
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+}
+
+.gymflow-native-dialog > .button-bar {
+    -fx-padding: 14 24 20 24;
+    -fx-background-radius: 0 0 20 20;
+    -fx-border-color: #E2E8F0 transparent transparent transparent;
+}
+
+.gymflow-native-dialog .button {
+    -fx-min-height: 42px;
+    -fx-padding: 0 20 0 20;
+    -fx-background-radius: 11px;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+}
+
+.gymflow-dialog-info > .header-panel {
+    -fx-border-color: #0EA5E9 transparent transparent transparent;
+    -fx-border-width: 4 0 0 0;
+}
+
+.gymflow-dialog-warning > .header-panel,
+.gymflow-dialog-confirm > .header-panel {
+    -fx-border-color: #F97316 transparent transparent transparent;
+    -fx-border-width: 4 0 0 0;
+}
+
+.gymflow-dialog-error > .header-panel {
+    -fx-border-color: #EF4444 transparent transparent transparent;
+    -fx-border-width: 4 0 0 0;
+}
+
+.gymflow-dialog-form > .header-panel {
+    -fx-border-color: #0F172A transparent transparent transparent;
+    -fx-border-width: 4 0 0 0;
+}
+
+.gymflow-native-dialog .combo-box,
+.gymflow-native-dialog .text-field,
+.gymflow-native-dialog .text-area {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.gymflow-native-dialog .combo-box:focused,
+.gymflow-native-dialog .text-field:focused,
+.gymflow-native-dialog .text-area:focused {
+    -fx-border-color: #F97316;
+    -fx-border-width: 1.5px;
+}
+
+.gymflow-native-dialog .dialog-pane {
+    -fx-background-radius: 20px;
+}
+
+.gymflow-native-dialog:rtl .label,
+.gymflow-native-dialog:rtl .text-field,
+.gymflow-native-dialog:rtl .text-area {
+    -fx-alignment: CENTER-RIGHT;
+}
