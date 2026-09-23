@@ -1,0 +1,109 @@
+name: Build GymFlow Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-windows:
+    name: Build Windows Installer
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Show Java and Maven versions
+        shell: powershell
+        run: |
+          java --version
+          javac --version
+          mvn --version
+          jpackage --version
+
+      - name: Build GymFlow with Maven
+        shell: powershell
+        run: |
+          mvn --batch-mode clean package
+
+      - name: Verify Windows JavaFX libraries
+        shell: powershell
+        run: |
+          Write-Host "JavaFX libraries:"
+          Get-ChildItem target\libs\javafx*
+
+          $windowsJavaFx = Get-ChildItem target\libs\*win*.jar -ErrorAction SilentlyContinue
+
+          if (-not $windowsJavaFx) {
+              Write-Error "Windows JavaFX native libraries were not found."
+              exit 1
+          }
+
+          Write-Host "Windows JavaFX native libraries found."
+
+      - name: Prepare jpackage input
+        shell: powershell
+        run: |
+          if (Test-Path target\jpackage-input) {
+              Remove-Item target\jpackage-input -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Force target\jpackage-input\libs | Out-Null
+
+          Copy-Item target\GymFlow.jar target\jpackage-input\GymFlow.jar
+
+          Copy-Item target\libs\*.jar target\jpackage-input\libs\
+
+          Write-Host "jpackage input prepared:"
+          Get-ChildItem target\jpackage-input
+          Get-ChildItem target\jpackage-input\libs
+
+      - name: Create installer output directory
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force installer-output | Out-Null
+
+      - name: Build GymFlow Windows EXE
+        shell: powershell
+        run: |
+          jpackage `
+            --type exe `
+            --name GymFlow `
+            --app-version 1.0.1 `
+            --vendor "MAKSOFT Software Solutions" `
+            --description "GymFlow Gym Management System" `
+            --input target\jpackage-input `
+            --main-jar GymFlow.jar `
+            --main-class com.mycompany.lazar_app.Lazar_APP `
+            --icon packaging\windows\gymflow.ico `
+            --dest installer-output `
+            --win-menu `
+            --win-menu-group "GymFlow" `
+            --win-shortcut `
+            --win-dir-chooser `
+            --java-options '--module-path=$APPDIR/libs' `
+            --java-options '--add-modules=javafx.controls,javafx.fxml' `
+            --java-options '-Dfile.encoding=UTF-8'
+
+      - name: Show generated installer
+        shell: powershell
+        run: |
+          Write-Host "Generated Windows installer:"
+          Get-ChildItem installer-output
+
+      - name: Upload GymFlow Windows Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: GymFlow-Windows-Installer-1.0.1
+          path: installer-output/*.exe
+          if-no-files-found: error
+          retention-days: 30
