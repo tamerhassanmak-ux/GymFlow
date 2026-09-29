@@ -281,6 +281,52 @@ public class MemberMembershipRepository {
 
 
     // =========================================================
+    // FIND LATEST MEMBERSHIP BY MEMBER
+    // =========================================================
+
+    public Optional<MemberMembership> findLatestByMemberId(
+            int memberId
+    ) throws SQLException {
+
+        if (memberId <= 0) {
+            return Optional.empty();
+        }
+
+        List<MemberMembership> memberships =
+                findByMemberId(
+                        memberId
+                );
+
+        return memberships.isEmpty()
+                ? Optional.empty()
+                : Optional.of(
+                        memberships.get(0)
+                );
+    }
+
+
+    // =========================================================
+    // FIND CURRENT OR LATEST MEMBERSHIP
+    // =========================================================
+
+    public Optional<MemberMembership> findCurrentOrLatestByMemberId(
+            int memberId
+    ) throws SQLException {
+
+        Optional<MemberMembership> current =
+                findCurrentMembershipByMemberId(
+                        memberId
+                );
+
+        return current.isPresent()
+                ? current
+                : findLatestByMemberId(
+                        memberId
+                );
+    }
+
+
+    // =========================================================
     // FIND CURRENT MEMBERSHIP BY MEMBER
     // =========================================================
 
@@ -580,7 +626,7 @@ public class MemberMembershipRepository {
             MemberMembership membership
     ) throws SQLException {
 
-        validateMembership(
+        validateMembershipCore(
                 membership
         );
 
@@ -611,9 +657,6 @@ public class MemberMembershipRepository {
         }
 
 
-        membership.calculateFinalPrice();
-
-
         String sql = """
                 INSERT INTO member_memberships (
                     member_id,
@@ -633,113 +676,122 @@ public class MemberMembershipRepository {
 
         try (
                 Connection connection =
-                        DatabaseManager.getConnection();
-
-                PreparedStatement statement =
-                        connection.prepareStatement(
-                                sql,
-                                Statement.RETURN_GENERATED_KEYS
-                        )
+                        DatabaseManager.getConnection()
         ) {
 
-            statement.setInt(
-                    1,
-                    membership.getMemberId()
+            connection.setAutoCommit(
+                    false
             );
 
 
-            statement.setInt(
-                    2,
-                    membership.getMembershipPlanId()
-            );
+            try {
+
+                /*
+                 * IMPORTANT DOMAIN RULE
+                 * ---------------------
+                 * The controller does not own plan price/session values.
+                 * We always read the plan from the database and snapshot
+                 * those commercial terms into the new membership.
+                 */
+                PlanSnapshot planSnapshot =
+                        loadPlanSnapshot(
+                                connection,
+                                membership.getMembershipPlanId()
+                        );
 
 
-            setLocalDate(
-                    statement,
-                    3,
-                    membership.getStartDate()
-            );
-
-
-            setLocalDate(
-                    statement,
-                    4,
-                    membership.getEndDate()
-            );
-
-
-            statement.setInt(
-                    5,
-                    membership.getAllowedSessions()
-            );
-
-
-            statement.setDouble(
-                    6,
-                    membership.getPrice()
-            );
-
-
-            statement.setDouble(
-                    7,
-                    membership.getDiscount()
-            );
-
-
-            statement.setDouble(
-                    8,
-                    membership.getFinalPrice()
-            );
-
-
-            statement.setString(
-                    9,
-                    normalizeStatus(
-                            membership.getStatus()
-                    )
-            );
-
-
-            statement.setString(
-                    10,
-                    safe(
-                            membership.getNotes()
-                    )
-            );
-
-
-            int affectedRows =
-                    statement.executeUpdate();
-
-
-            if (affectedRows == 0) {
-
-                throw new SQLException(
-                        "Creating membership failed. No rows were inserted."
+                membership.setAllowedSessions(
+                        planSnapshot.maxSessions()
                 );
-            }
 
 
-            try (
-                    ResultSet generatedKeys =
-                            statement.getGeneratedKeys()
-            ) {
+                membership.setPlanPriceSnapshot(
+                        planSnapshot.price()
+                );
 
-                if (!generatedKeys.next()) {
 
-                    throw new SQLException(
-                            "Creating membership failed. Database did not return an ID."
+                validateCommercialTerms(
+                        membership
+                );
+
+
+                membership.calculateFinalPrice();
+
+
+                try (
+                        PreparedStatement statement =
+                                connection.prepareStatement(
+                                        sql,
+                                        Statement.RETURN_GENERATED_KEYS
+                                )
+                ) {
+
+                    bindMembershipValues(
+                            statement,
+                            membership,
+                            false
                     );
+
+
+                    int affectedRows =
+                            statement.executeUpdate();
+
+
+                    if (affectedRows == 0) {
+
+                        throw new SQLException(
+                                "Creating membership failed. No rows were inserted."
+                        );
+                    }
+
+
+                    try (
+                            ResultSet generatedKeys =
+                                    statement.getGeneratedKeys()
+                    ) {
+
+                        if (!generatedKeys.next()) {
+
+                            throw new SQLException(
+                                    "Creating membership failed. Database did not return an ID."
+                            );
+                        }
+
+
+                        membership.setId(
+                                generatedKeys.getInt(1)
+                        );
+                    }
                 }
 
 
-                membership.setId(
-                        generatedKeys.getInt(1)
+                connection.commit();
+
+                return membership;
+
+
+            } catch (Exception exception) {
+
+                connection.rollback();
+
+
+                if (exception instanceof SQLException sqlException) {
+
+                    throw sqlException;
+                }
+
+
+                throw new SQLException(
+                        "Unable to create membership.",
+                        exception
+                );
+
+            } finally {
+
+                connection.setAutoCommit(
+                        true
                 );
             }
-
-
-            return membership;
         }
     }
 
@@ -752,7 +804,7 @@ public class MemberMembershipRepository {
             MemberMembership membership
     ) throws SQLException {
 
-        validateMembership(
+        validateMembershipCore(
                 membership
         );
 
@@ -831,9 +883,6 @@ public class MemberMembershipRepository {
         }
 
 
-        membership.calculateFinalPrice();
-
-
         String sql = """
                 UPDATE member_memberships
                 SET
@@ -854,86 +903,120 @@ public class MemberMembershipRepository {
 
         try (
                 Connection connection =
-                        DatabaseManager.getConnection();
-
-                PreparedStatement statement =
-                        connection.prepareStatement(sql)
+                        DatabaseManager.getConnection()
         ) {
 
-            statement.setInt(
-                    1,
-                    membership.getMemberId()
+            connection.setAutoCommit(
+                    false
             );
 
 
-            statement.setInt(
-                    2,
-                    membership.getMembershipPlanId()
-            );
+            try {
+
+                MembershipSnapshot existingSnapshot =
+                        loadExistingMembershipSnapshot(
+                                connection,
+                                membership.getId()
+                        );
 
 
-            setLocalDate(
-                    statement,
-                    3,
-                    membership.getStartDate()
-            );
+                /*
+                 * Preserve the original commercial snapshot while editing
+                 * the same plan. If the operator explicitly changes the
+                 * plan, snapshot the new plan's current terms.
+                 */
+                if (existingSnapshot.membershipPlanId()
+                        == membership.getMembershipPlanId()) {
+
+                    membership.setAllowedSessions(
+                            existingSnapshot.allowedSessions()
+                    );
+
+                    membership.setPlanPriceSnapshot(
+                            existingSnapshot.price()
+                    );
+
+                } else {
+
+                    PlanSnapshot planSnapshot =
+                            loadPlanSnapshot(
+                                    connection,
+                                    membership.getMembershipPlanId()
+                            );
+
+                    membership.setAllowedSessions(
+                            planSnapshot.maxSessions()
+                    );
+
+                    membership.setPlanPriceSnapshot(
+                            planSnapshot.price()
+                    );
+                }
 
 
-            setLocalDate(
-                    statement,
-                    4,
-                    membership.getEndDate()
-            );
+                validateCommercialTerms(
+                        membership
+                );
 
 
-            statement.setInt(
-                    5,
-                    membership.getAllowedSessions()
-            );
+                membership.calculateFinalPrice();
 
 
-            statement.setDouble(
-                    6,
-                    membership.getPrice()
-            );
+                try (
+                        PreparedStatement statement =
+                                connection.prepareStatement(
+                                        sql
+                                )
+                ) {
+
+                    bindMembershipValues(
+                            statement,
+                            membership,
+                            true
+                    );
 
 
-            statement.setDouble(
-                    7,
-                    membership.getDiscount()
-            );
+                    boolean updated =
+                            statement.executeUpdate()
+                                    > 0;
 
 
-            statement.setDouble(
-                    8,
-                    membership.getFinalPrice()
-            );
+                    if (!updated) {
+
+                        connection.rollback();
+
+                        return false;
+                    }
+                }
 
 
-            statement.setString(
-                    9,
-                    normalizeStatus(
-                            membership.getStatus()
-                    )
-            );
+                connection.commit();
+
+                return true;
 
 
-            statement.setString(
-                    10,
-                    safe(
-                            membership.getNotes()
-                    )
-            );
+            } catch (Exception exception) {
+
+                connection.rollback();
 
 
-            statement.setInt(
-                    11,
-                    membership.getId()
-            );
+                if (exception instanceof SQLException sqlException) {
+
+                    throw sqlException;
+                }
 
 
-            return statement.executeUpdate()
-                    > 0;
+                throw new SQLException(
+                        "Unable to update membership.",
+                        exception
+                );
+
+            } finally {
+
+                connection.setAutoCommit(
+                        true
+                );
+            }
         }
     }
 
@@ -983,6 +1066,30 @@ public class MemberMembershipRepository {
             int membershipId
     ) throws SQLException {
 
+        if (membershipId <= 0) {
+
+            throw new IllegalArgumentException(
+                    "Membership ID is invalid."
+            );
+        }
+
+
+        /*
+         * Historical subscriptions that already have financial or
+         * attendance activity must never be physically deleted.
+         * Use cancel(...) instead so audit history remains intact.
+         */
+        if (hasDependentActivity(
+                membershipId
+        )) {
+
+            throw new SQLException(
+                    "Membership has payments or check-ins and cannot be deleted. "
+                    + "Cancel the membership instead."
+            );
+        }
+
+
         String sql = """
                 DELETE FROM member_memberships
                 WHERE id = ?
@@ -1005,6 +1112,65 @@ public class MemberMembershipRepository {
 
             return statement.executeUpdate()
                     > 0;
+        }
+    }
+
+
+    // =========================================================
+    // DEPENDENT ACTIVITY
+    // =========================================================
+
+    private boolean hasDependentActivity(
+            int membershipId
+    ) throws SQLException {
+
+        String sql = """
+                SELECT
+                    (
+                        SELECT COUNT(*)
+                        FROM payments
+                        WHERE membership_id = ?
+                    )
+                    +
+                    (
+                        SELECT COUNT(*)
+                        FROM check_ins
+                        WHERE membership_id = ?
+                    ) AS dependency_count
+                """;
+
+
+        try (
+                Connection connection =
+                        DatabaseManager.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(
+                                sql
+                        )
+        ) {
+
+            statement.setInt(
+                    1,
+                    membershipId
+            );
+
+            statement.setInt(
+                    2,
+                    membershipId
+            );
+
+
+            try (
+                    ResultSet resultSet =
+                            statement.executeQuery()
+            ) {
+
+                return resultSet.next()
+                        && resultSet.getInt(
+                                "dependency_count"
+                        ) > 0;
+            }
         }
     }
 
@@ -1328,7 +1494,7 @@ public class MemberMembershipRepository {
         );
 
 
-        membership.setPrice(
+        membership.setPlanPriceSnapshot(
                 resultSet.getDouble(
                         "price"
                 )
@@ -1698,10 +1864,10 @@ public class MemberMembershipRepository {
 
 
     // =========================================================
-    // VALIDATE MEMBERSHIP
+    // VALIDATE MEMBERSHIP CORE
     // =========================================================
 
-    private void validateMembership(
+    private void validateMembershipCore(
             MemberMembership membership
     ) {
 
@@ -1761,24 +1927,6 @@ public class MemberMembershipRepository {
         }
 
 
-        if (membership.getAllowedSessions()
-                <= 0) {
-
-            throw new IllegalArgumentException(
-                    "Allowed sessions must be greater than zero."
-            );
-        }
-
-
-        if (membership.getPrice()
-                < 0) {
-
-            throw new IllegalArgumentException(
-                    "Membership price cannot be negative."
-            );
-        }
-
-
         if (membership.getDiscount()
                 < 0) {
 
@@ -1786,15 +1934,267 @@ public class MemberMembershipRepository {
                     "Membership discount cannot be negative."
             );
         }
+    }
+
+
+    // =========================================================
+    // VALIDATE COMMERCIAL SNAPSHOT
+    // =========================================================
+
+    private void validateCommercialTerms(
+            MemberMembership membership
+    ) {
+
+        if (membership.getAllowedSessions()
+                <= 0) {
+
+            throw new IllegalArgumentException(
+                    "Membership plan must allow at least one session."
+            );
+        }
+
+
+        if (membership.getPlanPriceSnapshot()
+                < 0) {
+
+            throw new IllegalArgumentException(
+                    "Membership plan price cannot be negative."
+            );
+        }
 
 
         if (membership.getDiscount()
-                > membership.getPrice()) {
+                > membership.getPlanPriceSnapshot()) {
 
             throw new IllegalArgumentException(
-                    "Membership discount cannot exceed price."
+                    "Membership discount cannot exceed the plan price."
             );
         }
+    }
+
+
+    // =========================================================
+    // LOAD PLAN SNAPSHOT
+    // =========================================================
+
+    private PlanSnapshot loadPlanSnapshot(
+            Connection connection,
+            int membershipPlanId
+    ) throws SQLException {
+
+        String sql = """
+                SELECT
+                    price,
+                    max_sessions
+                FROM membership_plans
+                WHERE id = ?
+                """;
+
+
+        try (
+                PreparedStatement statement =
+                        connection.prepareStatement(
+                                sql
+                        )
+        ) {
+
+            statement.setInt(
+                    1,
+                    membershipPlanId
+            );
+
+
+            try (
+                    ResultSet resultSet =
+                            statement.executeQuery()
+            ) {
+
+                if (!resultSet.next()) {
+
+                    throw new SQLException(
+                            "Membership plan not found: "
+                            + membershipPlanId
+                    );
+                }
+
+
+                return new PlanSnapshot(
+                        resultSet.getDouble(
+                                "price"
+                        ),
+                        resultSet.getInt(
+                                "max_sessions"
+                        )
+                );
+            }
+        }
+    }
+
+
+    // =========================================================
+    // LOAD EXISTING MEMBERSHIP SNAPSHOT
+    // =========================================================
+
+    private MembershipSnapshot loadExistingMembershipSnapshot(
+            Connection connection,
+            int membershipId
+    ) throws SQLException {
+
+        String sql = """
+                SELECT
+                    membership_plan_id,
+                    price,
+                    allowed_sessions
+                FROM member_memberships
+                WHERE id = ?
+                """;
+
+
+        try (
+                PreparedStatement statement =
+                        connection.prepareStatement(
+                                sql
+                        )
+        ) {
+
+            statement.setInt(
+                    1,
+                    membershipId
+            );
+
+
+            try (
+                    ResultSet resultSet =
+                            statement.executeQuery()
+            ) {
+
+                if (!resultSet.next()) {
+
+                    throw new SQLException(
+                            "Membership not found: "
+                            + membershipId
+                    );
+                }
+
+
+                return new MembershipSnapshot(
+                        resultSet.getInt(
+                                "membership_plan_id"
+                        ),
+                        resultSet.getDouble(
+                                "price"
+                        ),
+                        resultSet.getInt(
+                                "allowed_sessions"
+                        )
+                );
+            }
+        }
+    }
+
+
+    // =========================================================
+    // BIND INSERT / UPDATE VALUES
+    // =========================================================
+
+    private void bindMembershipValues(
+            PreparedStatement statement,
+            MemberMembership membership,
+            boolean includeId
+    ) throws SQLException {
+
+        statement.setInt(
+                1,
+                membership.getMemberId()
+        );
+
+
+        statement.setInt(
+                2,
+                membership.getMembershipPlanId()
+        );
+
+
+        setLocalDate(
+                statement,
+                3,
+                membership.getStartDate()
+        );
+
+
+        setLocalDate(
+                statement,
+                4,
+                membership.getEndDate()
+        );
+
+
+        statement.setInt(
+                5,
+                membership.getAllowedSessions()
+        );
+
+
+        statement.setDouble(
+                6,
+                membership.getPlanPriceSnapshot()
+        );
+
+
+        statement.setDouble(
+                7,
+                membership.getDiscount()
+        );
+
+
+        statement.setDouble(
+                8,
+                membership.getFinalPrice()
+        );
+
+
+        statement.setString(
+                9,
+                normalizeStatus(
+                        membership.getStatus()
+                )
+        );
+
+
+        statement.setString(
+                10,
+                safe(
+                        membership.getNotes()
+                )
+        );
+
+
+        if (includeId) {
+
+            statement.setInt(
+                    11,
+                    membership.getId()
+            );
+        }
+    }
+
+
+    // =========================================================
+    // SNAPSHOT RECORDS
+    // =========================================================
+
+    private record PlanSnapshot(
+            double price,
+            int maxSessions
+    ) {
+    }
+
+
+    private record MembershipSnapshot(
+            int membershipPlanId,
+            double price,
+            int allowedSessions
+    ) {
     }
 
 

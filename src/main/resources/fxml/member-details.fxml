@@ -522,6 +522,55 @@
 
 
                     <!-- =========================================
+                         MEMBERSHIP CARD / REPRINT
+                         ========================================= -->
+
+                    <VBox
+                            spacing="14"
+                            styleClass="member-info-card">
+
+                        <HBox
+                                spacing="12"
+                                alignment="CENTER_LEFT">
+
+                            <Label
+                                    fx:id="membershipCardTitleLabel"
+                                    text="Membership Card"
+                                    styleClass="member-info-title"/>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Button
+                                    fx:id="printMembershipCardButton"
+                                    text="Print Card"
+                                    onAction="#printMembershipCard"
+                                    mnemonicParsing="false"
+                                    style="-fx-background-color: #f97316;
+                                           -fx-text-fill: white;
+                                           -fx-font-weight: bold;
+                                           -fx-background-radius: 8;
+                                           -fx-padding: 9 18;
+                                           -fx-cursor: hand;"/>
+
+                        </HBox>
+
+                        <Region
+                                prefHeight="1"
+                                styleClass="member-info-separator"/>
+
+                        <StackPane
+                                fx:id="membershipCardContainer"
+                                minHeight="360"
+                                prefHeight="360"
+                                alignment="CENTER"
+                                style="-fx-background-color: #f8fafc;
+                                       -fx-background-radius: 14;
+                                       -fx-padding: 10;"/>
+
+                    </VBox>
+
+
+                    <!-- =========================================
                          NOTES
                          ========================================= -->
 

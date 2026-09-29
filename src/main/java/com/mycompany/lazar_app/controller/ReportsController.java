@@ -1,6 +1,7 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
+import com.mycompany.lazar_app.ui.WindowManager;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.report.FinancialActivity;
@@ -1355,38 +1356,24 @@ public class ReportsController {
 
             DialogStyler.style(dialog);
 
-            // Ensure the export dialog is wide enough for Arabic/RTL content.
-            dialog.getDialogPane().setMinWidth(520);
-            dialog.getDialogPane().setPrefWidth(520);
-            dialog.getDialogPane().setMaxWidth(520);
-
             dialog.getDialogPane().setNodeOrientation(
                     arabic
                             ? NodeOrientation.RIGHT_TO_LEFT
                             : NodeOrientation.LEFT_TO_RIGHT
             );
 
-            dialog.setOnShown(event -> {
-                if (dialog.getDialogPane().getScene() != null
-                        && dialog.getDialogPane().getScene().getWindow() != null) {
-
-                    Window dialogWindow =
-                            dialog.getDialogPane()
-                                    .getScene()
-                                    .getWindow();
-
-                    dialogWindow.sizeToScene();
-
-                    if (dialogWindow instanceof javafx.stage.Stage stage) {
-                        stage.setMinWidth(520);
-                        stage.setWidth(Math.max(stage.getWidth(), 520));
-                        stage.centerOnScreen();
-                    }
-                }
-            });
-
+            /*
+             * Centralized dialog sizing + centering.
+             * The export selector is centered over the Reports page owner,
+             * not over the whole monitor.
+             */
             var choice =
-                    dialog.showAndWait();
+                    WindowManager.showResponsiveDialogAndWait(
+                            dialog,
+                            getOwnerWindow(),
+                            560.0,
+                            360.0
+                    );
 
 
             if (choice.isEmpty()) {
@@ -1871,6 +1858,32 @@ public class ReportsController {
 
 
     // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (exportButton != null
+                && exportButton.getScene() != null) {
+
+            return exportButton
+                    .getScene()
+                    .getWindow();
+        }
+
+        if (financialActivityTable != null
+                && financialActivityTable.getScene() != null) {
+
+            return financialActivityTable
+                    .getScene()
+                    .getWindow();
+        }
+
+        return null;
+    }
+
+
+    // =========================================================
     // ERROR
     // =========================================================
 
@@ -1897,7 +1910,12 @@ public class ReportsController {
 
         DialogStyler.style(alert);
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                520.0,
+                320.0
+        );
     }
 
 
@@ -1922,6 +1940,11 @@ public class ReportsController {
 
         DialogStyler.style(alert);
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                520.0,
+                320.0
+        );
     }
 }

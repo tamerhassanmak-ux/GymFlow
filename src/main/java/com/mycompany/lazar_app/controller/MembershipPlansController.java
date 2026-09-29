@@ -1,6 +1,7 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
+import com.mycompany.lazar_app.ui.WindowManager;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.MembershipPlan;
@@ -20,7 +21,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.NodeOrientation;
 
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -32,8 +32,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 
@@ -290,6 +290,11 @@ public class MembershipPlansController {
     // =========================================================
 
     private void configureTable() {
+
+        plansTable.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
+        );
+
 
         idColumn.setCellValueFactory(
                 data ->
@@ -1019,78 +1024,34 @@ public class MembershipPlansController {
             );
 
 
-            root.setNodeOrientation(
-                    LanguageManager.isArabic()
-                            ? NodeOrientation.RIGHT_TO_LEFT
-                            : NodeOrientation.LEFT_TO_RIGHT
-            );
-
-
-            Scene scene =
-                    new Scene(
-                            root
-                    );
-
-
-            var css =
-                    getClass().getResource(
-                            "/css/app.css"
-                    );
-
-
-            if (css != null) {
-
-                scene.getStylesheets()
-                        .add(
-                                css.toExternalForm()
-                        );
-            }
-
-
-            Stage stage =
-                    new Stage();
-
-
-            stage.initModality(
-                    Modality.APPLICATION_MODAL
-            );
-
-
-            if (plansTable.getScene() != null
-                    && plansTable
-                            .getScene()
-                            .getWindow() != null) {
-
-                stage.initOwner(
-                        plansTable
-                                .getScene()
-                                .getWindow()
-                );
-            }
-
-
-            stage.setTitle(
+            String windowTitle =
                     LanguageManager.isArabic()
                             ? plan == null
                                 ? "إضافة خطة اشتراك"
                                 : "تعديل خطة الاشتراك"
                             : plan == null
                                 ? "Add Membership Plan"
-                                : "Edit Membership Plan"
+                                : "Edit Membership Plan";
+
+
+            Stage stage =
+                    WindowManager.createModalStage(
+                            root,
+                            windowTitle,
+                            getOwnerWindow()
+                    );
+
+
+            /*
+             * Centralized window policy:
+             * WindowManager applies the usable-screen bounds, minimum size,
+             * owner relationship and Linux/Ubuntu maximize retry.
+             */
+            WindowManager.showMaximizedAndWait(
+                    stage,
+                    820.0,
+                    650.0
             );
-
-
-            stage.setScene(
-                    scene
-            );
-
-
-            stage.setResizable(
-                    false
-            );
-
-
-            stage.showAndWait();
 
 
             if (controller.isSaved()) {
@@ -1213,8 +1174,14 @@ public class MembershipPlansController {
 
 
         DialogStyler.style(confirmation);
+
         Optional<ButtonType> result =
-                confirmation.showAndWait();
+                WindowManager.showResponsiveDialogAndWait(
+                        confirmation,
+                        getOwnerWindow(),
+                        590.0,
+                        360.0
+                );
 
 
         if (result.isEmpty()
@@ -1320,6 +1287,24 @@ public class MembershipPlansController {
 
 
     // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (plansTable == null
+                || plansTable.getScene() == null) {
+
+            return null;
+        }
+
+        return plansTable
+                .getScene()
+                .getWindow();
+    }
+
+
+    // =========================================================
     // SAFE
     // =========================================================
 
@@ -1367,7 +1352,12 @@ public class MembershipPlansController {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                560.0,
+                320.0
+        );
     }
 
 
@@ -1409,6 +1399,11 @@ public class MembershipPlansController {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                600.0,
+                360.0
+        );
     }
 }

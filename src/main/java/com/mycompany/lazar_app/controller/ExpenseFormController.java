@@ -1,6 +1,7 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
+import com.mycompany.lazar_app.ui.WindowManager;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.Expense;
@@ -25,6 +26,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class ExpenseFormController {
 
@@ -1174,7 +1176,12 @@ public class ExpenseFormController {
 
         DialogStyler.style(alert);
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                520.0,
+                320.0
+        );
     }
 
 
@@ -1207,7 +1214,29 @@ public class ExpenseFormController {
 
         DialogStyler.style(alert);
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                520.0,
+                320.0
+        );
+    }
+
+
+    // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (rootPane == null
+                || rootPane.getScene() == null) {
+            return null;
+        }
+
+        return rootPane
+                .getScene()
+                .getWindow();
     }
 
 

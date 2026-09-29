@@ -31,6 +31,10 @@ import java.util.Map;
 public class DashboardRepository {
 
 
+    private static final DateTimeFormatter DATABASE_DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+
     // =========================================================
     // DASHBOARD SUMMARY
     // =========================================================
@@ -176,29 +180,28 @@ public class DashboardRepository {
     ) throws SQLException {
 
         /*
-         * check_in_time is stored as TEXT in SQLite.
+         * check_in_time is VARCHAR/TEXT and is normally stored as:
+         * yyyy-MM-dd HH:mm:ss
          *
-         * We deliberately use a range instead of SQLite DATE()
-         * so this repository remains friendlier to the other
-         * database engines supported by the application.
+         * The dashboard previously relied on a text range comparison.
+         * That becomes fragile when one writer uses a space and another
+         * uses the ISO 'T' separator.  For the daily KPI we only need the
+         * calendar date, so matching the yyyy-MM-dd prefix is both simpler
+         * and tolerant of either time separator.
+         *
+         * Examples matched for the same day:
+         * 2026-09-26 17:30:00
+         * 2026-09-26T17:30:00
+         * 2026-09-26 17:30
          */
 
         String sql =
                 """
                 SELECT COUNT(*)
                 FROM check_ins
-                WHERE check_in_time >= ?
-                  AND check_in_time < ?
+                WHERE check_in_time IS NOT NULL
+                  AND check_in_time LIKE ?
                 """;
-
-
-        LocalDateTime start =
-                date.atStartOfDay();
-
-
-        LocalDateTime end =
-                date.plusDays(1)
-                        .atStartOfDay();
 
 
         try (
@@ -208,12 +211,7 @@ public class DashboardRepository {
 
             statement.setString(
                     1,
-                    start.toString()
-            );
-
-            statement.setString(
-                    2,
-                    end.toString()
+                    date.toString() + "%"
             );
 
 
@@ -323,12 +321,12 @@ public class DashboardRepository {
 
             statement.setString(
                     1,
-                    start.toString()
+                    start.format(DATABASE_DATE_TIME_FORMATTER)
             );
 
             statement.setString(
                     2,
-                    end.toString()
+                    end.format(DATABASE_DATE_TIME_FORMATTER)
             );
 
 
@@ -532,14 +530,15 @@ public class DashboardRepository {
 
             statement.setString(
                     1,
-                    from.atStartOfDay().toString()
+                    from.atStartOfDay()
+                            .format(DATABASE_DATE_TIME_FORMATTER)
             );
 
             statement.setString(
                     2,
                     to.plusDays(1)
                             .atStartOfDay()
-                            .toString()
+                            .format(DATABASE_DATE_TIME_FORMATTER)
             );
 
 

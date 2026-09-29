@@ -12,161 +12,46 @@ import java.util.List;
 
 public final class MigrationRunner {
 
-    // =========================================================
-    // DATE / TIME FORMAT
-    // =========================================================
-
     private static final DateTimeFormatter DATE_TIME =
-            DateTimeFormatter.ofPattern(
-                    "yyyy-MM-dd HH:mm:ss"
-            );
-
-
-    // =========================================================
-    // CONSTRUCTOR
-    // =========================================================
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private MigrationRunner() {
     }
 
-
-    // =========================================================
-    // REGISTERED MIGRATIONS
-    // =========================================================
-
-    /*
-     * IMPORTANT:
-     *
-     * Never change the version or order of migrations
-     * that have already been applied to a database.
-     *
-     * Every new database change must be created as
-     * a new Migration and added at the END of this list.
-     */
-
     private static final List<Migration> MIGRATIONS =
             List.of(
-
-                    // -----------------------------------------
-                    // Members
-                    // -----------------------------------------
-
                     new M001CreateMembersTable(),
-
-
-                    // -----------------------------------------
-                    // Membership Plans
-                    // -----------------------------------------
-
                     new M002CreateMembershipPlansTable(),
-
-
-                    // -----------------------------------------
-                    // Member Memberships
-                    // -----------------------------------------
-
                     new M003CreateMemberMembershipsTable(),
-
-
-                    // -----------------------------------------
-                    // Check-ins
-                    // -----------------------------------------
-
                     new M004CreateCheckInsTable(),
-
-
-                    // -----------------------------------------
-                    // Payments
-                    // -----------------------------------------
-
                     new M005CreatePaymentsTable(),
-
-
-                    // -----------------------------------------
-                    // Membership Session Limits
-                    // -----------------------------------------
-
                     new M006EnsureSessionLimitColumns(),
-
-
-                    // -----------------------------------------
-                    // Expenses
-                    // -----------------------------------------
-
                     new M007CreateExpensesTable(),
-
-
-                    // -----------------------------------------
-                    // Unique Member Phone
-                    // -----------------------------------------
-
-                    new M008MakeMemberPhoneUnique()
+                    new M008CreateRevenuesTable(),
+                    new M009EnsureRevenueTables()
             );
-
-
-    // =========================================================
-    // RUN MIGRATIONS
-    // =========================================================
 
     public static void migrate() throws Exception {
 
-        try (
-                Connection connection =
-                        DatabaseManager.getConnection()
-        ) {
+        try (Connection connection =
+                     DatabaseManager.getConnection()) {
 
             boolean oldAutoCommit =
                     connection.getAutoCommit();
 
-
             try {
 
-                // =================================================
-                // MANUAL TRANSACTION CONTROL
-                // =================================================
+                connection.setAutoCommit(false);
 
-                connection.setAutoCommit(
-                        false
-                );
+                enableSQLiteForeignKeys(connection);
 
-
-                // =================================================
-                // SQLITE FOREIGN KEYS
-                // =================================================
-
-                /*
-                 * SQLite requires foreign-key support
-                 * to be enabled for every connection.
-                 */
-
-                enableSQLiteForeignKeys(
-                        connection
-                );
-
-
-                // =================================================
-                // MIGRATION HISTORY TABLE
-                // =================================================
-
-                createMigrationsTable(
-                        connection
-                );
-
-
-                // =================================================
-                // EXECUTE MIGRATIONS IN ORDER
-                // =================================================
+                createMigrationsTable(connection);
 
                 for (Migration migration : MIGRATIONS) {
 
-                    // ---------------------------------------------
-                    // SKIP ALREADY APPLIED MIGRATIONS
-                    // ---------------------------------------------
-
                     if (isApplied(
                             connection,
-                            migration.version()
-                    )) {
+                            migration.version())) {
 
                         System.out.println(
                                 "[SKIP] "
@@ -178,11 +63,6 @@ public final class MigrationRunner {
                         continue;
                     }
 
-
-                    // ---------------------------------------------
-                    // START MIGRATION
-                    // ---------------------------------------------
-
                     System.out.println(
                             "[RUN ] "
                                     + migration.version()
@@ -190,34 +70,16 @@ public final class MigrationRunner {
                                     + migration.description()
                     );
 
-
                     try {
 
-                        // -----------------------------------------
-                        // EXECUTE MIGRATION
-                        // -----------------------------------------
-
-                        migration.up(
-                                connection
-                        );
-
-
-                        // -----------------------------------------
-                        // RECORD MIGRATION
-                        // -----------------------------------------
+                        migration.up(connection);
 
                         recordMigration(
                                 connection,
                                 migration
                         );
 
-
-                        // -----------------------------------------
-                        // COMMIT MIGRATION
-                        // -----------------------------------------
-
                         connection.commit();
-
 
                         System.out.println(
                                 "[ OK ] "
@@ -226,24 +88,9 @@ public final class MigrationRunner {
                                         + migration.description()
                         );
 
-
                     } catch (Exception migrationException) {
 
-                        // -----------------------------------------
-                        // ROLLBACK FAILED MIGRATION
-                        // -----------------------------------------
-
-                        try {
-
-                            connection.rollback();
-
-                        } catch (Exception rollbackException) {
-
-                            migrationException.addSuppressed(
-                                    rollbackException
-                            );
-                        }
-
+                        connection.rollback();
 
                         throw new Exception(
                                 "Migration "
@@ -257,96 +104,48 @@ public final class MigrationRunner {
                     }
                 }
 
-
-                // =================================================
-                // SUCCESS
-                // =================================================
-
                 System.out.println(
                         "Database migrations completed successfully."
                 );
 
-
-            } catch (Exception exception) {
-
-                // =================================================
-                // SAFE ROLLBACK
-                // =================================================
+            } catch (Exception e) {
 
                 try {
-
                     connection.rollback();
-
-                } catch (Exception rollbackException) {
-
-                    exception.addSuppressed(
-                            rollbackException
-                    );
+                } catch (Exception ignored) {
                 }
-
 
                 throw new Exception(
                         "Database migration failed: "
-                                + exception.getMessage(),
-                        exception
+                                + e.getMessage(),
+                        e
                 );
-
 
             } finally {
 
-                // =================================================
-                // RESTORE AUTO COMMIT
-                // =================================================
-
                 try {
-
                     connection.setAutoCommit(
                             oldAutoCommit
                     );
-
                 } catch (Exception ignored) {
-
-                    /*
-                     * Connection is about to be closed.
-                     * Nothing else should be done here.
-                     */
                 }
             }
         }
     }
 
-
-    // =========================================================
-    // CREATE MIGRATION HISTORY TABLE
-    // =========================================================
-
     private static void createMigrationsTable(
-            Connection connection
-    ) throws Exception {
-
-        // =====================================================
-        // TABLE ALREADY EXISTS
-        // =====================================================
+            Connection connection) throws Exception {
 
         if (MigrationSupport.tableExists(
                 connection,
-                "schema_migrations"
-        )) {
+                "schema_migrations")) {
 
             return;
         }
 
-
         String sql;
 
-
-        // =====================================================
-        // SQLITE
-        // =====================================================
-
-        if (MigrationSupport.isSQLite(
-                connection
-        )) {
+        if (MigrationSupport.isSQLite(connection)) {
 
             sql = """
                     CREATE TABLE schema_migrations (
@@ -356,14 +155,7 @@ public final class MigrationRunner {
                     )
                     """;
 
-
-        // =====================================================
-        // MYSQL / MARIADB
-        // =====================================================
-
-        } else if (MigrationSupport.isMySQL(
-                connection
-        )) {
+        } else if (MigrationSupport.isMySQL(connection)) {
 
             sql = """
                     CREATE TABLE schema_migrations (
@@ -373,14 +165,8 @@ public final class MigrationRunner {
                     )
                     """;
 
-
-        // =====================================================
-        // SQL SERVER
-        // =====================================================
-
-        } else if (MigrationSupport.isSqlServer(
-                connection
-        )) {
+        } else if (
+                MigrationSupport.isSqlServer(connection)) {
 
             sql = """
                     CREATE TABLE schema_migrations (
@@ -390,21 +176,15 @@ public final class MigrationRunner {
                     )
                     """;
 
-
-        // =====================================================
-        // UNSUPPORTED DATABASE
-        // =====================================================
-
         } else {
 
             throw new IllegalStateException(
                     "Unsupported database: "
                             + connection
-                                    .getMetaData()
-                                    .getDatabaseProductName()
+                            .getMetaData()
+                            .getDatabaseProductName()
             );
         }
-
 
         MigrationSupport.execute(
                 connection,
@@ -412,15 +192,9 @@ public final class MigrationRunner {
         );
     }
 
-
-    // =========================================================
-    // CHECK IF MIGRATION IS APPLIED
-    // =========================================================
-
     private static boolean isApplied(
             Connection connection,
-            String version
-    ) throws Exception {
+            String version) throws Exception {
 
         String sql = """
                 SELECT COUNT(*)
@@ -428,40 +202,26 @@ public final class MigrationRunner {
                 WHERE version = ?
                 """;
 
-
-        try (
-                PreparedStatement statement =
-                        connection.prepareStatement(
-                                sql
-                        )
-        ) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setString(
                     1,
                     version
             );
 
+            try (ResultSet rs =
+                         statement.executeQuery()) {
 
-            try (
-                    ResultSet resultSet =
-                            statement.executeQuery()
-            ) {
-
-                return resultSet.next()
-                        && resultSet.getInt(1) > 0;
+                return rs.next()
+                        && rs.getInt(1) > 0;
             }
         }
     }
 
-
-    // =========================================================
-    // RECORD MIGRATION
-    // =========================================================
-
     private static void recordMigration(
             Connection connection,
-            Migration migration
-    ) throws Exception {
+            Migration migration) throws Exception {
 
         String sql = """
                 INSERT INTO schema_migrations
@@ -473,80 +233,38 @@ public final class MigrationRunner {
                 VALUES (?, ?, ?)
                 """;
 
-
-        try (
-                PreparedStatement statement =
-                        connection.prepareStatement(
-                                sql
-                        )
-        ) {
-
-            // =================================================
-            // VERSION
-            // =================================================
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setString(
                     1,
                     migration.version()
             );
 
-
-            // =================================================
-            // DESCRIPTION
-            // =================================================
-
             statement.setString(
                     2,
                     migration.description()
             );
 
-
-            // =================================================
-            // APPLIED AT
-            // =================================================
-
             statement.setString(
                     3,
-                    LocalDateTime
-                            .now()
-                            .format(
-                                    DATE_TIME
-                            )
+                    LocalDateTime.now()
+                            .format(DATE_TIME)
             );
-
 
             statement.executeUpdate();
         }
     }
 
-
-    // =========================================================
-    // SQLITE FOREIGN KEYS
-    // =========================================================
-
     private static void enableSQLiteForeignKeys(
-            Connection connection
-    ) throws Exception {
+            Connection connection) throws Exception {
 
-        /*
-         * This setting is required only for SQLite.
-         *
-         * MySQL / MariaDB and SQL Server handle
-         * foreign-key enforcement differently.
-         */
-
-        if (!MigrationSupport.isSQLite(
-                connection
-        )) {
-
+        if (!MigrationSupport.isSQLite(connection)) {
             return;
         }
 
-
-        try (
-                Statement statement =
-                        connection.createStatement()
-        ) {
+        try (Statement statement =
+                     connection.createStatement()) {
 
             statement.execute(
                     "PRAGMA foreign_keys = ON"
@@ -554,42 +272,22 @@ public final class MigrationRunner {
         }
     }
 
-
-    // =========================================================
-    // MANUAL MIGRATION RUNNER
-    // =========================================================
-
-    public static void main(
-            String[] args
-    ) {
+    public static void main(String[] args) {
 
         try {
 
-            // =================================================
-            // RUN
-            // =================================================
-
             migrate();
 
-
-        } catch (Exception exception) {
-
-            // =================================================
-            // ERROR
-            // =================================================
+        } catch (Exception e) {
 
             System.err.println(
                     "Migration error: "
-                            + exception.getMessage()
+                            + e.getMessage()
             );
 
+            e.printStackTrace();
 
-            exception.printStackTrace();
-
-
-            System.exit(
-                    1
-            );
+            System.exit(1);
         }
     }
 }

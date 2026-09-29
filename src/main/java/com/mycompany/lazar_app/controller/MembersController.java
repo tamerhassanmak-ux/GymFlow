@@ -3,10 +3,12 @@ package com.mycompany.lazar_app.controller;
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.Member;
 import com.mycompany.lazar_app.repository.MemberRepository;
+import com.mycompany.lazar_app.ui.WindowManager;
+import com.mycompany.lazar_app.util.MemberCardPrinter;
+import com.mycompany.lazar_app.ui.dialog.AppDialog;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -15,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
+import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -22,18 +25,18 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -264,6 +267,20 @@ public class MembersController {
                                             )
                                     );
 
+                            private final Button previewCardButton =
+                                    new Button(
+                                            LanguageManager.isArabic()
+                                                    ? "معاينة"
+                                                    : "Preview"
+                                    );
+
+                            private final Button printCardButton =
+                                    new Button(
+                                            LanguageManager.isArabic()
+                                                    ? "طباعة كارت"
+                                                    : "Print Card"
+                                    );
+
                             private final Button deleteButton =
                                     new Button(
                                             bundle.getString(
@@ -276,6 +293,8 @@ public class MembersController {
                                             6,
                                             viewButton,
                                             editButton,
+                                            previewCardButton,
+                                            printCardButton,
                                             deleteButton
                                     );
 
@@ -295,6 +314,48 @@ public class MembersController {
                                 editButton
                                         .getStyleClass()
                                         .add("member-edit-button");
+
+                                previewCardButton
+                                        .getStyleClass()
+                                        .add("member-preview-button");
+
+                                previewCardButton.setStyle(
+                                        "-fx-background-color: #e0f2fe;"
+                                                + "-fx-text-fill: #0369a1;"
+                                                + "-fx-font-weight: bold;"
+                                                + "-fx-background-radius: 7;"
+                                                + "-fx-padding: 7 10;"
+                                                + "-fx-cursor: hand;"
+                                );
+
+                                previewCardButton.setTooltip(
+                                        new Tooltip(
+                                                LanguageManager.isArabic()
+                                                        ? "معاينة كارت العضو قبل الطباعة"
+                                                        : "Preview the membership card before printing"
+                                        )
+                                );
+
+                                printCardButton
+                                        .getStyleClass()
+                                        .add("member-print-button");
+
+                                printCardButton.setStyle(
+                                        "-fx-background-color: #f97316;"
+                                                + "-fx-text-fill: white;"
+                                                + "-fx-font-weight: bold;"
+                                                + "-fx-background-radius: 7;"
+                                                + "-fx-padding: 7 10;"
+                                                + "-fx-cursor: hand;"
+                                );
+
+                                printCardButton.setTooltip(
+                                        new Tooltip(
+                                                LanguageManager.isArabic()
+                                                        ? "طباعة كارت العضوية المحفوظ"
+                                                        : "Print the saved membership card"
+                                        )
+                                );
 
                                 deleteButton
                                         .getStyleClass()
@@ -337,6 +398,38 @@ public class MembersController {
                                             if (member != null) {
 
                                                 openEditMember(
+                                                        member
+                                                );
+                                            }
+                                        }
+                                );
+
+
+                                previewCardButton.setOnAction(
+                                        event -> {
+
+                                            Member member =
+                                                    getCurrentMember();
+
+                                            if (member != null) {
+
+                                                previewMemberCard(
+                                                        member
+                                                );
+                                            }
+                                        }
+                                );
+
+
+                                printCardButton.setOnAction(
+                                        event -> {
+
+                                            Member member =
+                                                    getCurrentMember();
+
+                                            if (member != null) {
+
+                                                printMemberCard(
                                                         member
                                                 );
                                             }
@@ -403,6 +496,321 @@ public class MembersController {
                             }
                         }
         );
+    }
+
+
+    // =========================================================
+    // PREVIEW SAVED MEMBER CARD
+    // =========================================================
+
+    private void previewMemberCard(
+            Member member
+    ) {
+
+        Window owner =
+                membersTable != null
+                        && membersTable.getScene() != null
+                        ? membersTable.getScene().getWindow()
+                        : null;
+
+
+        if (!MemberCardPrinter.isSavedMember(
+                member
+        )) {
+
+            AppDialog.warning(
+                    owner,
+                    LanguageManager.isArabic()
+                            ? "لا يمكن عرض المعاينة"
+                            : "Preview Unavailable",
+                    LanguageManager.isArabic()
+                            ? "يجب حفظ العضو أولاً والحصول على كود عضوية قبل معاينة الكارت."
+                            : "Save the member and generate a membership code before previewing the card."
+            );
+
+            return;
+        }
+
+
+        boolean arabic =
+                LanguageManager.isArabic();
+
+
+        Stage previewStage =
+                new Stage();
+
+        previewStage.setTitle(
+                arabic
+                        ? "معاينة كارت العضو - " + member.getName()
+                        : "Member Card Preview - " + member.getName()
+        );
+
+        previewStage.initModality(
+                Modality.WINDOW_MODAL
+        );
+
+        if (owner != null) {
+
+            previewStage.initOwner(
+                    owner
+            );
+        }
+
+
+        Label titleLabel =
+                new Label(
+                        arabic
+                                ? "معاينة كارت العضوية"
+                                : "Membership Card Preview"
+                );
+
+        titleLabel.setStyle(
+                "-fx-font-size: 22px;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-text-fill: #111827;"
+        );
+
+
+        Label descriptionLabel =
+                new Label(
+                        arabic
+                                ? "هذه هي النسخة التي سيتم إرسالها إلى الطابعة."
+                                : "This is the card that will be sent to the printer."
+                );
+
+        descriptionLabel.setStyle(
+                "-fx-font-size: 12px;"
+                        + "-fx-text-fill: #64748b;"
+        );
+
+
+        VBox heading =
+                new VBox(
+                        5,
+                        titleLabel,
+                        descriptionLabel
+                );
+
+        heading.setAlignment(
+                arabic
+                        ? Pos.CENTER_RIGHT
+                        : Pos.CENTER_LEFT
+        );
+
+
+        Parent card =
+                MemberCardPrinter.createCard(
+                        member,
+                        arabic
+                );
+
+
+        Button printButton =
+                new Button(
+                        arabic
+                                ? "طباعة الكارت"
+                                : "Print Card"
+                );
+
+        printButton.setStyle(
+                "-fx-background-color: #f97316;"
+                        + "-fx-text-fill: white;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-background-radius: 8;"
+                        + "-fx-padding: 10 18;"
+                        + "-fx-cursor: hand;"
+        );
+
+        printButton.setOnAction(
+                event ->
+                        printMemberCard(
+                                member
+                        )
+        );
+
+
+        Button closeButton =
+                new Button(
+                        arabic
+                                ? "إغلاق"
+                                : "Close"
+                );
+
+        closeButton.setStyle(
+                "-fx-background-color: #e5e7eb;"
+                        + "-fx-text-fill: #111827;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-background-radius: 8;"
+                        + "-fx-padding: 10 18;"
+                        + "-fx-cursor: hand;"
+        );
+
+        closeButton.setOnAction(
+                event ->
+                        previewStage.close()
+        );
+
+
+        HBox buttons =
+                new HBox(
+                        10,
+                        printButton,
+                        closeButton
+                );
+
+        buttons.setAlignment(
+                arabic
+                        ? Pos.CENTER_LEFT
+                        : Pos.CENTER_RIGHT
+        );
+
+
+        VBox root =
+                new VBox(
+                        22,
+                        heading,
+                        card,
+                        buttons
+                );
+
+        root.setPadding(
+                new Insets(
+                        28
+                )
+        );
+
+        root.setAlignment(
+                Pos.CENTER
+        );
+
+        root.setStyle(
+                "-fx-background-color: #f8fafc;"
+        );
+
+        root.setNodeOrientation(
+                arabic
+                        ? NodeOrientation.RIGHT_TO_LEFT
+                        : NodeOrientation.LEFT_TO_RIGHT
+        );
+
+
+        Scene scene =
+                new Scene(
+                        root,
+                        650,
+                        535
+                );
+
+        var css =
+                getClass().getResource(
+                        "/css/app.css"
+                );
+
+        if (css != null) {
+
+            scene.getStylesheets().add(
+                    css.toExternalForm()
+            );
+        }
+
+
+        previewStage.setScene(
+                scene
+        );
+
+        WindowManager.showResponsiveAndWait(
+                previewStage,
+                760.0,
+                620.0
+        );
+    }
+
+
+    // =========================================================
+    // PRINT SAVED MEMBER CARD
+    // =========================================================
+
+    private void printMemberCard(
+            Member member
+    ) {
+
+        if (!MemberCardPrinter.isSavedMember(
+                member
+        )) {
+
+            AppDialog.warning(
+                    membersTable == null
+                            || membersTable.getScene() == null
+                            ? null
+                            : membersTable.getScene().getWindow(),
+                    LanguageManager.isArabic()
+                            ? "لا يمكن الطباعة"
+                            : "Unable to Print",
+                    LanguageManager.isArabic()
+                            ? "يجب حفظ العضو والحصول على رقم عضوية قبل طباعة الكارت."
+                            : "The member must be saved and have a membership code before the card can be printed."
+            );
+
+            return;
+        }
+
+        Window owner =
+                membersTable != null
+                        && membersTable.getScene() != null
+                        ? membersTable.getScene().getWindow()
+                        : null;
+
+        MemberCardPrinter.PrintResult result =
+                MemberCardPrinter.printCard(
+                        owner,
+                        member,
+                        LanguageManager.isArabic()
+                );
+
+        if (result == null
+                || result == MemberCardPrinter.PrintResult.CANCELLED) {
+
+            return;
+        }
+
+        switch (result) {
+
+            case PRINTED ->
+                    AppDialog.info(
+                            owner,
+                            LanguageManager.isArabic()
+                                    ? "تم إرسال الطباعة"
+                                    : "Print Sent",
+                            LanguageManager.isArabic()
+                                    ? "تم إرسال كارت العضو إلى الطابعة بنجاح."
+                                    : "The member card was sent to the printer successfully."
+                    );
+
+            case NO_PRINTER ->
+                    AppDialog.warning(
+                            owner,
+                            LanguageManager.isArabic()
+                                    ? "لا توجد طابعة"
+                                    : "No Printer",
+                            LanguageManager.isArabic()
+                                    ? "لم يتم العثور على طابعة متاحة على النظام."
+                                    : "No available printer was found on this system."
+                    );
+
+            case FAILED ->
+                    AppDialog.error(
+                            owner,
+                            LanguageManager.isArabic()
+                                    ? "فشل الطباعة"
+                                    : "Print Failed",
+                            LanguageManager.isArabic()
+                                    ? "تعذر إتمام طباعة كارت العضو. راجع إعدادات الطابعة."
+                                    : "The member card could not be printed. Check the printer settings."
+                    );
+
+            default -> {
+            }
+        }
     }
 
 
@@ -738,7 +1146,9 @@ public class MembersController {
                     stage
             );
 
-            stage.showAndWait();
+            WindowManager.showMaximizedAndWait(
+                    stage
+            );
 
 
             Member newMember =
@@ -749,8 +1159,23 @@ public class MembersController {
             }
 
             try {
-                memberRepository.insert(newMember);
+
+                /*
+                 * If Print Card / Print QR was pressed while creating
+                 * the member, AddMemberController has already inserted
+                 * the member in order to obtain its permanent code.
+                 *
+                 * Only insert here when the member is still unsaved.
+                 */
+                if (newMember.getId() <= 0) {
+
+                    memberRepository.insert(
+                            newMember
+                    );
+                }
+
                 loadMembersFromDatabase();
+
             } catch (SQLException exception) {
                 System.err.println("Unable to save member.");
                 exception.printStackTrace();
@@ -822,7 +1247,9 @@ public class MembersController {
                     stage
             );
 
-            stage.showAndWait();
+            WindowManager.showMaximizedAndWait(
+                    stage
+            );
 
 
             Member editedMember =
@@ -955,81 +1382,75 @@ public class MembersController {
             return;
         }
 
+        Window owner =
+                membersTable != null
+                        && membersTable.getScene() != null
+                        ? membersTable.getScene().getWindow()
+                        : null;
 
-        Alert confirmation =
-                new Alert(
-                        Alert.AlertType.CONFIRMATION
+        /*
+         * IMPORTANT:
+         * Never create a raw Alert here.
+         *
+         * AppDialog uses the central WindowManager policy, so the confirmation
+         * opens at one stable size and is centered over the owner window.
+         */
+        boolean confirmed =
+                AppDialog.confirmDelete(
+                        owner,
+                        member
                 );
 
-
-        confirmation.setTitle(
-                bundle.getString(
-                        "members.delete.title"
-                )
-        );
-
-
-        confirmation.setHeaderText(
-                bundle.getString(
-                        "members.delete.header"
-                )
-        );
-
-
-        confirmation.setContentText(
-                bundle.getString(
-                        "members.delete.message"
-                )
-                        + "\n\n"
-                        + member.getName()
-                        + "\n"
-                        + member.getMemberCode()
-        );
-
-
-        if (membersTable.getScene() != null
-                && membersTable
-                .getScene()
-                .getWindow() != null) {
-
-            confirmation.initOwner(
-                    membersTable
-                            .getScene()
-                            .getWindow()
-            );
+        if (!confirmed) {
+            return;
         }
 
+        try {
 
-        Optional<ButtonType> result =
-                confirmation.showAndWait();
-
-
-        if (result.isPresent()
-                && result.get()
-                == ButtonType.OK) {
-
-            try {
-                boolean deleted = memberRepository.delete(member.getId());
-                if (!deleted) {
-                    showDatabaseError(
-                            LanguageManager.isArabic()
-                                    ? "لم يتم العثور على العضو لحذفه."
-                                    : "Member was not found for deletion."
+            boolean deleted =
+                    memberRepository.delete(
+                            member.getId()
                     );
-                    return;
-                }
-                loadMembersFromDatabase();
-            } catch (SQLException exception) {
-                System.err.println("Unable to delete member.");
-                exception.printStackTrace();
+
+            if (!deleted) {
+
                 showDatabaseError(
                         LanguageManager.isArabic()
-                                ? "تعذر حذف العضو من قاعدة البيانات."
-                                : "Unable to delete member."
+                                ? "لم يتم العثور على العضو لحذفه."
+                                : "Member was not found for deletion."
                 );
+
+                return;
             }
+
+            loadMembersFromDatabase();
+
+            AppDialog.success(
+                    owner,
+                    LanguageManager.isArabic()
+                            ? "تم الحذف"
+                            : "Deleted",
+                    LanguageManager.isArabic()
+                            ? "تم حذف العضو بنجاح."
+                            : "The member was deleted successfully."
+            );
+
+        } catch (SQLException exception) {
+
+            System.err.println(
+                    "Unable to delete member."
+            );
+
+            exception.printStackTrace();
+
+            showDatabaseError(
+                    LanguageManager.isArabic()
+                            ? "تعذر حذف العضو من قاعدة البيانات."
+                            : "Unable to delete member."
+            );
         }
     }
+
 
     // =========================================================
     // VIEW MEMBER DETAILS
@@ -1069,32 +1490,17 @@ public class MembersController {
              * The window dimensions and position are already calculated
              * before the stage becomes visible.
              */
-            stage.showAndWait();
+            WindowManager.showMaximizedAndWait(
+                    stage
+            );
 
             if (controller.isMemberEdited()) {
 
-                Member editedMember =
-                        controller.getMember();
-
-                int index =
-                        members.indexOf(member);
-
-                if (index >= 0
-                        && editedMember != null) {
-
-                    try {
-                        memberRepository.update(editedMember);
-                        loadMembersFromDatabase();
-                    } catch (SQLException exception) {
-                        System.err.println("Unable to update member from details screen.");
-                        exception.printStackTrace();
-                        showDatabaseError(
-                                LanguageManager.isArabic()
-                                        ? "تعذر تحديث بيانات العضو."
-                                        : "Unable to update member."
-                        );
-                    }
-                }
+                /*
+                 * MemberDetailsController persists edits immediately.
+                 * The list only needs to reload the latest stored data.
+                 */
+                loadMembersFromDatabase();
             }
 
         } catch (IOException exception) {
@@ -1374,50 +1780,27 @@ public class MembersController {
                         + " screen:"
         );
 
-        exception.printStackTrace();
+        if (exception != null) {
+            exception.printStackTrace();
+        }
 
+        Window owner =
+                membersTable != null
+                        && membersTable.getScene() != null
+                        ? membersTable.getScene().getWindow()
+                        : null;
 
-        Alert alert =
-                new Alert(
-                        Alert.AlertType.ERROR
-                );
-
-
-        alert.setTitle(
-                "Lazar Gym"
-        );
-
-
-        alert.setHeaderText(
+        AppDialog.error(
+                owner,
                 LanguageManager.isArabic()
                         ? "تعذر فتح الشاشة"
-                        : "Unable to open screen"
-        );
-
-
-        alert.setContentText(
+                        : "Unable to open screen",
                 LanguageManager.isArabic()
                         ? "حدث خطأ أثناء فتح الشاشة. راجع سجل التشغيل للتفاصيل."
                         : "An error occurred while opening the screen. Check the application log for details."
         );
-
-
-        if (membersTable != null
-                && membersTable.getScene() != null
-                && membersTable
-                .getScene()
-                .getWindow() != null) {
-
-            alert.initOwner(
-                    membersTable
-                            .getScene()
-                            .getWindow()
-            );
-        }
-
-
-        alert.showAndWait();
     }
+
 
     // =========================================================
     // DUPLICATE PHONE DATABASE ERROR
@@ -1451,24 +1834,23 @@ public class MembersController {
     // DATABASE ERROR
     // =========================================================
 
-    private void showDatabaseError(String message) {
+    private void showDatabaseError(
+            String message
+    ) {
 
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Lazar Gym");
-        alert.setHeaderText(
+        Window owner =
+                membersTable != null
+                        && membersTable.getScene() != null
+                        ? membersTable.getScene().getWindow()
+                        : null;
+
+        AppDialog.error(
+                owner,
                 LanguageManager.isArabic()
                         ? "خطأ في قاعدة البيانات"
-                        : "Database Error"
+                        : "Database Error",
+                message
         );
-        alert.setContentText(message);
-
-        if (membersTable != null
-                && membersTable.getScene() != null
-                && membersTable.getScene().getWindow() != null) {
-            alert.initOwner(membersTable.getScene().getWindow());
-        }
-
-        alert.showAndWait();
     }
 
 }

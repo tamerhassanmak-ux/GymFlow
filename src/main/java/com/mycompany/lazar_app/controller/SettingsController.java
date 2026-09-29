@@ -1,6 +1,8 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.LanguageManager;
+import com.mycompany.lazar_app.ui.WindowManager;
+import com.mycompany.lazar_app.ui.dialog.DialogStyler;
 import com.mycompany.lazar_app.database.DatabaseConfig;
 import com.mycompany.lazar_app.database.DatabaseConfigManager;
 import com.mycompany.lazar_app.database.DatabaseType;
@@ -85,6 +87,7 @@ public class SettingsController {
     @FXML private Button backupDatabaseButton;
     @FXML private Button restoreBackupButton;
     @FXML private Button databaseConfigurationButton;
+    @FXML private Button programLicenseButton;
 
     private AppSettings settings;
 
@@ -120,6 +123,10 @@ public class SettingsController {
 
         if (databaseConfigurationButton != null) {
             databaseConfigurationButton.setOnAction(e -> openDatabaseAuthentication());
+        }
+
+        if (programLicenseButton != null) {
+            programLicenseButton.setOnAction(e -> openProgramLicenseSettings());
         }
     }
 
@@ -300,7 +307,16 @@ public class SettingsController {
         confirm.setContentText(ar("يُنصح بعمل نسخة احتياطية أولًا. هل تريد المتابعة؟",
                                   "Create a backup first. Do you want to continue?"));
 
-        Optional<ButtonType> result = confirm.showAndWait();
+        DialogStyler.style(confirm);
+
+        Optional<ButtonType> result =
+                WindowManager.showResponsiveDialogAndWait(
+                        confirm,
+                        owner(),
+                        520.0,
+                        320.0
+                );
+
         if (result.isEmpty() || result.get() != ButtonType.OK) return;
 
         Path target = Path.of(config.getSqlitePath()).toAbsolutePath().normalize();
@@ -380,13 +396,27 @@ public class SettingsController {
                 : null;
     }
 
-    private void show(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        if (owner() != null) alert.initOwner(owner());
+    private void show(
+            Alert.AlertType type,
+            String title,
+            String message
+    ) {
+
+        Alert alert =
+                new Alert(type);
+
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+
+        DialogStyler.style(alert);
+
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                owner(),
+                520.0,
+                320.0
+        );
     }
 
     public void updateLanguage() {
@@ -530,6 +560,10 @@ public class SettingsController {
                 databaseConfigurationButton.setText("إعداد قاعدة البيانات 🔒");
             }
 
+            if (programLicenseButton != null) {
+                programLicenseButton.setText("ترخيص تشغيل البرنامج 🔒");
+            }
+
         } else {
 
             // Header
@@ -666,41 +700,110 @@ public class SettingsController {
             if (databaseConfigurationButton != null) {
                 databaseConfigurationButton.setText("Database Configuration 🔒");
             }
+
+            if (programLicenseButton != null) {
+                programLicenseButton.setText("Program License 🔒");
+            }
+        }
+    }
+
+
+    private void openProgramLicenseSettings() {
+
+        try {
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/program-license-settings.fxml"
+                            )
+                    );
+
+            Parent root =
+                    loader.load();
+
+            String title =
+                    LanguageManager.isArabic()
+                            ? "ترخيص تشغيل GymFlow"
+                            : "GymFlow Program License";
+
+            Stage stage =
+                    WindowManager.createModalStage(
+                            root,
+                            title,
+                            owner()
+                    );
+
+            WindowManager.showResponsiveAndWait(
+                    stage,
+                    720.0,
+                    650.0
+            );
+
+        } catch (IOException exception) {
+
+            exception.printStackTrace();
+
+            show(
+                    Alert.AlertType.ERROR,
+                    ar("خطأ", "Error"),
+                    ar(
+                            "تعذر فتح إعدادات ترخيص تشغيل البرنامج.",
+                            "Could not open program license settings."
+                    )
+            );
         }
     }
 
 
     private void openDatabaseAuthentication() {
+
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/database-auth.fxml")
-            );
 
-            Parent root = loader.load();
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/database-auth.fxml"
+                            )
+                    );
 
-            Stage stage = new Stage();
-            stage.setTitle(
+            Parent root =
+                    loader.load();
+
+            String title =
                     LanguageManager.isArabic()
                             ? "التحقق من صلاحية السوبر أدمن"
-                            : "Super Admin Authentication"
+                            : "Super Admin Authentication";
+
+            Stage stage =
+                    WindowManager.createModalStage(
+                            root,
+                            title,
+                            owner()
+                    );
+
+            /*
+             * Authentication is a genuinely small screen:
+             * keep it at a stable centered size instead of sizeToScene().
+             */
+            WindowManager.showResponsiveAndWait(
+                    stage,
+                    560.0,
+                    420.0
             );
-            stage.initModality(Modality.APPLICATION_MODAL);
-
-            Window owner = databaseConfigurationButton.getScene().getWindow();
-            if (owner != null) stage.initOwner(owner);
-
-            stage.setScene(new Scene(root));
-            stage.setResizable(false);
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.showAndWait();
 
         } catch (IOException exception) {
+
             exception.printStackTrace();
-            show(Alert.AlertType.ERROR,
+
+            show(
+                    Alert.AlertType.ERROR,
                     ar("خطأ", "Error"),
-                    ar("تعذر فتح إعدادات قاعدة البيانات.",
-                       "Could not open database configuration."));
+                    ar(
+                            "تعذر فتح إعدادات قاعدة البيانات.",
+                            "Could not open database configuration."
+                    )
+            );
         }
     }
 }

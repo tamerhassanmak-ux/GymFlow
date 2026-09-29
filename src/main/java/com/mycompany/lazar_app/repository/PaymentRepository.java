@@ -4,6 +4,7 @@ import com.mycompany.lazar_app.database.DatabaseManager;
 import com.mycompany.lazar_app.model.Payment;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -86,6 +87,14 @@ public class PaymentRepository {
 
         private final String status;
 
+        /*
+         * Financial values belong to the concrete member membership,
+         * not to the current catalogue plan price.
+         */
+        private final BigDecimal membershipAmount;
+        private final BigDecimal paidAmount;
+        private final BigDecimal balanceDue;
+
 
         public MembershipOption(
                 long id,
@@ -94,7 +103,10 @@ public class PaymentRepository {
                 String planNameEn,
                 String startDate,
                 String endDate,
-                String status
+                String status,
+                BigDecimal membershipAmount,
+                BigDecimal paidAmount,
+                BigDecimal balanceDue
         ) {
 
             this.id = id;
@@ -107,6 +119,23 @@ public class PaymentRepository {
             this.endDate = endDate;
 
             this.status = status;
+
+            this.membershipAmount =
+                    zeroIfNull(
+                            membershipAmount
+                    );
+
+            this.paidAmount =
+                    zeroIfNull(
+                            paidAmount
+                    );
+
+            this.balanceDue =
+                    zeroIfNull(
+                            balanceDue
+                    ).max(
+                            BigDecimal.ZERO
+                    );
         }
 
 
@@ -136,6 +165,37 @@ public class PaymentRepository {
 
         public String getStatus() {
             return status;
+        }
+
+
+        public BigDecimal getMembershipAmount() {
+            return membershipAmount;
+        }
+
+
+        public BigDecimal getPaidAmount() {
+            return paidAmount;
+        }
+
+
+        public BigDecimal getBalanceDue() {
+            return balanceDue;
+        }
+
+
+        public boolean isFullyPaid() {
+            return balanceDue.compareTo(
+                    BigDecimal.ZERO
+            ) <= 0;
+        }
+
+
+        private static BigDecimal zeroIfNull(
+                BigDecimal value
+        ) {
+            return value == null
+                    ? BigDecimal.ZERO
+                    : value;
         }
 
 
@@ -179,6 +239,106 @@ public class PaymentRepository {
         public String toString() {
 
             return getDisplayName(false);
+        }
+    }
+
+
+    // =========================================================
+    // MEMBERSHIP FINANCIAL SUMMARY
+    // =========================================================
+
+    public static final class MembershipFinancialSummary {
+
+        private final long membershipId;
+        private final BigDecimal membershipAmount;
+        private final BigDecimal paidAmount;
+        private final BigDecimal balanceDue;
+
+        public MembershipFinancialSummary(
+                long membershipId,
+                BigDecimal membershipAmount,
+                BigDecimal paidAmount,
+                BigDecimal balanceDue
+        ) {
+            this.membershipId = membershipId;
+            this.membershipAmount = zero(membershipAmount);
+            this.paidAmount = zero(paidAmount);
+            this.balanceDue = zero(balanceDue).max(BigDecimal.ZERO);
+        }
+
+        public long getMembershipId() {
+            return membershipId;
+        }
+
+        public BigDecimal getMembershipAmount() {
+            return membershipAmount;
+        }
+
+        public BigDecimal getPaidAmount() {
+            return paidAmount;
+        }
+
+        public BigDecimal getBalanceDue() {
+            return balanceDue;
+        }
+
+        private static BigDecimal zero(BigDecimal value) {
+            return value == null ? BigDecimal.ZERO : value;
+        }
+    }
+
+
+    // =========================================================
+    // PAYMENT INSTALLMENT
+    // =========================================================
+
+    public static final class PaymentInstallment {
+
+        private final long id;
+        private final long membershipId;
+        private final int installmentNo;
+        private final LocalDate dueDate;
+        private final BigDecimal amount;
+        private final String status;
+
+        public PaymentInstallment(
+                long id,
+                long membershipId,
+                int installmentNo,
+                LocalDate dueDate,
+                BigDecimal amount,
+                String status
+        ) {
+            this.id = id;
+            this.membershipId = membershipId;
+            this.installmentNo = installmentNo;
+            this.dueDate = dueDate;
+            this.amount = amount == null ? BigDecimal.ZERO : amount;
+            this.status = status;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public long getMembershipId() {
+            return membershipId;
+        }
+
+        public int getInstallmentNo() {
+            return installmentNo;
+        }
+
+        public LocalDate getDueDate() {
+            return dueDate;
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
+
+        public String getStatus() {
+            return status;
         }
     }
 
@@ -1092,14 +1252,39 @@ public class PaymentRepository {
                     mp.name_en,
                     mm.start_date,
                     mm.end_date,
-                    mm.status
+                    mm.status,
+                    mm.final_price AS membership_amount,
+
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN UPPER(COALESCE(p.status, '')) = 'PAID'
+                                THEN p.amount
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS paid_amount
 
                 FROM member_memberships mm
 
                 JOIN membership_plans mp
                   ON mp.id = mm.membership_plan_id
 
+                LEFT JOIN payments p
+                  ON p.membership_id = mm.id
+
                 WHERE mm.member_id = ?
+
+                GROUP BY
+                    mm.id,
+                    mm.member_id,
+                    mp.name_ar,
+                    mp.name_en,
+                    mm.start_date,
+                    mm.end_date,
+                    mm.status,
+                    mm.final_price
 
                 ORDER BY mm.id DESC
                 """;
@@ -1146,7 +1331,21 @@ public class PaymentRepository {
                                                     "end_date"
                                             )
                                     ),
-                                    rs.getString("status")
+                                    rs.getString("status"),
+                                    rs.getBigDecimal(
+                                            "membership_amount"
+                                    ),
+                                    rs.getBigDecimal(
+                                            "paid_amount"
+                                    ),
+                                    calculateBalance(
+                                            rs.getBigDecimal(
+                                                    "membership_amount"
+                                            ),
+                                            rs.getBigDecimal(
+                                                    "paid_amount"
+                                            )
+                                    )
                             )
                     );
                 }
@@ -1155,6 +1354,35 @@ public class PaymentRepository {
 
 
         return result;
+    }
+
+
+    // =========================================================
+    // CALCULATE MEMBERSHIP BALANCE
+    // =========================================================
+
+    private BigDecimal calculateBalance(
+            BigDecimal membershipAmount,
+            BigDecimal paidAmount
+    ) {
+
+        BigDecimal total =
+                membershipAmount == null
+                        ? BigDecimal.ZERO
+                        : membershipAmount;
+
+        BigDecimal paid =
+                paidAmount == null
+                        ? BigDecimal.ZERO
+                        : paidAmount;
+
+        return total
+                .subtract(
+                        paid
+                )
+                .max(
+                        BigDecimal.ZERO
+                );
     }
 
 
@@ -1313,6 +1541,407 @@ public class PaymentRepository {
 
 
         return "#" + membershipId;
+    }
+
+
+    // =========================================================
+    // MEMBERSHIP FINANCIAL SUMMARY
+    // =========================================================
+
+    public MembershipFinancialSummary findMembershipFinancialSummary(
+            long membershipId
+    ) throws SQLException {
+
+        String sql = """
+                SELECT
+                    mm.id,
+                    mm.final_price AS membership_amount,
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN UPPER(COALESCE(p.status, '')) = 'PAID'
+                                THEN p.amount
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS paid_amount
+                FROM member_memberships mm
+                LEFT JOIN payments p
+                       ON p.membership_id = mm.id
+                WHERE mm.id = ?
+                GROUP BY mm.id, mm.final_price
+                """;
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setLong(1, membershipId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (!rs.next()) {
+                    return new MembershipFinancialSummary(
+                            membershipId,
+                            BigDecimal.ZERO,
+                            BigDecimal.ZERO,
+                            BigDecimal.ZERO
+                    );
+                }
+
+                BigDecimal membershipAmount = rs.getBigDecimal("membership_amount");
+                BigDecimal paidAmount = rs.getBigDecimal("paid_amount");
+
+                return new MembershipFinancialSummary(
+                        membershipId,
+                        membershipAmount,
+                        paidAmount,
+                        calculateBalance(membershipAmount, paidAmount)
+                );
+            }
+        }
+    }
+
+
+    // =========================================================
+    // PAYMENTS BY MEMBERSHIP
+    // =========================================================
+
+    public List<Payment> findPaymentsByMembershipId(
+            long membershipId
+    ) throws SQLException {
+
+        String sql = """
+                SELECT
+                    id,
+                    member_id,
+                    membership_id,
+                    amount,
+                    payment_method,
+                    status,
+                    payment_date,
+                    reference_number,
+                    notes
+                FROM payments
+                WHERE membership_id = ?
+                ORDER BY payment_date ASC, id ASC
+                """;
+
+        List<Payment> result = new ArrayList<>();
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setLong(1, membershipId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    result.add(mapPayment(rs));
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+    // =========================================================
+    // PAYMENT SCHEDULE
+    // =========================================================
+
+    public List<PaymentInstallment> findPaymentScheduleByMembershipId(
+            long membershipId
+    ) throws SQLException {
+
+        List<PaymentInstallment> result = new ArrayList<>();
+
+        try (Connection connection = DatabaseManager.getConnection()) {
+            ensurePaymentInstallmentsTable(connection);
+
+            String sql = """
+                    SELECT
+                        id,
+                        membership_id,
+                        installment_no,
+                        due_date,
+                        amount,
+                        status
+                    FROM payment_installments
+                    WHERE membership_id = ?
+                    ORDER BY installment_no ASC, due_date ASC, id ASC
+                    """;
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setLong(1, membershipId);
+
+                try (ResultSet rs = statement.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(
+                                new PaymentInstallment(
+                                        rs.getLong("id"),
+                                        rs.getLong("membership_id"),
+                                        rs.getInt("installment_no"),
+                                        parseDate(rs.getObject("due_date")),
+                                        rs.getBigDecimal("amount"),
+                                        rs.getString("status")
+                                )
+                        );
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+    public void replaceOutstandingSchedule(
+            long membershipId,
+            BigDecimal remainingBalance,
+            int installments,
+            LocalDate firstDueDate
+    ) throws SQLException {
+
+        if (membershipId <= 0) {
+            throw new IllegalArgumentException("Membership ID is required.");
+        }
+
+        BigDecimal remaining = remainingBalance == null
+                ? BigDecimal.ZERO
+                : remainingBalance.max(BigDecimal.ZERO);
+
+        try (Connection connection = DatabaseManager.getConnection()) {
+            ensurePaymentInstallmentsTable(connection);
+            connection.setAutoCommit(false);
+
+            try {
+                try (PreparedStatement delete = connection.prepareStatement(
+                        "DELETE FROM payment_installments WHERE membership_id = ?"
+                )) {
+                    delete.setLong(1, membershipId);
+                    delete.executeUpdate();
+                }
+
+                if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+                    if (installments <= 0) {
+                        throw new IllegalArgumentException(
+                                "Installment count must be greater than zero."
+                        );
+                    }
+
+                    if (firstDueDate == null) {
+                        throw new IllegalArgumentException(
+                                "First installment due date is required."
+                        );
+                    }
+
+                    String insertSql = """
+                            INSERT INTO payment_installments
+                            (
+                                membership_id,
+                                installment_no,
+                                due_date,
+                                amount,
+                                status,
+                                created_at,
+                                updated_at
+                            )
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                            """;
+
+                    BigDecimal base = remaining.divide(
+                            BigDecimal.valueOf(installments),
+                            2,
+                            RoundingMode.DOWN
+                    );
+
+                    String now = formatDateTime(LocalDateTime.now());
+
+                    try (PreparedStatement insert = connection.prepareStatement(insertSql)) {
+                        BigDecimal allocated = BigDecimal.ZERO;
+
+                        for (int i = 1; i <= installments; i++) {
+                            BigDecimal amount = i == installments
+                                    ? remaining.subtract(allocated)
+                                    : base;
+
+                            allocated = allocated.add(amount);
+
+                            insert.setLong(1, membershipId);
+                            insert.setInt(2, i);
+                            insert.setString(3, firstDueDate.plusMonths(i - 1L).toString());
+                            insert.setBigDecimal(4, amount);
+                            insert.setString(5, "SCHEDULED");
+                            insert.setString(6, now);
+                            insert.setString(7, now);
+                            insert.addBatch();
+                        }
+
+                        insert.executeBatch();
+                    }
+                }
+
+                connection.commit();
+
+            } catch (Exception exception) {
+                connection.rollback();
+
+                if (exception instanceof SQLException sqlException) {
+                    throw sqlException;
+                }
+
+                throw new SQLException(
+                        "Unable to update payment schedule.",
+                        exception
+                );
+
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        }
+    }
+
+
+    // =========================================================
+    // SCHEDULE TABLE BOOTSTRAP
+    // =========================================================
+
+    private void ensurePaymentInstallmentsTable(
+            Connection connection
+    ) throws SQLException {
+
+        if (tableExists(connection, "payment_installments")) {
+            return;
+        }
+
+        String product = connection
+                .getMetaData()
+                .getDatabaseProductName()
+                .toLowerCase();
+
+        String ddl;
+
+        if (product.contains("sql server")) {
+            ddl = """
+                    CREATE TABLE payment_installments (
+                        id BIGINT IDENTITY(1,1) PRIMARY KEY,
+                        membership_id BIGINT NOT NULL,
+                        installment_no INT NOT NULL,
+                        due_date DATE NOT NULL,
+                        amount DECIMAL(18,2) NOT NULL,
+                        status NVARCHAR(30) NOT NULL DEFAULT 'SCHEDULED',
+                        created_at NVARCHAR(30) NULL,
+                        updated_at NVARCHAR(30) NULL
+                    )
+                    """;
+
+        } else if (product.contains("mysql") || product.contains("mariadb")) {
+            ddl = """
+                    CREATE TABLE payment_installments (
+                        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                        membership_id BIGINT NOT NULL,
+                        installment_no INT NOT NULL,
+                        due_date DATE NOT NULL,
+                        amount DECIMAL(18,2) NOT NULL,
+                        status VARCHAR(30) NOT NULL DEFAULT 'SCHEDULED',
+                        created_at VARCHAR(30),
+                        updated_at VARCHAR(30),
+                        INDEX idx_payment_installments_membership (membership_id)
+                    )
+                    """;
+
+        } else {
+            ddl = """
+                    CREATE TABLE payment_installments (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        membership_id INTEGER NOT NULL,
+                        installment_no INTEGER NOT NULL,
+                        due_date TEXT NOT NULL,
+                        amount NUMERIC NOT NULL,
+                        status TEXT NOT NULL DEFAULT 'SCHEDULED',
+                        created_at TEXT,
+                        updated_at TEXT
+                    )
+                    """;
+        }
+
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(ddl);
+        }
+    }
+
+
+    private boolean tableExists(
+            Connection connection,
+            String tableName
+    ) throws SQLException {
+
+        DatabaseMetaData metaData = connection.getMetaData();
+
+        try (ResultSet tables = metaData.getTables(
+                null,
+                null,
+                "%",
+                new String[]{"TABLE"}
+        )) {
+            while (tables.next()) {
+                String name = tables.getString("TABLE_NAME");
+
+                if (name != null && name.equalsIgnoreCase(tableName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    private LocalDate parseDate(
+            Object value
+    ) {
+
+        if (value == null) {
+            return null;
+        }
+
+        if (value instanceof java.sql.Date date) {
+            return date.toLocalDate();
+        }
+
+        if (value instanceof Timestamp timestamp) {
+            return timestamp.toLocalDateTime().toLocalDate();
+        }
+
+        if (value instanceof Number number) {
+            return java.time.Instant
+                    .ofEpochMilli(number.longValue())
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+
+        String text = value.toString().trim();
+
+        if (text.matches("-?\\d+")) {
+            try {
+                return java.time.Instant
+                        .ofEpochMilli(Long.parseLong(text))
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDate();
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (text.length() >= 10) {
+            text = text.substring(0, 10);
+        }
+
+        try {
+            return LocalDate.parse(text);
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
 

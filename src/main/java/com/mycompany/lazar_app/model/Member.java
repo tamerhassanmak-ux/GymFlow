@@ -33,9 +33,23 @@ public class Member {
 
 
     // =========================================================
-    // MEMBERSHIP DATA
+    // MEMBERSHIP / STATUS PROJECTION
     // =========================================================
 
+    /*
+     * IMPORTANT ARCHITECTURE NOTE
+     * ---------------------------
+     * membership/startDate/endDate are kept in Member only as a UI
+     * compatibility projection. The authoritative subscription history
+     * lives in member_memberships.
+     *
+     * New business logic must read membership data through
+     * MemberMembershipRepository.
+     *
+     * status is retained because the existing members table also uses it
+     * as the member/account status. Membership status is authoritative on
+     * MemberMembership.
+     */
     private String membership;
 
     private LocalDate startDate;

@@ -1,4 +1,6 @@
-package com.mycompany.lazar_app;
+package com.mycompany.lazar_app.controller;
+
+import com.mycompany.lazar_app.LanguageManager;
 
 import java.io.IOException;
 
@@ -9,6 +11,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 public class DashboardController {
@@ -19,6 +23,12 @@ public class DashboardController {
 
     @FXML
     private StackPane contentArea;
+
+    @FXML
+    private ImageView gymLogoImageView;
+
+    @FXML
+    private ImageView systemLogoImageView;
 
 
     // ==========================================
@@ -45,6 +55,9 @@ public class DashboardController {
     private Button paymentsButton;
 
     @FXML
+    private Button revenuesButton;
+
+    @FXML
     private Button expensesButton;
 
     @FXML
@@ -64,7 +77,60 @@ public class DashboardController {
     @FXML
     public void initialize() {
 
+        loadLogos();
+
         openDashboard();
+    }
+
+
+    // ==========================================
+    // LOGOS
+    // ==========================================
+
+    private void loadLogos() {
+
+        loadImage(
+                gymLogoImageView,
+                "/com/mycompany/lazar_app/images/logo.png"
+        );
+
+        loadImage(
+                systemLogoImageView,
+                "/com/mycompany/lazar_app/images/systemlogo.png"
+        );
+    }
+
+
+    private void loadImage(
+            ImageView imageView,
+            String resourcePath
+    ) {
+
+        if (imageView == null) {
+            return;
+        }
+
+        var resource =
+                getClass().getResource(
+                        resourcePath
+                );
+
+        if (resource == null) {
+
+            System.err.println(
+                    "Image resource not found: "
+                            + resourcePath
+            );
+
+            return;
+        }
+
+        imageView.setImage(
+                new Image(
+                        resource.toExternalForm(),
+                        true
+                )
+        );
     }
 
 
@@ -161,6 +227,10 @@ public class DashboardController {
         );
 
         clearActiveButton(
+                revenuesButton
+        );
+
+        clearActiveButton(
                 expensesButton
         );
 
@@ -237,7 +307,7 @@ public class DashboardController {
             FXMLLoader loader =
                     new FXMLLoader(
                             getClass().getResource(
-                                    "dashboard.fxml"
+                                    "/fxml/dashboard.fxml"
                             ),
                             LanguageManager.getBundle()
                     );
@@ -381,6 +451,24 @@ public class DashboardController {
 
             setActiveButton(
                     paymentsButton
+            );
+        }
+    }
+
+
+    // ==========================================
+    // REVENUES
+    // ==========================================
+
+    @FXML
+    private void openRevenues() {
+
+        if (loadView(
+                "revenues.fxml"
+        )) {
+
+            setActiveButton(
+                    revenuesButton
             );
         }
     }

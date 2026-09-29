@@ -271,6 +271,138 @@ public class MemberRepository {
 
 
     // =========================================================
+    // FIND BY MEMBER CODE / QR VALUE
+    // =========================================================
+
+    public Optional<Member> findByMemberCode(
+            String memberCode
+    ) throws SQLException {
+
+        String normalizedCode =
+                safe(memberCode);
+
+        if (normalizedCode.isBlank()) {
+            return Optional.empty();
+        }
+
+        String sql = """
+                SELECT
+                    id,
+                    member_code,
+                    name,
+                    phone,
+                    whatsapp,
+                    email,
+                    gender,
+                    birth_date,
+                    membership,
+                    start_date,
+                    end_date,
+                    status,
+                    notes,
+                    photo_path
+                FROM members
+                WHERE LOWER(TRIM(member_code)) = LOWER(?)
+                LIMIT 1
+                """;
+
+        try (
+                Connection connection =
+                        DatabaseManager.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(
+                    1,
+                    normalizedCode
+            );
+
+            try (
+                    ResultSet resultSet =
+                            statement.executeQuery()
+            ) {
+
+                if (resultSet.next()) {
+                    return Optional.of(
+                            mapMember(resultSet)
+                    );
+                }
+            }
+        }
+
+        return Optional.empty();
+    }
+
+
+    // =========================================================
+    // FIND ANOTHER MEMBER BY CODE / QR VALUE
+    // =========================================================
+
+    public Optional<Member> findAnotherByMemberCode(
+            String memberCode,
+            int excludedMemberId
+    ) throws SQLException {
+
+        String normalizedCode =
+                safe(memberCode);
+
+        if (normalizedCode.isBlank()) {
+            return Optional.empty();
+        }
+
+        String sql = """
+                SELECT
+                    id,
+                    member_code,
+                    name,
+                    phone,
+                    whatsapp,
+                    email,
+                    gender,
+                    birth_date,
+                    membership,
+                    start_date,
+                    end_date,
+                    status,
+                    notes,
+                    photo_path
+                FROM members
+                WHERE LOWER(TRIM(member_code)) = LOWER(?)
+                AND id <> ?
+                LIMIT 1
+                """;
+
+        try (
+                Connection connection =
+                        DatabaseManager.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(1, normalizedCode);
+            statement.setInt(2, excludedMemberId);
+
+            try (
+                    ResultSet resultSet =
+                            statement.executeQuery()
+            ) {
+
+                if (resultSet.next()) {
+                    return Optional.of(
+                            mapMember(resultSet)
+                    );
+                }
+            }
+        }
+
+        return Optional.empty();
+    }
+
+
+    // =========================================================
     // INSERT
     // =========================================================
 
@@ -294,6 +426,29 @@ public class MemberRepository {
             );
         }
 
+        String requestedMemberCode =
+                safe(member.getMemberCode());
+
+        if (!requestedMemberCode.isBlank()) {
+
+            Optional<Member> duplicateCode =
+                    findByMemberCode(
+                            requestedMemberCode
+                    );
+
+            if (duplicateCode.isPresent()) {
+                throw new SQLException(
+                        "Duplicate member code: " + requestedMemberCode
+                );
+            }
+        }
+
+        /*
+         * Member master data only.
+         *
+         * Plan, subscription dates and subscription lifecycle belong to
+         * member_memberships and must never be duplicated here.
+         */
         String sql = """
                 INSERT INTO members (
                     member_code,
@@ -303,14 +458,11 @@ public class MemberRepository {
                     email,
                     gender,
                     birth_date,
-                    membership,
-                    start_date,
-                    end_date,
                     status,
                     notes,
                     photo_path
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
 
@@ -338,11 +490,25 @@ public class MemberRepository {
                                 )
                 ) {
 
-                    // Member code is created AFTER database ID.
-                    statement.setNull(
-                            1,
-                            java.sql.Types.VARCHAR
-                    );
+                    /*
+                     * If the user supplied a code / scanned QR value,
+                     * keep it. Otherwise insert NULL and generate the
+                     * standard LZR-xxxxxx code after obtaining the DB ID.
+                     */
+                    if (requestedMemberCode.isBlank()) {
+
+                        statement.setNull(
+                                1,
+                                java.sql.Types.VARCHAR
+                        );
+
+                    } else {
+
+                        statement.setString(
+                                1,
+                                requestedMemberCode
+                        );
+                    }
 
                     statement.setString(
                             2,
@@ -377,35 +543,18 @@ public class MemberRepository {
 
                     statement.setString(
                             8,
-                            safe(member.getMembership())
-                    );
-
-                    setLocalDate(
-                            statement,
-                            9,
-                            member.getStartDate()
-                    );
-
-                    setLocalDate(
-                            statement,
-                            10,
-                            member.getEndDate()
-                    );
-
-                    statement.setString(
-                            11,
                             normalizeStatus(
                                     member.getStatus()
                             )
                     );
 
                     statement.setString(
-                            12,
+                            9,
                             safe(member.getNotes())
                     );
 
                     statement.setString(
-                            13,
+                            10,
                             safe(member.getPhotoPath())
                     );
 
@@ -441,13 +590,13 @@ public class MemberRepository {
 
 
                 // =================================================
-                // GENERATE MEMBER CODE
+                // RESOLVE FINAL MEMBER CODE
                 // =================================================
 
                 String memberCode =
-                        generateMemberCode(
-                                generatedId
-                        );
+                        requestedMemberCode.isBlank()
+                                ? generateMemberCode(generatedId)
+                                : requestedMemberCode;
 
 
                 // =================================================
@@ -559,7 +708,31 @@ public class MemberRepository {
             );
         }
 
+        String requestedMemberCode =
+                safe(member.getMemberCode());
 
+        if (!requestedMemberCode.isBlank()) {
+
+            Optional<Member> duplicateCode =
+                    findAnotherByMemberCode(
+                            requestedMemberCode,
+                            member.getId()
+                    );
+
+            if (duplicateCode.isPresent()) {
+                throw new SQLException(
+                        "Duplicate member code: " + requestedMemberCode
+                );
+            }
+        }
+
+
+        /*
+         * Subscription columns are intentionally not maintained here.
+         * member_memberships is the single source of truth for plans and
+         * subscription dates. Legacy columns are cleared when a member is
+         * edited so stale duplicated subscription data cannot survive.
+         */
         String sql = """
                 UPDATE members
                 SET
@@ -570,9 +743,9 @@ public class MemberRepository {
                     email = ?,
                     gender = ?,
                     birth_date = ?,
-                    membership = ?,
-                    start_date = ?,
-                    end_date = ?,
+                    membership = NULL,
+                    start_date = NULL,
+                    end_date = NULL,
                     status = ?,
                     notes = ?,
                     photo_path = ?,
@@ -646,40 +819,23 @@ public class MemberRepository {
 
             statement.setString(
                     8,
-                    safe(member.getMembership())
-            );
-
-            setLocalDate(
-                    statement,
-                    9,
-                    member.getStartDate()
-            );
-
-            setLocalDate(
-                    statement,
-                    10,
-                    member.getEndDate()
-            );
-
-            statement.setString(
-                    11,
                     normalizeStatus(
                             member.getStatus()
                     )
             );
 
             statement.setString(
-                    12,
+                    9,
                     safe(member.getNotes())
             );
 
             statement.setString(
-                    13,
+                    10,
                     safe(member.getPhotoPath())
             );
 
             statement.setInt(
-                    14,
+                    11,
                     member.getId()
             );
 

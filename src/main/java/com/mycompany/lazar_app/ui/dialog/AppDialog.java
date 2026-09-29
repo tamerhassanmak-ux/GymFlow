@@ -1,6 +1,7 @@
 package com.mycompany.lazar_app.ui.dialog;
 
 import com.mycompany.lazar_app.LanguageManager;
+import com.mycompany.lazar_app.ui.WindowManager;
 import com.mycompany.lazar_app.model.Member;
 import java.util.Optional;
 import javafx.geometry.NodeOrientation;
@@ -94,9 +95,16 @@ public final class AppDialog {
         DialogPane pane = dialog.getDialogPane();
         pane.getStyleClass().addAll("app-dialog", "app-dialog-" + type.name().toLowerCase());
         pane.setNodeOrientation(ar ? NodeOrientation.RIGHT_TO_LEFT : NodeOrientation.LEFT_TO_RIGHT);
-        pane.setMinWidth(430);
-        pane.setPrefWidth(470);
-        pane.setMaxWidth(540);
+        /*
+         * Keep every normal GymFlow message at the same professional size.
+         * WindowManager will also enforce this on the native Stage.
+         */
+        pane.setMinWidth(WindowManager.STANDARD_DIALOG_WIDTH);
+        pane.setPrefWidth(WindowManager.STANDARD_DIALOG_WIDTH);
+        pane.setMaxWidth(WindowManager.STANDARD_DIALOG_WIDTH);
+        pane.setMinHeight(WindowManager.STANDARD_DIALOG_HEIGHT);
+        pane.setPrefHeight(WindowManager.STANDARD_DIALOG_HEIGHT);
+        pane.setMaxHeight(WindowManager.STANDARD_DIALOG_HEIGHT);
 
         var css = AppDialog.class.getResource("/css/app.css");
         if (css != null) pane.getStylesheets().add(css.toExternalForm());
@@ -138,8 +146,21 @@ public final class AppDialog {
             cancel.getStyleClass().add("app-dialog-secondary-button");
         }
 
-        Optional<ButtonType> result = dialog.showAndWait();
-        return confirmation && result.isPresent() && result.get() == primary;
+        /*
+         * All AppDialog messages are shown through WindowManager so they use
+         * one size policy and are centered over the owner window.
+         */
+        Optional<ButtonType> result =
+                WindowManager.showResponsiveDialogAndWait(
+                        dialog,
+                        owner,
+                        WindowManager.STANDARD_DIALOG_WIDTH,
+                        WindowManager.STANDARD_DIALOG_HEIGHT
+                );
+
+        return confirmation
+                && result.isPresent()
+                && result.get() == primary;
     }
 
     private static String iconFor(Type type) {

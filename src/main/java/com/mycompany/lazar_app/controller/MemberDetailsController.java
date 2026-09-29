@@ -5,11 +5,16 @@ import com.mycompany.lazar_app.model.Member;
 import com.mycompany.lazar_app.model.MemberMembership;
 import com.mycompany.lazar_app.repository.CheckInRepository;
 import com.mycompany.lazar_app.repository.MemberMembershipRepository;
+import com.mycompany.lazar_app.repository.MemberRepository;
 import com.mycompany.lazar_app.util.QrCodeGenerator;
+import com.mycompany.lazar_app.ui.WindowManager;
+import com.mycompany.lazar_app.util.MemberCardPrinter;
+import com.mycompany.lazar_app.ui.dialog.AppDialog;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
@@ -21,11 +26,14 @@ import javafx.geometry.NodeOrientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import javafx.scene.layout.StackPane;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -65,6 +73,20 @@ public class MemberDetailsController {
 
     @FXML
     private Label qrPlaceholderLabel;
+
+
+    // =========================================================
+    // MEMBERSHIP CARD
+    // =========================================================
+
+    @FXML
+    private Label membershipCardTitleLabel;
+
+    @FXML
+    private StackPane membershipCardContainer;
+
+    @FXML
+    private Button printMembershipCardButton;
 
 
     // =========================================================
@@ -162,12 +184,22 @@ public class MemberDetailsController {
 
     private Member member;
 
+    /*
+     * Authoritative membership data for this screen.
+     * It comes from member_memberships, not from the legacy membership
+     * columns stored on members.
+     */
+    private MemberMembership displayedMembership;
+
     private ResourceBundle bundle;
 
     private boolean memberEdited = false;
 
     private final MemberMembershipRepository memberMembershipRepository =
             new MemberMembershipRepository();
+
+    private final MemberRepository memberRepository =
+            new MemberRepository();
 
     private final CheckInRepository checkInRepository =
             new CheckInRepository();
@@ -198,6 +230,24 @@ public class MemberDetailsController {
                             : "Days"
             );
         }
+
+        if (membershipCardTitleLabel != null) {
+
+            membershipCardTitleLabel.setText(
+                    LanguageManager.isArabic()
+                            ? "كارت العضوية"
+                            : "Membership Card"
+            );
+        }
+
+        if (printMembershipCardButton != null) {
+
+            printMembershipCardButton.setText(
+                    LanguageManager.isArabic()
+                            ? "طباعة الكارت"
+                            : "Print Card"
+            );
+        }
     }
 
 
@@ -218,7 +268,79 @@ public class MemberDetailsController {
                 member;
 
 
+        loadMembershipProjection();
+
+
         populateMemberData();
+    }
+
+
+    // =========================================================
+    // LOAD AUTHORITATIVE MEMBERSHIP PROJECTION
+    // =========================================================
+
+    private void loadMembershipProjection() {
+
+        displayedMembership =
+                null;
+
+
+        if (member == null
+                || member.getId() <= 0) {
+
+            return;
+        }
+
+
+        try {
+
+            displayedMembership =
+                    memberMembershipRepository
+                            .findCurrentOrLatestByMemberId(
+                                    member.getId()
+                            )
+                            .orElse(null);
+
+
+            if (displayedMembership == null) {
+
+                return;
+            }
+
+
+            /*
+             * Keep the existing Member-based UI intact while making
+             * member_memberships the source of truth for membership data.
+             *
+             * These changes affect only this in-memory object; no legacy
+             * membership columns in members are updated here.
+             */
+            member.setMembership(
+                    displayedMembership.getPlanNameEn()
+            );
+
+            member.setStartDate(
+                    displayedMembership.getStartDate()
+            );
+
+            member.setEndDate(
+                    displayedMembership.getEndDate()
+            );
+
+            member.setStatus(
+                    displayedMembership.getStatus()
+            );
+
+
+        } catch (SQLException exception) {
+
+            /*
+             * Personal data should still be viewable if membership loading
+             * fails. The legacy projection already present on Member remains
+             * as a fallback.
+             */
+            exception.printStackTrace();
+        }
     }
 
 
@@ -291,6 +413,8 @@ public class MemberDetailsController {
         // =====================================================
 
         generateQrCode();
+
+        populateMembershipCard();
 
 
         // =====================================================
@@ -503,16 +627,14 @@ public class MemberDetailsController {
         sessionsProgressBar.setProgress(0.0);
 
         try {
-            var currentMembership =
-                    memberMembershipRepository.findCurrentMembershipByMemberId(
-                            member.getId()
-                    );
 
-            if (currentMembership.isEmpty()) {
+            MemberMembership membership =
+                    displayedMembership;
+
+
+            if (membership == null) {
                 return;
             }
-
-            MemberMembership membership = currentMembership.get();
 
             int allowedSessions =
                     Math.max(membership.getAllowedSessions(), 0);
@@ -727,6 +849,138 @@ public class MemberDetailsController {
         qrPlaceholderLabel.setManaged(
                 true
         );
+    }
+
+
+    // =========================================================
+    // MEMBERSHIP CARD PREVIEW / REPRINT
+    // =========================================================
+
+    private void populateMembershipCard() {
+
+        if (membershipCardContainer == null) {
+            return;
+        }
+
+        membershipCardContainer.getChildren()
+                .clear();
+
+        if (!MemberCardPrinter.isSavedMember(
+                member
+        )) {
+
+            Label unavailable =
+                    new Label(
+                            LanguageManager.isArabic()
+                                    ? "الكارت متاح بعد حفظ العضو."
+                                    : "The card is available after the member is saved."
+                    );
+
+            unavailable.setStyle(
+                    "-fx-text-fill: #b45309;"
+                            + "-fx-font-weight: bold;"
+                            + "-fx-font-size: 12px;"
+            );
+
+            membershipCardContainer.getChildren()
+                    .add(
+                            unavailable
+                    );
+
+            return;
+        }
+
+        membershipCardContainer.getChildren()
+                .add(
+                        MemberCardPrinter.createCard(
+                                member,
+                                LanguageManager.isArabic()
+                        )
+                );
+    }
+
+
+    @FXML
+    private void printMembershipCard() {
+
+        if (!MemberCardPrinter.isSavedMember(
+                member
+        )) {
+
+            AppDialog.warning(
+                    getStage(),
+                    LanguageManager.isArabic()
+                            ? "الحفظ مطلوب قبل الطباعة"
+                            : "Save Required Before Printing",
+                    LanguageManager.isArabic()
+                            ? "يجب حفظ العضو أولاً قبل طباعة كارت العضوية."
+                            : "The member must be saved before the membership card can be printed."
+            );
+
+            return;
+        }
+
+        MemberCardPrinter.PrintResult result =
+                MemberCardPrinter.printCard(
+                        getStage(),
+                        member,
+                        LanguageManager.isArabic()
+                );
+
+        handlePrintResult(
+                result
+        );
+    }
+
+
+    private void handlePrintResult(
+            MemberCardPrinter.PrintResult result
+    ) {
+
+        if (result == null
+                || result == MemberCardPrinter.PrintResult.CANCELLED) {
+
+            return;
+        }
+
+        switch (result) {
+
+            case PRINTED ->
+                    AppDialog.info(
+                            getStage(),
+                            LanguageManager.isArabic()
+                                    ? "تم إرسال الطباعة"
+                                    : "Print Sent",
+                            LanguageManager.isArabic()
+                                    ? "تم إرسال كارت العضوية إلى الطابعة بنجاح."
+                                    : "The membership card was sent to the printer successfully."
+                    );
+
+            case NO_PRINTER ->
+                    AppDialog.warning(
+                            getStage(),
+                            LanguageManager.isArabic()
+                                    ? "لا توجد طابعة"
+                                    : "No Printer",
+                            LanguageManager.isArabic()
+                                    ? "لم يتم العثور على طابعة متاحة على النظام."
+                                    : "No available printer was found on this system."
+                    );
+
+            case FAILED ->
+                    AppDialog.error(
+                            getStage(),
+                            LanguageManager.isArabic()
+                                    ? "فشل الطباعة"
+                                    : "Print Failed",
+                            LanguageManager.isArabic()
+                                    ? "تعذر إتمام طباعة كارت العضوية. راجع إعدادات الطابعة."
+                                    : "The membership card could not be printed. Check the printer settings."
+                    );
+
+            default -> {
+            }
+        }
     }
 
 
@@ -1063,10 +1317,9 @@ public class MemberDetailsController {
             );
 
 
-            editStage.setResizable(true);
-            editStage.setMaximized(true);
-
-            editStage.showAndWait();
+            WindowManager.showMaximizedAndWait(
+                    editStage
+            );
 
 
             Member editedMember =
@@ -1076,22 +1329,60 @@ public class MemberDetailsController {
             if (editedMember != null) {
 
                 /*
-                 * Keep the edited result.
+                 * Persist immediately.
                  *
-                 * MembersController will retrieve this after
-                 * the details window closes and replace the
-                 * original member in the list.
+                 * This makes "Save" inside the edit window a real save,
+                 * so the Details screen can reprint the latest stored card
+                 * without waiting for the Details window to close.
                  */
+                try {
 
-                this.member =
-                        editedMember;
+                    boolean updated =
+                            memberRepository.update(
+                                    editedMember
+                            );
 
+                    if (!updated) {
 
-                memberEdited =
-                        true;
+                        AppDialog.error(
+                                getStage(),
+                                LanguageManager.isArabic()
+                                        ? "تعذر حفظ التعديلات"
+                                        : "Unable to Save Changes",
+                                LanguageManager.isArabic()
+                                        ? "لم يتم العثور على العضو لتحديث بياناته."
+                                        : "The member could not be found for update."
+                        );
 
+                        return;
+                    }
 
-                populateMemberData();
+                    this.member =
+                            memberRepository.findById(
+                                    editedMember.getId()
+                            ).orElse(
+                                    editedMember
+                            );
+
+                    memberEdited =
+                            true;
+
+                    populateMemberData();
+
+                } catch (SQLException exception) {
+
+                    exception.printStackTrace();
+
+                    AppDialog.error(
+                            getStage(),
+                            LanguageManager.isArabic()
+                                    ? "خطأ في حفظ التعديلات"
+                                    : "Save Error",
+                            LanguageManager.isArabic()
+                                    ? "تعذر حفظ تعديلات العضو في قاعدة البيانات."
+                                    : "Unable to save member changes to the database."
+                    );
+                }
             }
 
 

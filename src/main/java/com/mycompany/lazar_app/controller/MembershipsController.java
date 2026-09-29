@@ -1,6 +1,7 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
+import com.mycompany.lazar_app.ui.WindowManager;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.MemberMembership;
@@ -19,19 +20,26 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
 import javafx.geometry.NodeOrientation;
+import javafx.geometry.Pos;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
+import javafx.scene.layout.HBox;
+
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -41,6 +49,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Optional;
 
 public class MembershipsController {
 
@@ -134,6 +143,12 @@ public class MembershipsController {
 
     @FXML
     private TableColumn<MemberMembership, String> statusColumn;
+
+    /*
+     * Created programmatically so membership table FXML does not need
+     * to be changed just to add the action buttons.
+     */
+    private TableColumn<MemberMembership, Void> actionsColumn;
 
 
     // =========================================================
@@ -279,6 +294,9 @@ public class MembershipsController {
         );
 
 
+        configureActionsColumn();
+
+
         membershipsTable.setPlaceholder(
                 new Label(
                         LanguageManager.isArabic()
@@ -286,6 +304,182 @@ public class MembershipsController {
                                 : "No memberships found"
                 )
         );
+    }
+
+
+    // =========================================================
+    // ACTIONS COLUMN - EDIT / DELETE
+    // =========================================================
+
+    private void configureActionsColumn() {
+
+        if (membershipsTable == null
+                || actionsColumn != null) {
+
+            return;
+        }
+
+
+        actionsColumn =
+                new TableColumn<>(
+                        LanguageManager.isArabic()
+                                ? "الإجراءات"
+                                : "Actions"
+                );
+
+
+        actionsColumn.setPrefWidth(190.0);
+
+        actionsColumn.setMinWidth(175.0);
+
+        actionsColumn.setSortable(false);
+
+        actionsColumn.setReorderable(false);
+
+
+        actionsColumn.setCellFactory(
+                column ->
+                        new TableCell<>() {
+
+                            private final Button editButton =
+                                    new Button(
+                                            LanguageManager.isArabic()
+                                                    ? "تعديل"
+                                                    : "Edit"
+                                    );
+
+                            private final Button deleteButton =
+                                    new Button(
+                                            LanguageManager.isArabic()
+                                                    ? "حذف"
+                                                    : "Delete"
+                                    );
+
+                            private final HBox buttons =
+                                    new HBox(
+                                            8.0,
+                                            editButton,
+                                            deleteButton
+                                    );
+
+
+                            {
+
+                                buttons.setAlignment(
+                                        Pos.CENTER
+                                );
+
+
+                                editButton.setMinWidth(72.0);
+
+                                deleteButton.setMinWidth(72.0);
+
+
+                                editButton.setStyle(
+                                        "-fx-background-color: #2563eb;"
+                                        + "-fx-text-fill: white;"
+                                        + "-fx-font-weight: bold;"
+                                        + "-fx-background-radius: 7;"
+                                        + "-fx-cursor: hand;"
+                                );
+
+
+                                deleteButton.setStyle(
+                                        "-fx-background-color: #dc2626;"
+                                        + "-fx-text-fill: white;"
+                                        + "-fx-font-weight: bold;"
+                                        + "-fx-background-radius: 7;"
+                                        + "-fx-cursor: hand;"
+                                );
+
+
+                                editButton.setOnAction(
+                                        event -> {
+
+                                            MemberMembership membership =
+                                                    getCurrentMembership();
+
+                                            if (membership != null) {
+
+                                                editMembership(
+                                                        membership
+                                                );
+                                            }
+                                        }
+                                );
+
+
+                                deleteButton.setOnAction(
+                                        event -> {
+
+                                            MemberMembership membership =
+                                                    getCurrentMembership();
+
+                                            if (membership != null) {
+
+                                                deleteMembership(
+                                                        membership
+                                                );
+                                            }
+                                        }
+                                );
+                            }
+
+
+                            private MemberMembership getCurrentMembership() {
+
+                                int index =
+                                        getIndex();
+
+
+                                if (index < 0
+                                        || index >= getTableView()
+                                                .getItems()
+                                                .size()) {
+
+                                    return null;
+                                }
+
+
+                                return getTableView()
+                                        .getItems()
+                                        .get(index);
+                            }
+
+
+                            @Override
+                            protected void updateItem(
+                                    Void item,
+                                    boolean empty
+                            ) {
+
+                                super.updateItem(
+                                        item,
+                                        empty
+                                );
+
+
+                                if (empty
+                                        || getCurrentMembership() == null) {
+
+                                    setGraphic(null);
+
+                                } else {
+
+                                    setGraphic(
+                                            buttons
+                                    );
+                                }
+                            }
+                        }
+        );
+
+
+        membershipsTable
+                .getColumns()
+                .add(
+                        actionsColumn
+                );
     }
 
 
@@ -650,197 +844,264 @@ public class MembershipsController {
     // =========================================================
     // NEW MEMBERSHIP
     // =========================================================
-@FXML
-private void openNewMembership() {
 
-    try {
+    @FXML
+    private void openNewMembership() {
 
-        // =====================================================
-        // RESOURCE BUNDLE
-        // =====================================================
-
-        ResourceBundle bundle =
-                ResourceBundle.getBundle(
-                        "i18n.messages",
-                        LanguageManager.isArabic()
-                                ? new Locale("ar")
-                                : new Locale("en")
-                );
-
-
-        // =====================================================
-        // LOAD FXML
-        // =====================================================
-
-        FXMLLoader loader =
-                new FXMLLoader(
-                        getClass().getResource(
-                                "/fxml/add-membership.fxml"
-                        ),
-                        bundle
-                );
-
-        Parent root =
-                loader.load();
-
-
-        // =====================================================
-        // LANGUAGE DIRECTION
-        // =====================================================
-
-        if (LanguageManager.isArabic()) {
-
-            root.setNodeOrientation(
-                    NodeOrientation.RIGHT_TO_LEFT
-            );
-
-        } else {
-
-            root.setNodeOrientation(
-                    NodeOrientation.LEFT_TO_RIGHT
-            );
-        }
-
-
-        // =====================================================
-        // CREATE SCENE
-        // =====================================================
-
-        Scene scene =
-                new Scene(root);
-
-
-        // =====================================================
-        // LOAD APPLICATION CSS
-        // =====================================================
-
-        var css =
-                getClass().getResource(
-                        "/css/app.css"
-                );
-
-        if (css != null) {
-
-            scene.getStylesheets().add(
-                    css.toExternalForm()
-            );
-        }
-
-
-        // =====================================================
-        // CREATE STAGE
-        // =====================================================
-
-        Stage stage =
-                new Stage();
-
-
-        // =====================================================
-        // WINDOW TITLE
-        // =====================================================
-
-        stage.setTitle(
-                LanguageManager.isArabic()
-                        ? "اشتراك جديد"
-                        : "New Membership"
-        );
-
-
-        // =====================================================
-        // MODAL WINDOW
-        // =====================================================
-
-        stage.initModality(
-                Modality.APPLICATION_MODAL
-        );
-
-
-        // =====================================================
-        // SET OWNER
-        // =====================================================
-
-        if (membershipsTable != null
-                && membershipsTable.getScene() != null
-                && membershipsTable
-                        .getScene()
-                        .getWindow() != null) {
-
-            stage.initOwner(
-                    membershipsTable
-                            .getScene()
-                            .getWindow()
-            );
-        }
-
-
-        // =====================================================
-        // STAGE SETTINGS
-        // =====================================================
-
-        stage.setScene(scene);
-
-        stage.setResizable(true);
-
-
-        // =====================================================
-        // ALWAYS OPEN MAXIMIZED
-        // =====================================================
-
-        stage.setMaximized(true);
-
-
-        // =====================================================
-        // SAFETY:
-        // ENSURE MAXIMIZED AFTER WINDOW IS SHOWN
-        // =====================================================
-
-        stage.setOnShown(event -> {
-
-            if (!stage.isMaximized()) {
-
-                stage.setMaximized(true);
-            }
-        });
-
-
-        // =====================================================
-        // SHOW WINDOW
-        // =====================================================
-
-        stage.showAndWait();
-
-
-        // =====================================================
-        // REFRESH MEMBERSHIPS AFTER CLOSE
-        // =====================================================
-
-        refresh();
-
-
-    } catch (IOException exception) {
-
-        exception.printStackTrace();
-
-        showError(
-                LanguageManager.isArabic()
-                        ? "تعذر فتح شاشة الاشتراك الجديد."
-                        : "Could not open the new membership window.",
-                exception
-        );
-
-
-    } catch (Exception exception) {
-
-        exception.printStackTrace();
-
-        showError(
-                LanguageManager.isArabic()
-                        ? "حدث خطأ أثناء فتح شاشة الاشتراك الجديد."
-                        : "An error occurred while opening the new membership window.",
-                exception
+        openMembershipForm(
+                null
         );
     }
-}
+
+
+    // =========================================================
+    // EDIT MEMBERSHIP
+    // =========================================================
+
+    private void editMembership(
+            MemberMembership membership
+    ) {
+
+        if (membership == null) {
+
+            return;
+        }
+
+
+        openMembershipForm(
+                membership
+        );
+    }
+
+
+    // =========================================================
+    // OPEN ADD / EDIT FORM
+    // =========================================================
+
+    private void openMembershipForm(
+            MemberMembership membership
+    ) {
+
+        try {
+
+            ResourceBundle bundle =
+                    ResourceBundle.getBundle(
+                            "i18n.messages",
+                            LanguageManager.isArabic()
+                                    ? new Locale("ar")
+                                    : Locale.ENGLISH
+                    );
+
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/add-membership.fxml"
+                            ),
+                            bundle
+                    );
+
+
+            Parent root =
+                    loader.load();
+
+
+            AddMembershipController controller =
+                    loader.getController();
+
+
+            if (membership != null) {
+
+                controller.setMembershipForEdit(
+                        membership
+                );
+            }
+
+
+            root.setNodeOrientation(
+                    LanguageManager.isArabic()
+                            ? NodeOrientation.RIGHT_TO_LEFT
+                            : NodeOrientation.LEFT_TO_RIGHT
+            );
+
+
+            String windowTitle =
+                    LanguageManager.isArabic()
+                            ? membership == null
+                                ? "اشتراك جديد"
+                                : "تعديل الاشتراك"
+                            : membership == null
+                                ? "New Membership"
+                                : "Edit Membership";
+
+
+            Stage stage =
+                    WindowManager.createModalStage(
+                            root,
+                            windowTitle,
+                            getOwnerWindow()
+                    );
+
+
+            /*
+             * Use one central policy instead of setMaximized/showAndWait
+             * directly. This fixes inconsistent child-window behavior on
+             * Ubuntu/Linux.
+             */
+            WindowManager.showMaximizedAndWait(
+                    stage
+            );
+
+
+            refresh();
+
+
+        } catch (IOException exception) {
+
+            exception.printStackTrace();
+
+
+            showError(
+                    LanguageManager.isArabic()
+                            ? membership == null
+                                ? "تعذر فتح شاشة الاشتراك الجديد."
+                                : "تعذر فتح شاشة تعديل الاشتراك."
+                            : membership == null
+                                ? "Could not open the new membership window."
+                                : "Could not open the edit membership window.",
+                    exception
+            );
+
+
+        } catch (Exception exception) {
+
+            exception.printStackTrace();
+
+
+            showError(
+                    LanguageManager.isArabic()
+                            ? "حدث خطأ أثناء فتح شاشة الاشتراك."
+                            : "An error occurred while opening the membership window.",
+                    exception
+            );
+        }
+    }
+
+
+    // =========================================================
+    // DELETE MEMBERSHIP
+    // =========================================================
+
+    private void deleteMembership(
+            MemberMembership membership
+    ) {
+
+        if (membership == null) {
+
+            return;
+        }
+
+
+        Alert confirmation =
+                new Alert(
+                        Alert.AlertType.CONFIRMATION
+                );
+
+
+        confirmation.setTitle(
+                LanguageManager.isArabic()
+                        ? "تأكيد الحذف"
+                        : "Confirm Delete"
+        );
+
+
+        confirmation.setHeaderText(
+                LanguageManager.isArabic()
+                        ? "هل تريد حذف هذا الاشتراك؟"
+                        : "Delete this membership?"
+        );
+
+
+        String memberName =
+                safe(
+                        membership.getMemberName()
+                );
+
+
+        String planName =
+                LanguageManager.isArabic()
+                        ? safe(membership.getPlanNameAr())
+                        : safe(membership.getPlanNameEn());
+
+
+        confirmation.setContentText(
+                LanguageManager.isArabic()
+                        ? "العضو: "
+                            + memberName
+                            + "\nالخطة: "
+                            + planName
+                            + "\n\nسيتم حذف سجل الاشتراك نهائيًا."
+                        : "Member: "
+                            + memberName
+                            + "\nPlan: "
+                            + planName
+                            + "\n\nThe membership record will be permanently deleted."
+        );
+
+
+        DialogStyler.style(
+                confirmation
+        );
+
+
+        Optional<ButtonType> result =
+                WindowManager.showResponsiveDialogAndWait(
+                        confirmation,
+                        getOwnerWindow(),
+                        620.0,
+                        390.0
+                );
+
+
+        if (result.isEmpty()
+                || result.get() != ButtonType.OK) {
+
+            return;
+        }
+
+
+        try {
+
+            boolean deleted =
+                    membershipRepository.delete(
+                            membership.getId()
+                    );
+
+
+            if (!deleted) {
+
+                throw new SQLException(
+                        "Membership was not deleted."
+                );
+            }
+
+
+            refresh();
+
+
+        } catch (SQLException exception) {
+
+            exception.printStackTrace();
+
+
+            showError(
+                    LanguageManager.isArabic()
+                            ? "تعذر حذف الاشتراك. قد يكون مرتبطًا ببيانات أخرى."
+                            : "Could not delete the membership. It may be linked to other data.",
+                    exception
+            );
+        }
+    }
 
 
     // =========================================================
@@ -1111,6 +1372,29 @@ private void openNewMembership() {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                620.0,
+                380.0
+        );
+    }
+
+
+    // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (membershipsTable == null
+                || membershipsTable.getScene() == null) {
+
+            return null;
+        }
+
+        return membershipsTable
+                .getScene()
+                .getWindow();
     }
 }

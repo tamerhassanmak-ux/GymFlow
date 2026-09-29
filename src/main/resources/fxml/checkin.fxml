@@ -14,6 +14,10 @@
 <AnchorPane
     prefHeight="700.0"
     prefWidth="950.0"
+    minHeight="0.0"
+    minWidth="0.0"
+    maxHeight="Infinity"
+    maxWidth="Infinity"
     xmlns="http://javafx.com/javafx/21"
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.mycompany.lazar_app.controller.CheckinController"

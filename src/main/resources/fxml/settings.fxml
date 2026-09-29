@@ -526,6 +526,17 @@
                                        -fx-text-fill: #6B7280;"/>
 
                         <Button
+                                fx:id="programLicenseButton"
+                                text="Program License 🔒"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: #F97316;
+                                       -fx-text-fill: white;
+                                       -fx-font-weight: bold;
+                                       -fx-background-radius: 7;
+                                       -fx-padding: 10;
+                                       -fx-cursor: hand;"/>
+
+                        <Button
                                 fx:id="databaseConfigurationButton"
                                 text="Database Configuration 🔒"
                                 maxWidth="Infinity"

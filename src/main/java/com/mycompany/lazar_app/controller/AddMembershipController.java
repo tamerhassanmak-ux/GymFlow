@@ -1,8 +1,8 @@
 package com.mycompany.lazar_app.controller;
 
-import com.mycompany.lazar_app.ui.dialog.DialogStyler;
-
 import com.mycompany.lazar_app.LanguageManager;
+import com.mycompany.lazar_app.ui.WindowManager;
+import com.mycompany.lazar_app.ui.dialog.DialogStyler;
 
 import com.mycompany.lazar_app.model.Member;
 import com.mycompany.lazar_app.model.MemberMembership;
@@ -29,6 +29,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.sql.SQLException;
 
@@ -68,6 +69,15 @@ public class AddMembershipController {
 
     private final List<Member> allMembers =
             new ArrayList<>();
+
+
+    // =========================================================
+    // EDIT MODE
+    // =========================================================
+
+    private MemberMembership editingMembership;
+
+    private boolean loadingEditData;
 
 
     // =========================================================
@@ -206,6 +216,210 @@ public class AddMembershipController {
         if (memberSearchField != null) {
 
             memberSearchField.requestFocus();
+        }
+    }
+
+
+    // =========================================================
+    // EDIT EXISTING MEMBERSHIP
+    // =========================================================
+
+    public void setMembershipForEdit(
+            MemberMembership membership
+    ) {
+
+        if (membership == null) {
+
+            return;
+        }
+
+
+        editingMembership =
+                membership;
+
+        loadingEditData =
+                true;
+
+
+        try {
+
+            // -------------------------------------------------
+            // Header
+            // -------------------------------------------------
+
+            titleLabel.setText(
+                    LanguageManager.isArabic()
+                            ? "تعديل الاشتراك"
+                            : "Edit Membership"
+            );
+
+
+            subtitleLabel.setText(
+                    LanguageManager.isArabic()
+                            ? "تعديل بيانات اشتراك العضو الحالي"
+                            : "Update the selected membership details"
+            );
+
+
+            saveButton.setText(
+                    LanguageManager.isArabic()
+                            ? "حفظ التعديلات"
+                            : "Save Changes"
+            );
+
+
+            // -------------------------------------------------
+            // Member
+            // -------------------------------------------------
+
+            Member selectedMember =
+                    allMembers
+                            .stream()
+                            .filter(
+                                    member ->
+                                            member.getId()
+                                                    == membership.getMemberId()
+                            )
+                            .findFirst()
+                            .orElse(null);
+
+
+            if (selectedMember != null) {
+
+                memberComboBox.setValue(
+                        selectedMember
+                );
+
+
+                if (memberSearchField != null) {
+
+                    memberSearchField.setText(
+                            safe(
+                                    selectedMember.getMemberCode()
+                            )
+                    );
+                }
+            }
+
+
+            /*
+             * Changing the owner of an existing membership can
+             * corrupt membership history, so keep the member fixed.
+             */
+            memberComboBox.setDisable(
+                    true
+            );
+
+
+            if (memberSearchField != null) {
+
+                memberSearchField.setDisable(
+                        true
+                );
+            }
+
+
+            // -------------------------------------------------
+            // Plan
+            // -------------------------------------------------
+
+            MembershipPlan selectedPlan =
+                    planComboBox
+                            .getItems()
+                            .stream()
+                            .filter(
+                                    plan ->
+                                            plan.getId()
+                                                    == membership.getMembershipPlanId()
+                            )
+                            .findFirst()
+                            .orElse(null);
+
+
+            /*
+             * The current plan may have been disabled after the
+             * membership was created. Add it temporarily so the
+             * historical record can still be edited correctly.
+             */
+            if (selectedPlan == null) {
+
+                try {
+
+                    Optional<MembershipPlan> storedPlan =
+                            planRepository.findById(
+                                    membership.getMembershipPlanId()
+                            );
+
+
+                    if (storedPlan.isPresent()) {
+
+                        selectedPlan =
+                                storedPlan.get();
+
+                        planComboBox
+                                .getItems()
+                                .add(
+                                        selectedPlan
+                                );
+                    }
+
+                } catch (SQLException exception) {
+
+                    exception.printStackTrace();
+                }
+            }
+
+
+            if (selectedPlan != null) {
+
+                planComboBox.setValue(
+                        selectedPlan
+                );
+            }
+
+
+            // -------------------------------------------------
+            // Existing values
+            // -------------------------------------------------
+
+            startDatePicker.setValue(
+                    membership.getStartDate()
+            );
+
+
+            endDatePicker.setValue(
+                    membership.getEndDate()
+            );
+
+
+            priceField.setText(
+                    formatNumber(
+                            membership.getPrice()
+                    )
+            );
+
+
+            discountField.setText(
+                    formatNumber(
+                            membership.getDiscount()
+                    )
+            );
+
+
+            notesArea.setText(
+                    safe(
+                            membership.getNotes()
+                    )
+            );
+
+
+            updateFinalPrice();
+
+
+        } finally {
+
+            loadingEditData =
+                    false;
         }
     }
 
@@ -791,6 +1005,12 @@ public class AddMembershipController {
                                     newValue
                             ) -> {
 
+                                if (loadingEditData) {
+
+                                    return;
+                                }
+
+
                                 searchMembers(
                                         newValue
                                 );
@@ -822,7 +1042,9 @@ public class AddMembershipController {
                                 newMember
                         ) -> {
 
-                            if (newMember != null) {
+                            if (newMember != null
+                                    && !loadingEditData
+                                    && editingMembership == null) {
 
                                 checkSelectedMemberMembership(
                                         newMember
@@ -1168,7 +1390,9 @@ public class AddMembershipController {
             Member member
     ) {
 
-        if (member == null) {
+        if (member == null
+                || editingMembership != null
+                || loadingEditData) {
 
             return;
         }
@@ -1374,14 +1598,10 @@ public class AddMembershipController {
 
     private void updateFinalPrice() {
 
-        MembershipPlan selectedPlan =
-                planComboBox.getValue();
-
-
         double price =
-                selectedPlan == null
-                        ? 0
-                        : selectedPlan.getPrice();
+                parseDouble(
+                        priceField.getText()
+                );
 
 
         double discount =
@@ -1525,67 +1745,70 @@ public class AddMembershipController {
 
 
         // =====================================================
-        // ACTIVE MEMBERSHIP CHECK
+        // ACTIVE / OVERLAP CHECK (NEW MEMBERSHIP ONLY)
         // =====================================================
 
-        try {
+        if (editingMembership == null) {
 
-            Optional<MemberMembership> currentMembership =
-                    membershipRepository
-                            .findCurrentMembershipByMemberId(
-                                    selectedMember.getId()
-                            );
+            try {
+
+                Optional<MemberMembership> currentMembership =
+                        membershipRepository
+                                .findCurrentMembershipByMemberId(
+                                        selectedMember.getId()
+                                );
 
 
-            if (currentMembership.isPresent()) {
+                if (currentMembership.isPresent()) {
 
-                showActiveMembershipWarning(
-                        selectedMember,
-                        currentMembership.get()
+                    showActiveMembershipWarning(
+                            selectedMember,
+                            currentMembership.get()
+                    );
+
+                    return;
+                }
+
+
+                // =================================================
+                // PERIOD OVERLAP CHECK
+                // =================================================
+
+                Optional<MemberMembership> overlapping =
+                        membershipRepository
+                                .findOverlappingMembership(
+                                        selectedMember.getId(),
+                                        startDate,
+                                        endDate
+                                );
+
+
+                if (overlapping.isPresent()) {
+
+                    showOverlappingMembershipWarning(
+                            selectedMember,
+                            overlapping.get()
+                    );
+
+                    return;
+                }
+
+
+            } catch (SQLException exception) {
+
+                exception.printStackTrace();
+
+
+                showError(
+                        LanguageManager.isArabic()
+                                ? "تعذر التحقق من حالة اشتراك العضو."
+                                : "Could not verify the member's membership status.",
+                        exception
                 );
+
 
                 return;
             }
-
-
-            // =================================================
-            // PERIOD OVERLAP CHECK
-            // =================================================
-
-            Optional<MemberMembership> overlapping =
-                    membershipRepository
-                            .findOverlappingMembership(
-                                    selectedMember.getId(),
-                                    startDate,
-                                    endDate
-                            );
-
-
-            if (overlapping.isPresent()) {
-
-                showOverlappingMembershipWarning(
-                        selectedMember,
-                        overlapping.get()
-                );
-
-                return;
-            }
-
-
-        } catch (SQLException exception) {
-
-            exception.printStackTrace();
-
-
-            showError(
-                    LanguageManager.isArabic()
-                            ? "تعذر التحقق من حالة اشتراك العضو."
-                            : "Could not verify the member's membership status.",
-                    exception
-            );
-
-
-            return;
         }
 
 
@@ -1594,7 +1817,9 @@ public class AddMembershipController {
         // =====================================================
 
         double price =
-                selectedPlan.getPrice();
+                parseDouble(
+                        priceField.getText()
+                );
 
 
         double discount =
@@ -1645,7 +1870,9 @@ public class AddMembershipController {
         // =====================================================
 
         MemberMembership membership =
-                new MemberMembership();
+                editingMembership == null
+                        ? new MemberMembership()
+                        : editingMembership;
 
 
         membership.setMemberId(
@@ -1669,32 +1896,26 @@ public class AddMembershipController {
 
 
         /*
-         * Snapshot the plan session limit into this membership.
-         * Future changes to the plan will not change existing
-         * memberships.
+         * IMPORTANT:
+         * Commercial plan terms are owned by MemberMembershipRepository.
+         *
+         * The repository snapshots the current plan price and session limit
+         * when a NEW membership is created. During EDIT, it preserves the
+         * original snapshot unless the plan itself is changed.
+         *
+         * The controller only supplies the relationship-specific discount.
          */
-        membership.setAllowedSessions(
-                selectedPlan.getMaxSessions()
-        );
-
-
-        membership.setPrice(
-                price
-        );
-
-
         membership.setDiscount(
                 discount
         );
 
 
-        membership.setFinalPrice(
-                finalPrice
-        );
-
-
         membership.setStatus(
-                "Active"
+                editingMembership == null
+                        ? "Active"
+                        : safe(editingMembership.getStatus()).isBlank()
+                            ? "Active"
+                            : editingMembership.getStatus()
         );
 
 
@@ -1716,15 +1937,37 @@ public class AddMembershipController {
             );
 
 
-            membershipRepository.insert(
-                    membership
-            );
+            if (editingMembership == null) {
+
+                membershipRepository.insert(
+                        membership
+                );
+
+            } else {
+
+                boolean updated =
+                        membershipRepository.update(
+                                membership
+                        );
+
+
+                if (!updated) {
+
+                    throw new SQLException(
+                            "Membership update did not affect any row."
+                    );
+                }
+            }
 
 
             showSuccess(
                     LanguageManager.isArabic()
-                            ? "تم حفظ اشتراك العضو بنجاح."
-                            : "Membership saved successfully."
+                            ? editingMembership == null
+                                ? "تم حفظ اشتراك العضو بنجاح."
+                                : "تم تعديل الاشتراك بنجاح."
+                            : editingMembership == null
+                                ? "Membership saved successfully."
+                                : "Membership updated successfully."
             );
 
 
@@ -1738,8 +1981,12 @@ public class AddMembershipController {
 
             showError(
                     LanguageManager.isArabic()
-                            ? "تعذر حفظ الاشتراك. تحقق من عدم وجود اشتراك آخر في نفس الفترة."
-                            : "Could not save membership. Check for another membership in the same period.",
+                            ? editingMembership == null
+                                ? "تعذر حفظ الاشتراك. تحقق من عدم وجود اشتراك آخر في نفس الفترة."
+                                : "تعذر تعديل الاشتراك. تحقق من عدم تداخل الفترة مع اشتراك آخر."
+                            : editingMembership == null
+                                ? "Could not save membership. Check for another membership in the same period."
+                                : "Could not update membership. Check that the period does not overlap another membership.",
                     exception
             );
 
@@ -2120,8 +2367,12 @@ public class AddMembershipController {
 
         DialogStyler.style(alert);
 
-
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                600.0,
+                360.0
+        );
     }
 
 
@@ -2158,8 +2409,12 @@ public class AddMembershipController {
 
         DialogStyler.style(alert);
 
-
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                560.0,
+                330.0
+        );
     }
 
 
@@ -2205,7 +2460,29 @@ public class AddMembershipController {
 
         DialogStyler.style(alert);
 
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                620.0,
+                380.0
+        );
+    }
 
-        alert.showAndWait();
+
+    // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (saveButton == null
+                || saveButton.getScene() == null) {
+
+            return null;
+        }
+
+        return saveButton
+                .getScene()
+                .getWindow();
     }
 }

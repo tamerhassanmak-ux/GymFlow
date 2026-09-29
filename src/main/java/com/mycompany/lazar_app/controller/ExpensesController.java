@@ -1,6 +1,7 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
+import com.mycompany.lazar_app.ui.WindowManager;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.Expense;
@@ -41,6 +42,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class ExpensesController implements Initializable {
 
@@ -952,8 +954,14 @@ public class ExpensesController implements Initializable {
         applyAlertDirection(confirmation);
 
         DialogStyler.style(confirmation);
+
         Optional<ButtonType> result =
-                confirmation.showAndWait();
+                WindowManager.showResponsiveDialogAndWait(
+                        confirmation,
+                        getOwnerWindow(),
+                        520.0,
+                        320.0
+                );
 
         if (result.isEmpty()
                 || result.get() != ButtonType.OK) {
@@ -1077,13 +1085,7 @@ public class ExpensesController implements Initializable {
                     this::refreshAll
             );
 
-            Scene scene =
-                    new Scene(root);
-
-            Stage stage =
-                    new Stage();
-
-            stage.setTitle(
+            String windowTitle =
                     expense == null
                             ? text(
                                     "expense.new",
@@ -1092,31 +1094,20 @@ public class ExpensesController implements Initializable {
                             : text(
                                     "expense.edit",
                                     "Edit Expense"
-                            )
+                            );
+
+            Stage stage =
+                    WindowManager.createModalStage(
+                            root,
+                            windowTitle,
+                            getOwnerWindow()
+                    );
+
+            WindowManager.showMaximizedAndWait(
+                    stage,
+                    900.0,
+                    650.0
             );
-
-            stage.setScene(scene);
-
-            stage.initModality(
-                    Modality.APPLICATION_MODAL
-            );
-
-            if (expensesTable.getScene() != null) {
-
-                stage.initOwner(
-                        expensesTable
-                                .getScene()
-                                .getWindow()
-                );
-            }
-
-            stage.setMaximized(true);
-
-            stage.setMinWidth(900);
-
-            stage.setMinHeight(650);
-
-            stage.showAndWait();
 
         } catch (IOException exception) {
 
@@ -1434,7 +1425,12 @@ public class ExpensesController implements Initializable {
 
         DialogStyler.style(alert);
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                520.0,
+                320.0
+        );
     }
 
 
@@ -1467,7 +1463,29 @@ public class ExpensesController implements Initializable {
 
         DialogStyler.style(alert);
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                520.0,
+                320.0
+        );
+    }
+
+
+    // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (expensesTable == null
+                || expensesTable.getScene() == null) {
+            return null;
+        }
+
+        return expensesTable
+                .getScene()
+                .getWindow();
     }
 
 

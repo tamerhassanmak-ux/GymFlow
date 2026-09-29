@@ -87,7 +87,7 @@ public class Lazar_APP extends Application {
 
             FXMLLoader loader = new FXMLLoader(
                     Lazar_APP.class.getResource(
-                            "dashboard.fxml"
+                            "/fxml/dashboard.fxml"
                     ),
                     LanguageManager.getBundle()
             );

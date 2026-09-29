@@ -23,7 +23,9 @@ import java.util.Map;
 public class ReportRepository {
 
     private static final DateTimeFormatter DB_DATE_TIME =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter.ofPattern(
+                    "yyyy-MM-dd HH:mm:ss"
+            );
 
 
     // =========================================================
@@ -35,13 +37,67 @@ public class ReportRepository {
             LocalDate to
     ) throws SQLException {
 
-        return getSummary(
-                from,
-                to,
-                ReportType.FINANCIAL_SUMMARY
+        validateDates(from, to);
+
+        ReportSummary summary =
+                new ReportSummary();
+
+        summary.setTotalRevenue(
+                getRevenue(
+                        from,
+                        to,
+                        null
+                )
         );
+
+        summary.setMembershipRevenue(
+                getRevenue(
+                        from,
+                        to,
+                        Boolean.TRUE
+                )
+        );
+
+        summary.setOtherRevenue(
+                getRevenue(
+                        from,
+                        to,
+                        Boolean.FALSE
+                )
+        );
+
+        summary.setTotalExpenses(
+                getExpenses(
+                        from,
+                        to
+                )
+        );
+
+        summary.setTransactions(
+                countTransactions(
+                        from,
+                        to
+                )
+        );
+
+        summary.setActiveMembers(
+                countActiveMembers()
+        );
+
+        summary.setNewMembers(
+                countNewMembers(
+                        from,
+                        to
+                )
+        );
+
+        return summary;
     }
 
+
+    // =========================================================
+    // SUMMARY BY REPORT TYPE
+    // =========================================================
 
     public ReportSummary getSummary(
             LocalDate from,
@@ -51,16 +107,70 @@ public class ReportRepository {
 
         validateDates(from, to);
 
-        ReportType type =
+        ReportType effectiveType =
                 reportType == null
                         ? ReportType.FINANCIAL_SUMMARY
                         : reportType;
 
+        if (effectiveType == ReportType.FINANCIAL_SUMMARY) {
+            return getSummary(from, to);
+        }
+
         ReportSummary summary =
                 new ReportSummary();
 
+        BigDecimal membershipRevenue =
+                getRevenue(from, to, Boolean.TRUE);
 
-        // Always useful membership statistics.
+        BigDecimal otherRevenue =
+                getRevenue(from, to, Boolean.FALSE);
+
+        BigDecimal totalRevenue =
+                membershipRevenue.add(otherRevenue);
+
+        BigDecimal totalExpenses =
+                getExpenses(from, to);
+
+        switch (effectiveType) {
+
+            case REVENUE -> {
+                summary.setTotalRevenue(totalRevenue);
+                summary.setMembershipRevenue(membershipRevenue);
+                summary.setOtherRevenue(otherRevenue);
+                summary.setTotalExpenses(BigDecimal.ZERO);
+                summary.setTransactions(
+                        countRevenueTransactions(from, to, null)
+                );
+            }
+
+            case EXPENSES -> {
+                summary.setTotalRevenue(BigDecimal.ZERO);
+                summary.setMembershipRevenue(BigDecimal.ZERO);
+                summary.setOtherRevenue(BigDecimal.ZERO);
+                summary.setTotalExpenses(totalExpenses);
+                summary.setTransactions(
+                        countExpenseTransactions(from, to)
+                );
+            }
+
+            case MEMBERSHIPS -> {
+                summary.setTotalRevenue(membershipRevenue);
+                summary.setMembershipRevenue(membershipRevenue);
+                summary.setOtherRevenue(BigDecimal.ZERO);
+                summary.setTotalExpenses(BigDecimal.ZERO);
+                summary.setTransactions(
+                        countRevenueTransactions(
+                                from,
+                                to,
+                                Boolean.TRUE
+                        )
+                );
+            }
+
+            default -> {
+                return getSummary(from, to);
+            }
+        }
 
         summary.setActiveMembers(
                 countActiveMembers()
@@ -69,122 +179,6 @@ public class ReportRepository {
         summary.setNewMembers(
                 countNewMembers(from, to)
         );
-
-
-        switch (type) {
-
-            case FINANCIAL_SUMMARY -> {
-
-                summary.setTotalRevenue(
-                        getRevenue(from, to, null)
-                );
-
-                summary.setMembershipRevenue(
-                        getRevenue(from, to, Boolean.TRUE)
-                );
-
-                summary.setOtherRevenue(
-                        getRevenue(from, to, Boolean.FALSE)
-                );
-
-                summary.setTotalExpenses(
-                        getExpenses(from, to)
-                );
-
-                summary.setTransactions(
-                        countTransactions(from, to)
-                );
-            }
-
-
-            case REVENUE -> {
-
-                BigDecimal revenue =
-                        getRevenue(from, to, null);
-
-                summary.setTotalRevenue(revenue);
-
-                summary.setMembershipRevenue(
-                        getRevenue(from, to, Boolean.TRUE)
-                );
-
-                summary.setOtherRevenue(
-                        getRevenue(from, to, Boolean.FALSE)
-                );
-
-                summary.setTotalExpenses(
-                        BigDecimal.ZERO
-                );
-
-                summary.setTransactions(
-                        countPayments(
-                                from,
-                                to,
-                                null
-                        )
-                );
-            }
-
-
-            case EXPENSES -> {
-
-                summary.setTotalRevenue(
-                        BigDecimal.ZERO
-                );
-
-                summary.setMembershipRevenue(
-                        BigDecimal.ZERO
-                );
-
-                summary.setOtherRevenue(
-                        BigDecimal.ZERO
-                );
-
-                summary.setTotalExpenses(
-                        getExpenses(from, to)
-                );
-
-                summary.setTransactions(
-                        countExpenses(from, to)
-                );
-            }
-
-
-            case MEMBERSHIPS -> {
-
-                BigDecimal membershipRevenue =
-                        getRevenue(
-                                from,
-                                to,
-                                Boolean.TRUE
-                        );
-
-                summary.setTotalRevenue(
-                        membershipRevenue
-                );
-
-                summary.setMembershipRevenue(
-                        membershipRevenue
-                );
-
-                summary.setOtherRevenue(
-                        BigDecimal.ZERO
-                );
-
-                summary.setTotalExpenses(
-                        BigDecimal.ZERO
-                );
-
-                summary.setTransactions(
-                        countPayments(
-                                from,
-                                to,
-                                Boolean.TRUE
-                        )
-                );
-            }
-        }
-
 
         return summary;
     }
@@ -200,6 +194,34 @@ public class ReportRepository {
             Boolean membershipOnly
     ) throws SQLException {
 
+        BigDecimal paymentRevenue =
+                getPaymentRevenue(
+                        from,
+                        to,
+                        membershipOnly
+                );
+
+        /*
+         * Manual revenues belong to Other Revenue.
+         * Therefore they are included in TOTAL revenue and OTHER revenue,
+         * but never in Membership Revenue.
+         */
+        if (Boolean.TRUE.equals(membershipOnly)) {
+            return paymentRevenue;
+        }
+
+        return paymentRevenue.add(
+                getManualRevenue(from, to)
+        );
+    }
+
+
+    private BigDecimal getPaymentRevenue(
+            LocalDate from,
+            LocalDate to,
+            Boolean membershipOnly
+    ) throws SQLException {
+
         StringBuilder sql =
                 new StringBuilder("""
                         SELECT COALESCE(SUM(amount), 0)
@@ -209,35 +231,47 @@ public class ReportRepository {
                           AND payment_date < ?
                         """);
 
-
-        appendMembershipFilter(
-                sql,
-                membershipOnly
-        );
-
+        if (Boolean.TRUE.equals(membershipOnly)) {
+            sql.append(" AND membership_id IS NOT NULL ");
+        } else if (Boolean.FALSE.equals(membershipOnly)) {
+            sql.append(" AND membership_id IS NULL ");
+        }
 
         try (
-                Connection connection =
-                        DatabaseManager.getConnection();
-
-                PreparedStatement statement =
-                        connection.prepareStatement(
-                                sql.toString()
-                        )
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        sql.toString()
+                )
         ) {
+            setDateRange(statement, from, to);
 
-            setDateRange(
-                    statement,
-                    from,
-                    to
-            );
+            try (ResultSet rs = statement.executeQuery()) {
+                return readDecimal(rs);
+            }
+        }
+    }
 
 
-            try (
-                    ResultSet rs =
-                            statement.executeQuery()
-            ) {
+    private BigDecimal getManualRevenue(
+            LocalDate from,
+            LocalDate to
+    ) throws SQLException {
 
+        String sql = """
+                SELECT COALESCE(SUM(amount), 0)
+                FROM revenues
+                WHERE revenue_date >= ?
+                  AND revenue_date <= ?
+                """;
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, from.toString());
+            statement.setString(2, to.toString());
+
+            try (ResultSet rs = statement.executeQuery()) {
                 return readDecimal(rs);
             }
         }
@@ -261,7 +295,6 @@ public class ReportRepository {
                   AND expense_date <= ?
                 """;
 
-
         try (
                 Connection connection =
                         DatabaseManager.getConnection();
@@ -270,12 +303,15 @@ public class ReportRepository {
                         connection.prepareStatement(sql)
         ) {
 
-            setExpenseDateRange(
-                    statement,
-                    from,
-                    to
+            statement.setString(
+                    1,
+                    from.toString()
             );
 
+            statement.setString(
+                    2,
+                    to.toString()
+            );
 
             try (
                     ResultSet rs =
@@ -289,7 +325,7 @@ public class ReportRepository {
 
 
     // =========================================================
-    // TRANSACTION COUNTS
+    // TRANSACTIONS
     // =========================================================
 
     private long countTransactions(
@@ -297,18 +333,93 @@ public class ReportRepository {
             LocalDate to
     ) throws SQLException {
 
-        return countPayments(
-                from,
-                to,
-                null
-        ) + countExpenses(
-                from,
-                to
-        );
+        String sql = """
+                SELECT
+                    (
+                        SELECT COUNT(*)
+                        FROM payments
+                        WHERE UPPER(status) = 'PAID'
+                          AND payment_date >= ?
+                          AND payment_date < ?
+                    )
+                    +
+                    (
+                        SELECT COUNT(*)
+                        FROM expenses
+                        WHERE UPPER(status) = 'PAID'
+                          AND expense_date >= ?
+                          AND expense_date <= ?
+                    )
+                    +
+                    (
+                        SELECT COUNT(*)
+                        FROM revenues
+                        WHERE revenue_date >= ?
+                          AND revenue_date <= ?
+                    )
+                """;
+
+        try (
+                Connection connection =
+                        DatabaseManager.getConnection();
+
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+
+            statement.setString(
+                    1,
+                    formatDateTime(
+                            from.atStartOfDay()
+                    )
+            );
+
+            statement.setString(
+                    2,
+                    formatDateTime(
+                            to.plusDays(1)
+                                    .atStartOfDay()
+                    )
+            );
+
+            statement.setString(
+                    3,
+                    from.toString()
+            );
+
+            statement.setString(
+                    4,
+                    to.toString()
+            );
+
+            statement.setString(
+                    5,
+                    from.toString()
+            );
+
+            statement.setString(
+                    6,
+                    to.toString()
+            );
+
+            try (
+                    ResultSet rs =
+                            statement.executeQuery()
+            ) {
+
+                return rs.next()
+                        ? rs.getLong(1)
+                        : 0L;
+            }
+        }
     }
 
 
-    private long countPayments(
+    // =========================================================
+    // FILTERED TRANSACTION COUNTS
+    // =========================================================
+
+    private long countRevenueTransactions(
             LocalDate from,
             LocalDate to,
             Boolean membershipOnly
@@ -323,44 +434,58 @@ public class ReportRepository {
                           AND payment_date < ?
                         """);
 
+        if (Boolean.TRUE.equals(membershipOnly)) {
+            sql.append(" AND membership_id IS NOT NULL ");
+        } else if (Boolean.FALSE.equals(membershipOnly)) {
+            sql.append(" AND membership_id IS NULL ");
+        }
 
-        appendMembershipFilter(
-                sql,
-                membershipOnly
-        );
-
+        long paymentCount;
 
         try (
-                Connection connection =
-                        DatabaseManager.getConnection();
-
+                Connection connection = DatabaseManager.getConnection();
                 PreparedStatement statement =
-                        connection.prepareStatement(
-                                sql.toString()
-                        )
+                        connection.prepareStatement(sql.toString())
         ) {
+            setDateRange(statement, from, to);
 
-            setDateRange(
-                    statement,
-                    from,
-                    to
-            );
+            try (ResultSet rs = statement.executeQuery()) {
+                paymentCount = rs.next() ? rs.getLong(1) : 0L;
+            }
+        }
 
+        /*
+         * Manually entered revenues are part of Revenue and Financial Summary,
+         * but never part of Memberships.
+         */
+        if (Boolean.TRUE.equals(membershipOnly)) {
+            return paymentCount;
+        }
 
-            try (
-                    ResultSet rs =
-                            statement.executeQuery()
-            ) {
+        String manualSql = """
+                SELECT COUNT(*)
+                FROM revenues
+                WHERE revenue_date >= ?
+                  AND revenue_date <= ?
+                """;
 
-                return rs.next()
-                        ? rs.getLong(1)
-                        : 0L;
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement =
+                        connection.prepareStatement(manualSql)
+        ) {
+            statement.setString(1, from.toString());
+            statement.setString(2, to.toString());
+
+            try (ResultSet rs = statement.executeQuery()) {
+                return paymentCount
+                        + (rs.next() ? rs.getLong(1) : 0L);
             }
         }
     }
 
 
-    private long countExpenses(
+    private long countExpenseTransactions(
             LocalDate from,
             LocalDate to
     ) throws SQLException {
@@ -373,30 +498,16 @@ public class ReportRepository {
                   AND expense_date <= ?
                 """;
 
-
         try (
-                Connection connection =
-                        DatabaseManager.getConnection();
-
+                Connection connection = DatabaseManager.getConnection();
                 PreparedStatement statement =
                         connection.prepareStatement(sql)
         ) {
+            statement.setString(1, from.toString());
+            statement.setString(2, to.toString());
 
-            setExpenseDateRange(
-                    statement,
-                    from,
-                    to
-            );
-
-
-            try (
-                    ResultSet rs =
-                            statement.executeQuery()
-            ) {
-
-                return rs.next()
-                        ? rs.getLong(1)
-                        : 0L;
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? rs.getLong(1) : 0L;
             }
         }
     }
@@ -414,7 +525,6 @@ public class ReportRepository {
                 FROM members
                 WHERE UPPER(status) = 'ACTIVE'
                 """;
-
 
         try (
                 Connection connection =
@@ -450,7 +560,6 @@ public class ReportRepository {
                   AND start_date <= ?
                 """;
 
-
         try (
                 Connection connection =
                         DatabaseManager.getConnection();
@@ -468,7 +577,6 @@ public class ReportRepository {
                     2,
                     to.toString()
             );
-
 
             try (
                     ResultSet rs =
@@ -493,82 +601,28 @@ public class ReportRepository {
             int limit
     ) throws SQLException {
 
-        return getFinancialActivity(
-                from,
-                to,
-                ReportType.FINANCIAL_SUMMARY,
-                limit
-        );
-    }
-
-
-    public List<FinancialActivity> getFinancialActivity(
-            LocalDate from,
-            LocalDate to,
-            ReportType reportType,
-            int limit
-    ) throws SQLException {
-
         validateDates(from, to);
-
-        ReportType type =
-                reportType == null
-                        ? ReportType.FINANCIAL_SUMMARY
-                        : reportType;
-
 
         List<FinancialActivity> result =
                 new ArrayList<>();
 
+        loadPayments(
+                result,
+                from,
+                to
+        );
 
-        switch (type) {
+        loadManualRevenues(
+                result,
+                from,
+                to
+        );
 
-            case FINANCIAL_SUMMARY -> {
-
-                loadPayments(
-                        result,
-                        from,
-                        to,
-                        null
-                );
-
-                loadExpenses(
-                        result,
-                        from,
-                        to
-                );
-            }
-
-
-            case REVENUE ->
-
-                loadPayments(
-                        result,
-                        from,
-                        to,
-                        null
-                );
-
-
-            case EXPENSES ->
-
-                loadExpenses(
-                        result,
-                        from,
-                        to
-                );
-
-
-            case MEMBERSHIPS ->
-
-                loadPayments(
-                        result,
-                        from,
-                        to,
-                        Boolean.TRUE
-                );
-        }
-
+        loadExpenses(
+                result,
+                from,
+                to
+        );
 
         result.sort(
                 (a, b) -> {
@@ -594,7 +648,6 @@ public class ReportRepository {
                 }
         );
 
-
         if (limit > 0
                 && result.size() > limit) {
 
@@ -606,8 +659,148 @@ public class ReportRepository {
             );
         }
 
+        return result;
+    }
+
+
+    // =========================================================
+    // FINANCIAL ACTIVITY BY REPORT TYPE
+    // =========================================================
+
+    public List<FinancialActivity> getFinancialActivity(
+            LocalDate from,
+            LocalDate to,
+            ReportType reportType,
+            int limit
+    ) throws SQLException {
+
+        validateDates(from, to);
+
+        ReportType effectiveType =
+                reportType == null
+                        ? ReportType.FINANCIAL_SUMMARY
+                        : reportType;
+
+        List<FinancialActivity> result =
+                new ArrayList<>();
+
+        switch (effectiveType) {
+
+            case REVENUE -> {
+                loadPayments(result, from, to);
+                loadManualRevenues(result, from, to);
+            }
+
+            case EXPENSES ->
+                    loadExpenses(result, from, to);
+
+            case MEMBERSHIPS ->
+                    loadMembershipPayments(result, from, to);
+
+            case FINANCIAL_SUMMARY -> {
+                loadPayments(result, from, to);
+                loadManualRevenues(result, from, to);
+                loadExpenses(result, from, to);
+            }
+        }
+
+        sortAndLimit(result, limit);
+
+        if (limit > 0 && result.size() > limit) {
+            return new ArrayList<>(
+                    result.subList(0, limit)
+            );
+        }
 
         return result;
+    }
+
+
+    private void sortAndLimit(
+            List<FinancialActivity> result,
+            int ignoredLimit
+    ) {
+
+        result.sort(
+                (a, b) -> {
+                    if (a.getDate() == null && b.getDate() == null) {
+                        return 0;
+                    }
+                    if (a.getDate() == null) {
+                        return 1;
+                    }
+                    if (b.getDate() == null) {
+                        return -1;
+                    }
+                    return b.getDate().compareTo(a.getDate());
+                }
+        );
+    }
+
+
+    private void loadMembershipPayments(
+            List<FinancialActivity> result,
+            LocalDate from,
+            LocalDate to
+    ) throws SQLException {
+
+        String sql = """
+                SELECT
+                    p.payment_date,
+                    p.amount,
+                    p.payment_method,
+                    p.status,
+                    p.member_id,
+                    p.membership_id,
+                    m.member_code,
+                    m.name
+                FROM payments p
+                LEFT JOIN members m
+                    ON m.id = p.member_id
+                WHERE p.payment_date >= ?
+                  AND p.payment_date < ?
+                  AND p.membership_id IS NOT NULL
+                ORDER BY p.payment_date DESC
+                """;
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+            setDateRange(statement, from, to);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+
+                    String memberCode = safe(
+                            rs.getString("member_code")
+                    );
+
+                    String memberName = safe(
+                            rs.getString("name")
+                    );
+
+                    String description = memberCode.isBlank()
+                            ? memberName
+                            : memberCode + " - " + memberName;
+
+                    result.add(
+                            new FinancialActivity(
+                                    parseDateTime(
+                                            rs.getObject("payment_date")
+                                    ),
+                                    description,
+                                    "REVENUE",
+                                    rs.getBigDecimal("amount"),
+                                    rs.getString("payment_method"),
+                                    rs.getString("status"),
+                                    true
+                            )
+                    );
+                }
+            }
+        }
     }
 
 
@@ -618,61 +811,38 @@ public class ReportRepository {
     private void loadPayments(
             List<FinancialActivity> result,
             LocalDate from,
-            LocalDate to,
-            Boolean membershipOnly
+            LocalDate to
     ) throws SQLException {
 
-        StringBuilder sql =
-                new StringBuilder("""
-                        SELECT
-                            p.payment_date,
-                            p.amount,
-                            p.payment_method,
-                            p.status,
-                            p.reference_number,
-                            p.member_id,
-                            p.membership_id,
-                            m.member_code,
-                            m.name
+        String sql = """
+                SELECT
+                    p.payment_date,
+                    p.amount,
+                    p.payment_method,
+                    p.status,
+                    p.reference_number,
+                    p.member_id,
+                    p.membership_id,
+                    m.member_code,
+                    m.name
 
-                        FROM payments p
+                FROM payments p
 
-                        LEFT JOIN members m
-                            ON m.id = p.member_id
+                LEFT JOIN members m
+                    ON m.id = p.member_id
 
-                        WHERE UPPER(p.status) = 'PAID'
-                          AND p.payment_date >= ?
-                          AND p.payment_date < ?
-                        """);
+                WHERE p.payment_date >= ?
+                  AND p.payment_date < ?
 
-
-        if (Boolean.TRUE.equals(membershipOnly)) {
-
-            sql.append("""
-                    AND p.membership_id IS NOT NULL
-                    """);
-
-        } else if (Boolean.FALSE.equals(membershipOnly)) {
-
-            sql.append("""
-                    AND p.membership_id IS NULL
-                    """);
-        }
-
-
-        sql.append("""
                 ORDER BY p.payment_date DESC
-                """);
-
+                """;
 
         try (
                 Connection connection =
                         DatabaseManager.getConnection();
 
                 PreparedStatement statement =
-                        connection.prepareStatement(
-                                sql.toString()
-                        )
+                        connection.prepareStatement(sql)
         ) {
 
             setDateRange(
@@ -680,7 +850,6 @@ public class ReportRepository {
                     from,
                     to
             );
-
 
             try (
                     ResultSet rs =
@@ -703,27 +872,12 @@ public class ReportRepository {
                                     )
                             );
 
-                    String reference =
-                            safe(
-                                    rs.getString(
-                                            "reference_number"
-                                    )
-                            );
-
-
                     String description =
-                            buildPaymentDescription(
-                                    memberCode,
-                                    memberName,
-                                    reference
-                            );
-
-
-                    Object membershipId =
-                            rs.getObject(
-                                    "membership_id"
-                            );
-
+                            memberCode.isBlank()
+                                    ? memberName
+                                    : memberCode
+                                        + " - "
+                                        + memberName;
 
                     result.add(
                             new FinancialActivity(
@@ -734,10 +888,8 @@ public class ReportRepository {
                                     ),
                                     description,
                                     "REVENUE",
-                                    safeDecimal(
-                                            rs.getBigDecimal(
-                                                    "amount"
-                                            )
+                                    rs.getBigDecimal(
+                                            "amount"
                                     ),
                                     rs.getString(
                                             "payment_method"
@@ -745,7 +897,67 @@ public class ReportRepository {
                                     rs.getString(
                                             "status"
                                     ),
-                                    membershipId != null
+                                    rs.getObject(
+                                            "membership_id"
+                                    ) != null
+                            )
+                    );
+                }
+            }
+        }
+    }
+
+
+    // =========================================================
+    // LOAD MANUAL REVENUES
+    // =========================================================
+
+    private void loadManualRevenues(
+            List<FinancialActivity> result,
+            LocalDate from,
+            LocalDate to
+    ) throws SQLException {
+
+        String sql = """
+                SELECT
+                    revenue_date,
+                    name,
+                    revenue_type,
+                    amount
+                FROM revenues
+                WHERE revenue_date >= ?
+                  AND revenue_date <= ?
+                ORDER BY revenue_date DESC, id DESC
+                """;
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, from.toString());
+            statement.setString(2, to.toString());
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    LocalDate date = LocalDate.parse(
+                            rs.getString("revenue_date")
+                    );
+
+                    String name = safe(rs.getString("name"));
+                    String type = safe(rs.getString("revenue_type"));
+                    String description = type.isBlank()
+                            ? name
+                            : name + " - " + type;
+
+                    result.add(
+                            new FinancialActivity(
+                                    date.atStartOfDay(),
+                                    description,
+                                    "REVENUE",
+                                    rs.getBigDecimal("amount"),
+                                    "OTHER",
+                                    "PAID",
+                                    false
                             )
                     );
                 }
@@ -774,13 +986,11 @@ public class ReportRepository {
 
                 FROM expenses
 
-                WHERE UPPER(status) = 'PAID'
-                  AND expense_date >= ?
+                WHERE expense_date >= ?
                   AND expense_date <= ?
 
                 ORDER BY expense_date DESC
                 """;
-
 
         try (
                 Connection connection =
@@ -790,12 +1000,15 @@ public class ReportRepository {
                         connection.prepareStatement(sql)
         ) {
 
-            setExpenseDateRange(
-                    statement,
-                    from,
-                    to
+            statement.setString(
+                    1,
+                    from.toString()
             );
 
+            statement.setString(
+                    2,
+                    to.toString()
+            );
 
             try (
                     ResultSet rs =
@@ -805,17 +1018,11 @@ public class ReportRepository {
                 while (rs.next()) {
 
                     LocalDate date =
-                            parseDate(
-                                    rs.getObject(
+                            LocalDate.parse(
+                                    rs.getString(
                                             "expense_date"
                                     )
                             );
-
-
-                    if (date == null) {
-                        continue;
-                    }
-
 
                     result.add(
                             new FinancialActivity(
@@ -826,10 +1033,8 @@ public class ReportRepository {
                                             )
                                     ),
                                     "EXPENSE",
-                                    safeDecimal(
-                                            rs.getBigDecimal(
-                                                    "amount"
-                                            )
+                                    rs.getBigDecimal(
+                                            "amount"
                                     ),
                                     rs.getString(
                                             "payment_method"
@@ -856,95 +1061,56 @@ public class ReportRepository {
                     LocalDate to
             ) throws SQLException {
 
-        return getMonthlyFinancialSummary(
-                from,
-                to,
-                ReportType.FINANCIAL_SUMMARY
-        );
-    }
-
-
-    public List<MonthlyFinancialSummary>
-            getMonthlyFinancialSummary(
-                    LocalDate from,
-                    LocalDate to,
-                    ReportType reportType
-            ) throws SQLException {
-
         validateDates(from, to);
 
-
-        ReportType type =
-                reportType == null
-                        ? ReportType.FINANCIAL_SUMMARY
-                        : reportType;
-
-
         Map<YearMonth, BigDecimal> revenues =
-                createMonthMap(
-                        from,
-                        to
-                );
+                new LinkedHashMap<>();
 
         Map<YearMonth, BigDecimal> expenses =
-                createMonthMap(
-                        from,
-                        to
-                );
+                new LinkedHashMap<>();
 
+        YearMonth current =
+                YearMonth.from(from);
 
-        switch (type) {
+        YearMonth last =
+                YearMonth.from(to);
 
-            case FINANCIAL_SUMMARY -> {
+        while (!current.isAfter(last)) {
 
-                loadMonthlyRevenue(
-                        revenues,
-                        from,
-                        to,
-                        null
-                );
+            revenues.put(
+                    current,
+                    BigDecimal.ZERO
+            );
 
-                loadMonthlyExpenses(
-                        expenses,
-                        from,
-                        to
-                );
-            }
+            expenses.put(
+                    current,
+                    BigDecimal.ZERO
+            );
 
-
-            case REVENUE ->
-
-                loadMonthlyRevenue(
-                        revenues,
-                        from,
-                        to,
-                        null
-                );
-
-
-            case EXPENSES ->
-
-                loadMonthlyExpenses(
-                        expenses,
-                        from,
-                        to
-                );
-
-
-            case MEMBERSHIPS ->
-
-                loadMonthlyRevenue(
-                        revenues,
-                        from,
-                        to,
-                        Boolean.TRUE
-                );
+            current =
+                    current.plusMonths(1);
         }
 
+        loadMonthlyRevenue(
+                revenues,
+                from,
+                to
+        );
+
+        loadMonthlyManualRevenue(
+                revenues,
+                from,
+                to
+        );
+
+        loadMonthlyExpenses(
+                expenses,
+                from,
+                to
+        );
 
         List<MonthlyFinancialSummary> result =
                 new ArrayList<>();
-
 
         for (YearMonth month
                 : revenues.keySet()) {
@@ -964,16 +1130,84 @@ public class ReportRepository {
             );
         }
 
-
         return result;
     }
 
 
     // =========================================================
-    // CREATE MONTH MAP
+    // MONTHLY FINANCIAL DATA BY REPORT TYPE
     // =========================================================
 
-    private Map<YearMonth, BigDecimal> createMonthMap(
+    public List<MonthlyFinancialSummary>
+            getMonthlyFinancialSummary(
+                    LocalDate from,
+                    LocalDate to,
+                    ReportType reportType
+            ) throws SQLException {
+
+        validateDates(from, to);
+
+        ReportType effectiveType =
+                reportType == null
+                        ? ReportType.FINANCIAL_SUMMARY
+                        : reportType;
+
+        if (effectiveType == ReportType.FINANCIAL_SUMMARY) {
+            return getMonthlyFinancialSummary(from, to);
+        }
+
+        Map<YearMonth, BigDecimal> revenues =
+                createMonthlyMap(from, to);
+
+        Map<YearMonth, BigDecimal> expenses =
+                createMonthlyMap(from, to);
+
+        switch (effectiveType) {
+
+            case REVENUE -> {
+                loadMonthlyRevenue(revenues, from, to);
+                loadMonthlyManualRevenue(revenues, from, to);
+            }
+
+            case EXPENSES ->
+                    loadMonthlyExpenses(expenses, from, to);
+
+            case MEMBERSHIPS ->
+                    loadMonthlyMembershipRevenue(
+                            revenues,
+                            from,
+                            to
+                    );
+
+            default -> {
+                return getMonthlyFinancialSummary(from, to);
+            }
+        }
+
+        List<MonthlyFinancialSummary> result =
+                new ArrayList<>();
+
+        for (YearMonth month : revenues.keySet()) {
+            result.add(
+                    new MonthlyFinancialSummary(
+                            month,
+                            revenues.getOrDefault(
+                                    month,
+                                    BigDecimal.ZERO
+                            ),
+                            expenses.getOrDefault(
+                                    month,
+                                    BigDecimal.ZERO
+                            )
+                    )
+            );
+        }
+
+        return result;
+    }
+
+
+    private Map<YearMonth, BigDecimal> createMonthlyMap(
             LocalDate from,
             LocalDate to
     ) {
@@ -981,27 +1215,62 @@ public class ReportRepository {
         Map<YearMonth, BigDecimal> result =
                 new LinkedHashMap<>();
 
-
-        YearMonth current =
-                YearMonth.from(from);
-
-        YearMonth last =
-                YearMonth.from(to);
-
+        YearMonth current = YearMonth.from(from);
+        YearMonth last = YearMonth.from(to);
 
         while (!current.isAfter(last)) {
-
-            result.put(
-                    current,
-                    BigDecimal.ZERO
-            );
-
-            current =
-                    current.plusMonths(1);
+            result.put(current, BigDecimal.ZERO);
+            current = current.plusMonths(1);
         }
 
-
         return result;
+    }
+
+
+    private void loadMonthlyMembershipRevenue(
+            Map<YearMonth, BigDecimal> target,
+            LocalDate from,
+            LocalDate to
+    ) throws SQLException {
+
+        String sql = """
+                SELECT payment_date, amount
+                FROM payments
+                WHERE UPPER(status) = 'PAID'
+                  AND membership_id IS NOT NULL
+                  AND payment_date >= ?
+                  AND payment_date < ?
+                """;
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement =
+                        connection.prepareStatement(sql)
+        ) {
+            setDateRange(statement, from, to);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+
+                    LocalDateTime date =
+                            parseDateTime(
+                                    rs.getObject("payment_date")
+                            );
+
+                    if (date == null) {
+                        continue;
+                    }
+
+                    target.merge(
+                            YearMonth.from(date),
+                            safeDecimal(
+                                    rs.getBigDecimal("amount")
+                            ),
+                            BigDecimal::add
+                    );
+                }
+            }
+        }
     }
 
 
@@ -1012,36 +1281,25 @@ public class ReportRepository {
     private void loadMonthlyRevenue(
             Map<YearMonth, BigDecimal> target,
             LocalDate from,
-            LocalDate to,
-            Boolean membershipOnly
+            LocalDate to
     ) throws SQLException {
 
-        StringBuilder sql =
-                new StringBuilder("""
-                        SELECT
-                            payment_date,
-                            amount
-                        FROM payments
-                        WHERE UPPER(status) = 'PAID'
-                          AND payment_date >= ?
-                          AND payment_date < ?
-                        """);
-
-
-        appendMembershipFilter(
-                sql,
-                membershipOnly
-        );
-
+        String sql = """
+                SELECT
+                    payment_date,
+                    amount
+                FROM payments
+                WHERE UPPER(status) = 'PAID'
+                  AND payment_date >= ?
+                  AND payment_date < ?
+                """;
 
         try (
                 Connection connection =
                         DatabaseManager.getConnection();
 
                 PreparedStatement statement =
-                        connection.prepareStatement(
-                                sql.toString()
-                        )
+                        connection.prepareStatement(sql)
         ) {
 
             setDateRange(
@@ -1049,7 +1307,6 @@ public class ReportRepository {
                     from,
                     to
             );
-
 
             try (
                     ResultSet rs =
@@ -1065,15 +1322,12 @@ public class ReportRepository {
                                     )
                             );
 
-
                     if (date == null) {
                         continue;
                     }
 
-
                     YearMonth month =
                             YearMonth.from(date);
-
 
                     target.merge(
                             month,
@@ -1082,6 +1336,47 @@ public class ReportRepository {
                                             "amount"
                                     )
                             ),
+                            BigDecimal::add
+                    );
+                }
+            }
+        }
+    }
+
+
+    // =========================================================
+    // MONTHLY MANUAL REVENUE
+    // =========================================================
+
+    private void loadMonthlyManualRevenue(
+            Map<YearMonth, BigDecimal> target,
+            LocalDate from,
+            LocalDate to
+    ) throws SQLException {
+
+        String sql = """
+                SELECT revenue_date, amount
+                FROM revenues
+                WHERE revenue_date >= ?
+                  AND revenue_date <= ?
+                """;
+
+        try (
+                Connection connection = DatabaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, from.toString());
+            statement.setString(2, to.toString());
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    LocalDate date = LocalDate.parse(
+                            rs.getString("revenue_date")
+                    );
+
+                    target.merge(
+                            YearMonth.from(date),
+                            safeDecimal(rs.getBigDecimal("amount")),
                             BigDecimal::add
                     );
                 }
@@ -1110,7 +1405,6 @@ public class ReportRepository {
                   AND expense_date <= ?
                 """;
 
-
         try (
                 Connection connection =
                         DatabaseManager.getConnection();
@@ -1119,12 +1413,15 @@ public class ReportRepository {
                         connection.prepareStatement(sql)
         ) {
 
-            setExpenseDateRange(
-                    statement,
-                    from,
-                    to
+            statement.setString(
+                    1,
+                    from.toString()
             );
 
+            statement.setString(
+                    2,
+                    to.toString()
+            );
 
             try (
                     ResultSet rs =
@@ -1134,21 +1431,14 @@ public class ReportRepository {
                 while (rs.next()) {
 
                     LocalDate date =
-                            parseDate(
-                                    rs.getObject(
+                            LocalDate.parse(
+                                    rs.getString(
                                             "expense_date"
                                     )
                             );
 
-
-                    if (date == null) {
-                        continue;
-                    }
-
-
                     YearMonth month =
                             YearMonth.from(date);
-
 
                     target.merge(
                             month,
@@ -1166,93 +1456,7 @@ public class ReportRepository {
 
 
     // =========================================================
-    // MEMBERSHIP SQL FILTER
-    // =========================================================
-
-    private void appendMembershipFilter(
-            StringBuilder sql,
-            Boolean membershipOnly
-    ) {
-
-        if (Boolean.TRUE.equals(
-                membershipOnly
-        )) {
-
-            sql.append("""
-                    AND membership_id IS NOT NULL
-                    """);
-
-        } else if (Boolean.FALSE.equals(
-                membershipOnly
-        )) {
-
-            sql.append("""
-                    AND membership_id IS NULL
-                    """);
-        }
-    }
-
-
-    // =========================================================
-    // PAYMENT DESCRIPTION
-    // =========================================================
-
-    private String buildPaymentDescription(
-            String memberCode,
-            String memberName,
-            String reference
-    ) {
-
-        StringBuilder result =
-                new StringBuilder();
-
-
-        if (!memberCode.isBlank()) {
-
-            result.append(
-                    memberCode
-            );
-        }
-
-
-        if (!memberName.isBlank()) {
-
-            if (!result.isEmpty()) {
-
-                result.append(
-                        " - "
-                );
-            }
-
-            result.append(
-                    memberName
-            );
-        }
-
-
-        if (result.isEmpty()
-                && !reference.isBlank()) {
-
-            result.append(
-                    reference
-            );
-        }
-
-
-        if (result.isEmpty()) {
-
-            result.append(
-                    "Payment"
-            );
-        }
-
-
-        return result.toString();
-    }
-
-
-    // =========================================================
-    // PAYMENT DATE RANGE
+    // DATE RANGE
     // =========================================================
 
     private void setDateRange(
@@ -1279,28 +1483,6 @@ public class ReportRepository {
 
 
     // =========================================================
-    // EXPENSE DATE RANGE
-    // =========================================================
-
-    private void setExpenseDateRange(
-            PreparedStatement statement,
-            LocalDate from,
-            LocalDate to
-    ) throws SQLException {
-
-        statement.setString(
-                1,
-                from.toString()
-        );
-
-        statement.setString(
-                2,
-                to.toString()
-        );
-    }
-
-
-    // =========================================================
     // VALIDATE
     // =========================================================
 
@@ -1309,14 +1491,12 @@ public class ReportRepository {
             LocalDate to
     ) {
 
-        if (from == null
-                || to == null) {
+        if (from == null || to == null) {
 
             throw new IllegalArgumentException(
                     "Report date range is required."
             );
         }
-
 
         if (to.isBefore(from)) {
 
@@ -1336,16 +1516,13 @@ public class ReportRepository {
     ) throws SQLException {
 
         if (!rs.next()) {
-
             return BigDecimal.ZERO;
         }
-
 
         return safeDecimal(
                 rs.getBigDecimal(1)
         );
     }
-
 
     private BigDecimal safeDecimal(
             BigDecimal value
@@ -1370,7 +1547,6 @@ public class ReportRepository {
         );
     }
 
-
     private LocalDateTime parseDateTime(
             Object value
     ) {
@@ -1379,31 +1555,14 @@ public class ReportRepository {
             return null;
         }
 
-
         if (value instanceof java.sql.Timestamp timestamp) {
 
             return timestamp
                     .toLocalDateTime();
         }
 
-
-        if (value instanceof LocalDateTime dateTime) {
-
-            return dateTime;
-        }
-
-
-        if (value instanceof java.sql.Date sqlDate) {
-
-            return sqlDate
-                    .toLocalDate()
-                    .atStartOfDay();
-        }
-
-
         String text =
                 value.toString().trim();
-
 
         try {
 
@@ -1413,7 +1572,6 @@ public class ReportRepository {
 
         } catch (Exception ignored) {
         }
-
 
         try {
 
@@ -1425,7 +1583,6 @@ public class ReportRepository {
         } catch (Exception ignored) {
         }
 
-
         try {
 
             return LocalDate.parse(
@@ -1435,61 +1592,7 @@ public class ReportRepository {
         } catch (Exception ignored) {
         }
 
-
         return null;
-    }
-
-
-    private LocalDate parseDate(
-            Object value
-    ) {
-
-        if (value == null) {
-            return null;
-        }
-
-
-        if (value instanceof LocalDate date) {
-
-            return date;
-        }
-
-
-        if (value instanceof java.sql.Date sqlDate) {
-
-            return sqlDate.toLocalDate();
-        }
-
-
-        if (value instanceof java.sql.Timestamp timestamp) {
-
-            return timestamp
-                    .toLocalDateTime()
-                    .toLocalDate();
-        }
-
-
-        String text =
-                value.toString().trim();
-
-
-        try {
-
-            return LocalDate.parse(
-                    text
-            );
-
-        } catch (Exception ignored) {
-        }
-
-
-        LocalDateTime dateTime =
-                parseDateTime(value);
-
-
-        return dateTime == null
-                ? null
-                : dateTime.toLocalDate();
     }
 
 

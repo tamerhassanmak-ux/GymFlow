@@ -8,6 +8,7 @@ import com.mycompany.lazar_app.model.dashboard.DashboardPayment;
 import com.mycompany.lazar_app.model.dashboard.DashboardSummary;
 import com.mycompany.lazar_app.service.DashboardService;
 
+import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -36,6 +37,19 @@ import javafx.scene.layout.VBox;
 
 
 public class DashboardContentController {
+
+    // =========================================================
+    // LIVE DASHBOARD INSTANCE
+    // =========================================================
+
+    /**
+     * Weak reference to the dashboard controller that is currently
+     * attached to the JavaFX scene. Using a WeakReference avoids
+     * keeping an old dashboard view alive after navigation.
+     */
+    private static WeakReference<DashboardContentController> currentInstance =
+            new WeakReference<>(null);
+
 
     // =========================================================
     // SERVICES
@@ -116,10 +130,91 @@ public class DashboardContentController {
     @FXML
     public void initialize() {
 
+        // Register the controller that belongs to the currently visible
+        // dashboard view. Check-in operations can then refresh this exact
+        // instance instead of creating a detached controller.
+        currentInstance =
+                new WeakReference<>(this);
+
         bundle =
                 LanguageManager.getBundle();
 
+        refreshDashboard();
+    }
+
+
+    // =========================================================
+    // LIVE KPI REFRESH
+    // =========================================================
+
+    /**
+     * Refreshes the KPI cards of the dashboard that is currently loaded.
+     *
+     * This method is intentionally static so controllers such as
+     * CheckinController can notify the visible dashboard after a successful
+     * database change without creating a new DashboardContentController.
+     *
+     * If the dashboard is not currently loaded, there is nothing to update;
+     * the next dashboard load will read the latest values from the database.
+     */
+    public static void refreshCurrentSummary() {
+
+        DashboardContentController controller =
+                currentInstance.get();
+
+        if (controller == null) {
+            return;
+        }
+
+        Runnable refreshTask =
+                controller::refreshSummary;
+
+        if (Platform.isFxApplicationThread()) {
+
+            refreshTask.run();
+
+        } else {
+
+            Platform.runLater(
+                    refreshTask
+            );
+        }
+    }
+
+
+    // =========================================================
+    // LOAD / REFRESH DASHBOARD
+    // =========================================================
+
+    /**
+     * Loads every dashboard section from the database.
+     * Kept public because DashboardController can call it whenever
+     * the dashboard view becomes active again.
+     */
+    public void loadDashboard() {
+
         updateCurrentDate();
+
+        loadSummary();
+
+        loadCharts();
+
+        loadRecentMembers();
+
+        loadUpcomingExpirations();
+
+        loadRecentPayments();
+    }
+
+
+    /**
+     * Safe full refresh.  A database error will not escape to the
+     * JavaFX event thread and leave the view in a half-rendered state.
+     */
+    public void refreshDashboard() {
+
+        bundle =
+                LanguageManager.getBundle();
 
         try {
 
@@ -134,21 +229,26 @@ public class DashboardContentController {
     }
 
 
-    // =========================================================
-    // LOAD DASHBOARD
-    // =========================================================
+    /**
+     * Lightweight KPI refresh.
+     * This can be called after a successful check-in/check-out so the
+     * "Today Check-ins" card immediately reads the database again
+     * without rebuilding all charts and lists.
+     */
+    public void refreshSummary() {
 
-    public void loadDashboard() {
+        try {
 
-        loadSummary();
+            loadSummary();
 
-        loadCharts();
+        } catch (Exception exception) {
 
-        loadRecentMembers();
+            exception.printStackTrace();
 
-        loadUpcomingExpirations();
-
-        loadRecentPayments();
+            if (todayCheckInsValueLabel != null) {
+                todayCheckInsValueLabel.setText("-");
+            }
+        }
     }
 
 

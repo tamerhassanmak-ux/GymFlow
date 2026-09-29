@@ -164,13 +164,33 @@
                                             text="%addMember.memberCode"
                                             styleClass="form-label"/>
 
-                                    <TextField
-                                            fx:id="memberCodeField"
-                                            editable="false"
-                                            focusTraversable="false"
-                                            prefHeight="38.0"
+                                    <HBox spacing="8.0" maxWidth="Infinity">
+
+                                        <TextField
+                                                fx:id="memberCodeField"
+                                                editable="true"
+                                                focusTraversable="true"
+                                                onAction="#applyManualMemberCode"
+                                                prefHeight="38.0"
+                                                maxWidth="Infinity"
+                                                HBox.hgrow="ALWAYS"
+                                                styleClass="form-input,member-code-field"/>
+
+                                        <Button
+                                                fx:id="applyMemberCodeButton"
+                                                mnemonicParsing="false"
+                                                onAction="#applyManualMemberCode"
+                                                prefHeight="38.0"
+                                                minWidth="145.0"
+                                                styleClass="secondary-button"/>
+
+                                    </HBox>
+
+                                    <Label
+                                            fx:id="memberCodeHintLabel"
+                                            wrapText="true"
                                             maxWidth="Infinity"
-                                            styleClass="form-input,member-code-field"/>
+                                            style="-fx-text-fill: #64748b; -fx-font-size: 10.5px;"/>
 
                                 </VBox>
 
@@ -267,11 +287,10 @@
 
 
                         <!-- =============================================
-                             GENDER + BIRTH DATE + MEMBERSHIP
+                             GENDER + BIRTH DATE + MEMBER STATUS
                              ============================================= -->
 
                         <HBox spacing="16.0" maxWidth="Infinity" fillHeight="true">
-
 
                             <!-- GENDER -->
 
@@ -313,76 +332,8 @@
                             </VBox>
 
 
-                            <!-- MEMBERSHIP PLAN -->
-
-                            <VBox
-                                    spacing="4.0"
-                                    HBox.hgrow="ALWAYS">
-
-                                <Label
-                                        text="%addMember.membership"
-                                        styleClass="form-label"/>
-
-                                <ComboBox
-                                        fx:id="membershipComboBox"
-                                        promptText="%addMember.selectMembership"
-                                        prefHeight="40.0"
-                                        maxWidth="Infinity"
-                                        styleClass="form-combo"/>
-
-                            </VBox>
-
-                        </HBox>
-
-
-                        <!-- =============================================
-                             START + END + STATUS
-                             ============================================= -->
-
-                        <HBox spacing="16.0" maxWidth="Infinity" fillHeight="true">
-
-
-                            <!-- START DATE -->
-
-                            <VBox
-                                    spacing="4.0"
-                                    HBox.hgrow="ALWAYS">
-
-                                <Label
-                                        text="%addMember.startDate"
-                                        styleClass="form-label"/>
-
-                                <DatePicker
-                                        fx:id="startDatePicker"
-                                        promptText="%addMember.selectDate"
-                                        prefHeight="40.0"
-                                        maxWidth="Infinity"
-                                        styleClass="form-input"/>
-
-                            </VBox>
-
-
-                            <!-- END DATE -->
-
-                            <VBox
-                                    spacing="4.0"
-                                    HBox.hgrow="ALWAYS">
-
-                                <Label
-                                        text="%addMember.endDate"
-                                        styleClass="form-label"/>
-
-                                <DatePicker
-                                        fx:id="endDatePicker"
-                                        promptText="%addMember.selectDate"
-                                        prefHeight="40.0"
-                                        maxWidth="Infinity"
-                                        styleClass="form-input"/>
-
-                            </VBox>
-
-
-                            <!-- STATUS -->
+                            <!-- MEMBER MASTER STATUS
+                                 Subscription status is managed in member_memberships. -->
 
                             <VBox
                                     spacing="4.0"
@@ -498,7 +449,7 @@
 
 
                         <!-- =============================================
-                             MEMBERSHIP CARD PREVIEW
+                             MEMBER CARD PREVIEW
                              ============================================= -->
 
                         <VBox
@@ -511,7 +462,7 @@
 
 
                             <!-- =========================================
-                                 MEMBERSHIP CARD
+                                 MEMBER CARD
                                  ========================================= -->
 
                             <HBox
@@ -592,15 +543,10 @@
                                             text="LZR-000000"
                                             styleClass="gym-card-member-code"/>
 
-                                    <Label
-                                            fx:id="cardMembershipLabel"
-                                            text="Membership"
-                                            styleClass="gym-card-membership"/>
-
                                     <Region VBox.vgrow="ALWAYS"/>
 
                                     <Label
-                                            text="FITNESS  â€¢  HEALTH  â€¢  BETTER YOU"
+                                            text="FITNESS  •  HEALTH  •  BETTER YOU"
                                             styleClass="gym-card-slogan"/>
 
                                 </VBox>

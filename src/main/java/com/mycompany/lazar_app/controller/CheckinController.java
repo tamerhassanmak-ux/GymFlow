@@ -1,8 +1,10 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
+import com.mycompany.lazar_app.ui.WindowManager;
 
 import com.mycompany.lazar_app.LanguageManager;
+import com.mycompany.lazar_app.DashboardContentController;
 
 import com.mycompany.lazar_app.model.CheckIn;
 import com.mycompany.lazar_app.model.Member;
@@ -45,6 +47,8 @@ import javafx.scene.control.TextField;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import javafx.stage.Window;
 
 
 public class CheckinController {
@@ -163,6 +167,11 @@ public class CheckinController {
     // =========================================================
 
     private void configureTable() {
+
+        checkinTable.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
+        );
+
 
         idColumn.setCellValueFactory(
                 data ->
@@ -874,7 +883,12 @@ public class CheckinController {
 
         DialogStyler.style(dialog);
 
-        dialog.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                dialog,
+                getOwnerWindow(),
+                620.0,
+                400.0
+        );
 
 
         // =====================================================
@@ -1233,6 +1247,20 @@ public class CheckinController {
             );
 
 
+            // =================================================
+            // REFRESH DASHBOARD KPI IMMEDIATELY
+            // =================================================
+
+            /*
+             * The insert has completed successfully at this point, so ask
+             * the dashboard that is currently on screen to read the summary
+             * again from the database. If the dashboard is not loaded, the
+             * call safely does nothing and its next load will show the new
+             * value.
+             */
+            DashboardContentController.refreshCurrentSummary();
+
+
             /*
              * IMPORTANT:
              *
@@ -1402,8 +1430,14 @@ public class CheckinController {
 
 
         DialogStyler.style(dialog);
+
         Optional<ButtonType> result =
-                dialog.showAndWait();
+                WindowManager.showResponsiveDialogAndWait(
+                        dialog,
+                        getOwnerWindow(),
+                        600.0,
+                        340.0
+                );
 
 
         if (result.isEmpty()
@@ -1485,6 +1519,9 @@ public class CheckinController {
             if (deleted) {
 
                 loadData();
+
+                // A deleted attendance record changes today's dashboard count.
+                DashboardContentController.refreshCurrentSummary();
             }
 
 
@@ -1671,6 +1708,24 @@ public class CheckinController {
 
 
     // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (checkinTable == null
+                || checkinTable.getScene() == null) {
+
+            return null;
+        }
+
+        return checkinTable
+                .getScene()
+                .getWindow();
+    }
+
+
+    // =========================================================
     // SAFE STRING
     // =========================================================
 
@@ -1726,7 +1781,12 @@ public class CheckinController {
 
         DialogStyler.style(alert);
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                560.0,
+                320.0
+        );
     }
 
 
@@ -1764,7 +1824,12 @@ public class CheckinController {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                560.0,
+                340.0
+        );
     }
 
 
@@ -1799,7 +1864,14 @@ public class CheckinController {
         );
 
 
-        return alert.showAndWait()
+        DialogStyler.style(alert);
+
+        return WindowManager.showResponsiveDialogAndWait(
+                        alert,
+                        getOwnerWindow(),
+                        560.0,
+                        330.0
+                )
                 .orElse(
                         ButtonType.CANCEL
                 );

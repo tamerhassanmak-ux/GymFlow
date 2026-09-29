@@ -247,7 +247,7 @@ public class MembershipPlanRepository {
                     status,
                     description
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (

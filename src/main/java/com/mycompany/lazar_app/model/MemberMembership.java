@@ -34,6 +34,16 @@ public class MemberMembership {
      */
     private int allowedSessions;
 
+    /*
+     * Commercial terms snapshot.
+     *
+     * These values intentionally live on the subscription instance.
+     * MembershipPlan.price is the CURRENT catalogue price, while this
+     * price records what applied when this membership was created.
+     *
+     * That distinction is essential for renewals, auditing and payments:
+     * changing a plan price later must not rewrite historical memberships.
+     */
     private double price;
     private double discount;
     private double finalPrice;
@@ -269,6 +279,43 @@ public class MemberMembership {
 
         this.finalPrice =
                 finalPrice;
+    }
+
+
+    // =========================================================
+    // COMMERCIAL SNAPSHOT ALIASES
+    // =========================================================
+
+    /**
+     * Semantic alias for {@link #getPrice()}.
+     *
+     * The database column is still named {@code price} for backward
+     * compatibility, but its domain meaning is "plan price snapshot".
+     */
+    public double getPlanPriceSnapshot() {
+        return price;
+    }
+
+
+    public void setPlanPriceSnapshot(
+            double planPriceSnapshot
+    ) {
+        this.price = planPriceSnapshot;
+    }
+
+
+    /**
+     * Semantic alias for the negotiated amount after discount.
+     */
+    public double getNetAmount() {
+        return finalPrice;
+    }
+
+
+    public void setNetAmount(
+            double netAmount
+    ) {
+        this.finalPrice = netAmount;
     }
 
 

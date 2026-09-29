@@ -1,10 +1,13 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
+import com.mycompany.lazar_app.ui.WindowManager;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.MembershipPlan;
 import com.mycompany.lazar_app.repository.MembershipPlanRepository;
+
+import javafx.application.Platform;
 
 import javafx.fxml.FXML;
 
@@ -12,11 +15,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.sql.SQLException;
 
@@ -35,6 +40,9 @@ public class MembershipPlanFormController {
 
     private boolean saved;
 
+
+    @FXML
+    private ScrollPane formScrollPane;
 
     @FXML
     private Label titleLabel;
@@ -117,6 +125,42 @@ public class MembershipPlanFormController {
 
         statusComboBox.setValue(
                 "Active"
+        );
+
+
+        /*
+         * Keep the form responsive inside the maximized window.
+         * Fit-to-width avoids horizontal clipping while allowing the
+         * ScrollPane to keep vertical scrolling available when required.
+         */
+        if (formScrollPane != null) {
+
+            formScrollPane.setFitToWidth(true);
+            formScrollPane.setFitToHeight(false);
+            formScrollPane.setPannable(true);
+        }
+
+
+        /*
+         * Always open the form from the top.
+         * JavaFX ScrollPane may otherwise scroll automatically to the
+         * currently focused control, which made the form appear incomplete.
+         */
+        Platform.runLater(
+                () -> {
+
+                    if (formScrollPane != null) {
+
+                        formScrollPane.setVvalue(
+                                0.0
+                        );
+                    }
+
+                    if (codeField != null) {
+
+                        codeField.requestFocus();
+                    }
+                }
         );
     }
 
@@ -859,6 +903,24 @@ public class MembershipPlanFormController {
     }
 
 
+    // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (saveButton == null
+                || saveButton.getScene() == null) {
+
+            return null;
+        }
+
+        return saveButton
+                .getScene()
+                .getWindow();
+    }
+
+
     private String safe(
             String value
     ) {
@@ -899,7 +961,12 @@ public class MembershipPlanFormController {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                560.0,
+                320.0
+        );
     }
 
 
@@ -933,7 +1000,12 @@ public class MembershipPlanFormController {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                540.0,
+                300.0
+        );
     }
 
 
@@ -971,6 +1043,11 @@ public class MembershipPlanFormController {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                600.0,
+                360.0
+        );
     }
 }

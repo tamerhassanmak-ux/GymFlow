@@ -1,14 +1,17 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
+import com.mycompany.lazar_app.ui.WindowManager;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.Payment;
 import com.mycompany.lazar_app.repository.PaymentRepository;
 import com.mycompany.lazar_app.repository.PaymentRepository.MemberOption;
 import com.mycompany.lazar_app.repository.PaymentRepository.MembershipOption;
+import com.mycompany.lazar_app.repository.PaymentRepository.PaymentInstallment;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -24,9 +28,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
@@ -35,6 +43,9 @@ public class AddPaymentController {
     // =========================================================
     // FXML CONTROLS
     // =========================================================
+
+    @FXML
+    private ScrollPane paymentFormScrollPane;
 
     @FXML
     private ComboBox<MemberOption> memberComboBox;
@@ -59,6 +70,60 @@ public class AddPaymentController {
 
     @FXML
     private TextArea notesArea;
+
+    @FXML
+    private VBox financialSummaryBox;
+
+    @FXML
+    private Label financialSummaryTitleLabel;
+
+    @FXML
+    private Label membershipAmountCaptionLabel;
+
+    @FXML
+    private Label membershipAmountValueLabel;
+
+    @FXML
+    private Label paidAmountCaptionLabel;
+
+    @FXML
+    private Label paidAmountValueLabel;
+
+    @FXML
+    private Label balanceCaptionLabel;
+
+    @FXML
+    private Label balanceValueLabel;
+
+    @FXML
+    private Label remainingAfterPaymentLabel;
+
+    @FXML
+    private VBox scheduleBox;
+
+    @FXML
+    private Label scheduleTitleLabel;
+
+    @FXML
+    private Label scheduleHintLabel;
+
+    @FXML
+    private Label installmentsCaptionLabel;
+
+    @FXML
+    private ComboBox<Integer> installmentsComboBox;
+
+    @FXML
+    private Label firstDueDateCaptionLabel;
+
+    @FXML
+    private DatePicker firstInstallmentDatePicker;
+
+    @FXML
+    private Label installmentAmountCaptionLabel;
+
+    @FXML
+    private Label installmentAmountValueLabel;
 
 
     // =========================================================
@@ -116,6 +181,10 @@ public class AddPaymentController {
 
         configureStatuses();
 
+        configureInstallmentControls();
+
+        configureFinancialPreviewLabels();
+
         configureMemberComboBox();
 
         configureMembershipComboBox();
@@ -131,6 +200,29 @@ public class AddPaymentController {
 
 
         loadMembers();
+
+        configureFinancialPreviewListeners();
+
+        updateFinancialPreview();
+
+
+        /*
+         * Always open Add/Edit Payment from the top.
+         * This prevents JavaFX ScrollPane from jumping to a lower
+         * focused control when the window is first shown.
+         */
+        Platform.runLater(
+                () -> {
+
+                    if (paymentFormScrollPane != null) {
+                        paymentFormScrollPane.setVvalue(0.0);
+                    }
+
+                    if (memberComboBox != null) {
+                        memberComboBox.requestFocus();
+                    }
+                }
+        );
     }
 
 
@@ -461,6 +553,32 @@ public class AddPaymentController {
                     }
                 }
         );
+
+
+        /*
+         * New payments are linked to a concrete member membership.
+         * Prefill the outstanding balance of that membership rather
+         * than the current MembershipPlan catalogue price.
+         */
+        membershipComboBox
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldMembership,
+                                newMembership
+                        ) -> {
+                            applyMembershipBalanceToAmount(
+                                    newMembership
+                            );
+
+                            loadScheduleDefaults(
+                                    newMembership
+                            );
+
+                            updateFinancialPreview();
+                        }
+                );
     }
 
 
@@ -855,6 +973,376 @@ public class AddPaymentController {
 
 
     // =========================================================
+    // APPLY OUTSTANDING MEMBERSHIP BALANCE
+    // =========================================================
+
+    private void applyMembershipBalanceToAmount(
+            MembershipOption membership
+    ) {
+
+        if (membership == null) {
+            amountField.clear();
+            return;
+        }
+
+        /*
+         * In edit mode the existing payment amount remains authoritative.
+         * For a new payment we prefill the currently available balance, but
+         * the user can enter any smaller positive value to make a partial
+         * payment.
+         */
+        if (editingPayment != null) {
+            return;
+        }
+
+        BigDecimal available = getAvailableBalanceForForm(membership);
+
+        amountField.setText(
+                moneyNumber(available)
+        );
+    }
+
+
+    // =========================================================
+    // PARTIAL PAYMENT / INSTALLMENT CONFIGURATION
+    // =========================================================
+
+    private void configureInstallmentControls() {
+
+        installmentsComboBox.getItems().clear();
+
+        for (int i = 1; i <= 12; i++) {
+            installmentsComboBox.getItems().add(i);
+        }
+
+        installmentsComboBox.setValue(2);
+        firstInstallmentDatePicker.setValue(LocalDate.now().plusMonths(1));
+    }
+
+
+    private void configureFinancialPreviewLabels() {
+
+        boolean ar = LanguageManager.isArabic();
+
+        financialSummaryTitleLabel.setText(
+                ar ? "ملخص الاشتراك المالي" : "Membership financial summary"
+        );
+
+        membershipAmountCaptionLabel.setText(
+                ar ? "قيمة الاشتراك" : "Subscription amount"
+        );
+
+        paidAmountCaptionLabel.setText(
+                ar ? "المدفوع فعلياً" : "Actually paid"
+        );
+
+        balanceCaptionLabel.setText(
+                ar ? "المتبقي قبل الدفعة" : "Remaining before payment"
+        );
+
+        scheduleTitleLabel.setText(
+                ar ? "جدولة باقي الاشتراك" : "Remaining balance schedule"
+        );
+
+        scheduleHintLabel.setText(
+                ar
+                        ? "سيتم تقسيم المتبقي بعد هذه الدفعة إلى أقساط شهرية متساوية تقريباً."
+                        : "The remaining balance after this payment will be split into approximately equal monthly installments."
+        );
+
+        installmentsCaptionLabel.setText(
+                ar ? "عدد الأقساط" : "Number of installments"
+        );
+
+        firstDueDateCaptionLabel.setText(
+                ar ? "تاريخ أول استحقاق" : "First due date"
+        );
+
+        installmentAmountCaptionLabel.setText(
+                ar ? "قيمة القسط التقريبية" : "Approx. installment"
+        );
+    }
+
+
+    private void configureFinancialPreviewListeners() {
+
+        amountField.textProperty().addListener(
+                (observable, oldValue, newValue) -> updateFinancialPreview()
+        );
+
+        statusComboBox.valueProperty().addListener(
+                (observable, oldValue, newValue) -> updateFinancialPreview()
+        );
+
+        paymentDatePicker.valueProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue != null
+                            && firstInstallmentDatePicker.getValue() == null) {
+                        firstInstallmentDatePicker.setValue(
+                                newValue.plusMonths(1)
+                        );
+                    }
+                    updateFinancialPreview();
+                }
+        );
+
+        installmentsComboBox.valueProperty().addListener(
+                (observable, oldValue, newValue) -> updateFinancialPreview()
+        );
+    }
+
+
+    private void loadScheduleDefaults(
+            MembershipOption membership
+    ) {
+
+        if (membership == null) {
+            return;
+        }
+
+        try {
+            List<PaymentInstallment> existing =
+                    paymentRepository.findPaymentScheduleByMembershipId(
+                            membership.getId()
+                    );
+
+            if (!existing.isEmpty()) {
+                int count = Math.min(12, Math.max(1, existing.size()));
+                installmentsComboBox.setValue(count);
+
+                LocalDate firstDue = existing.get(0).getDueDate();
+
+                if (firstDue != null) {
+                    firstInstallmentDatePicker.setValue(firstDue);
+                }
+
+            } else {
+                installmentsComboBox.setValue(2);
+
+                LocalDate paymentDate = paymentDatePicker.getValue();
+                firstInstallmentDatePicker.setValue(
+                        (paymentDate == null ? LocalDate.now() : paymentDate)
+                                .plusMonths(1)
+                );
+            }
+
+        } catch (Exception exception) {
+            /*
+             * The schedule table is self-created by PaymentRepository.
+             * A schedule loading problem must not block entering a payment;
+             * the save flow will still report any persistence error.
+             */
+            installmentsComboBox.setValue(2);
+        }
+    }
+
+
+    private void updateFinancialPreview() {
+
+        MembershipOption membership = membershipComboBox.getValue();
+
+        boolean hasMembership = membership != null;
+
+        financialSummaryBox.setVisible(hasMembership);
+        financialSummaryBox.setManaged(hasMembership);
+
+        if (!hasMembership) {
+            scheduleBox.setVisible(false);
+            scheduleBox.setManaged(false);
+            remainingAfterPaymentLabel.setText("");
+            return;
+        }
+
+        BigDecimal membershipAmount = membership.getMembershipAmount();
+        BigDecimal paidBefore = getPaidBeforeCurrentFormPayment(membership);
+        BigDecimal availableBalance = getAvailableBalanceForForm(membership);
+        BigDecimal enteredAmount = parseAmountSilently();
+
+        boolean paymentCountsAsPaid = isSelectedStatusPaid();
+
+        BigDecimal paidAfter = paidBefore;
+        BigDecimal remainingAfter = availableBalance;
+
+        if (paymentCountsAsPaid
+                && enteredAmount != null
+                && enteredAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+            paidAfter = paidBefore.add(enteredAmount);
+            remainingAfter = availableBalance
+                    .subtract(enteredAmount)
+                    .max(BigDecimal.ZERO);
+        }
+
+        membershipAmountValueLabel.setText(formatMoney(membershipAmount));
+        paidAmountValueLabel.setText(formatMoney(paidBefore));
+        balanceValueLabel.setText(formatMoney(availableBalance));
+
+        boolean ar = LanguageManager.isArabic();
+
+        remainingAfterPaymentLabel.setText(
+                ar
+                        ? "بعد حفظ هذه الدفعة: المدفوع = "
+                            + formatMoney(paidAfter)
+                            + " | المتبقي = "
+                            + formatMoney(remainingAfter)
+                        : "After this payment: paid = "
+                            + formatMoney(paidAfter)
+                            + " | remaining = "
+                            + formatMoney(remainingAfter)
+        );
+
+        boolean partialPaidPayment =
+                paymentCountsAsPaid
+                && enteredAmount != null
+                && enteredAmount.compareTo(BigDecimal.ZERO) > 0
+                && enteredAmount.compareTo(availableBalance) < 0
+                && remainingAfter.compareTo(BigDecimal.ZERO) > 0;
+
+        scheduleBox.setVisible(partialPaidPayment);
+        scheduleBox.setManaged(partialPaidPayment);
+
+        if (partialPaidPayment) {
+            Integer count = installmentsComboBox.getValue();
+
+            BigDecimal installmentAmount =
+                    count == null || count <= 0
+                            ? remainingAfter
+                            : remainingAfter.divide(
+                                    BigDecimal.valueOf(count),
+                                    2,
+                                    RoundingMode.HALF_UP
+                            );
+
+            installmentAmountValueLabel.setText(
+                    formatMoney(installmentAmount)
+            );
+        } else {
+            installmentAmountValueLabel.setText(formatMoney(BigDecimal.ZERO));
+        }
+    }
+
+
+    private BigDecimal getAvailableBalanceForForm(
+            MembershipOption membership
+    ) {
+
+        if (membership == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal available = membership.getBalanceDue();
+
+        if (editingPayment != null
+                && editingPayment.getMembershipId() != null
+                && editingPayment.getMembershipId() == membership.getId()
+                && isPaidStatus(editingPayment.getStatus())
+                && editingPayment.getAmount() != null) {
+
+            available = available.add(editingPayment.getAmount());
+        }
+
+        return available.max(BigDecimal.ZERO);
+    }
+
+
+    private BigDecimal getPaidBeforeCurrentFormPayment(
+            MembershipOption membership
+    ) {
+
+        if (membership == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal paid = membership.getPaidAmount();
+
+        if (editingPayment != null
+                && editingPayment.getMembershipId() != null
+                && editingPayment.getMembershipId() == membership.getId()
+                && isPaidStatus(editingPayment.getStatus())
+                && editingPayment.getAmount() != null) {
+
+            paid = paid.subtract(editingPayment.getAmount());
+        }
+
+        return paid.max(BigDecimal.ZERO);
+    }
+
+
+    private BigDecimal parseAmountSilently() {
+
+        if (amountField.getText() == null
+                || amountField.getText().isBlank()) {
+            return null;
+        }
+
+        try {
+            return new BigDecimal(amountField.getText().trim());
+        } catch (NumberFormatException exception) {
+            return null;
+        }
+    }
+
+
+    private boolean isSelectedStatusPaid() {
+        return "PAID".equalsIgnoreCase(
+                normalizeStatus(statusComboBox.getValue())
+        );
+    }
+
+
+    private boolean isPaidStatus(
+            String status
+    ) {
+        return status != null && status.equalsIgnoreCase("PAID");
+    }
+
+
+    private String formatMoney(
+            BigDecimal amount
+    ) {
+        return moneyNumber(amount) + " EGP";
+    }
+
+
+    private String moneyNumber(
+            BigDecimal amount
+    ) {
+        BigDecimal safeAmount = amount == null ? BigDecimal.ZERO : amount;
+
+        return safeAmount
+                .setScale(2, RoundingMode.HALF_UP)
+                .toPlainString();
+    }
+
+
+    public boolean shouldCreateInstallmentSchedule() {
+
+        MembershipOption membership = membershipComboBox.getValue();
+        BigDecimal amount = parseAmountSilently();
+
+        if (membership == null
+                || amount == null
+                || !isSelectedStatusPaid()) {
+            return false;
+        }
+
+        return amount.compareTo(BigDecimal.ZERO) > 0
+                && amount.compareTo(getAvailableBalanceForForm(membership)) < 0;
+    }
+
+
+    public int getScheduleInstallmentCount() {
+        Integer value = installmentsComboBox.getValue();
+        return value == null ? 1 : Math.max(1, value);
+    }
+
+
+    public LocalDate getScheduleFirstDueDate() {
+        return firstInstallmentDatePicker.getValue();
+    }
+
+
+    // =========================================================
     // LOAD MEMBERSHIPS
     // =========================================================
 
@@ -1128,6 +1616,8 @@ public class AddPaymentController {
                         ? ""
                         : payment.getNotes()
         );
+
+        updateFinancialPreview();
     }
 
 
@@ -1428,6 +1918,46 @@ public class AddPaymentController {
             }
 
 
+            /*
+             * Prevent over-payment for both new and edited payments.
+             * When editing a previously PAID transaction, its old amount
+             * is temporarily added back to the available balance.
+             */
+            MembershipOption selectedMembership =
+                    membershipComboBox.getValue();
+
+            if (selectedMembership != null) {
+
+                BigDecimal balanceAvailable =
+                        getAvailableBalanceForForm(selectedMembership);
+
+                if (balanceAvailable.compareTo(BigDecimal.ZERO) <= 0) {
+
+                    showWarning(
+                            LanguageManager.isArabic()
+                                    ? "هذا الاشتراك مسدد بالكامل بالفعل."
+                                    : "This membership is already fully paid."
+                    );
+
+                    return false;
+                }
+
+                if (amount.compareTo(balanceAvailable) > 0) {
+
+                    showWarning(
+                            LanguageManager.isArabic()
+                                    ? "المبلغ أكبر من الرصيد المتاح على الاشتراك: "
+                                        + moneyNumber(balanceAvailable)
+                                    : "Amount exceeds the available membership balance: "
+                                        + moneyNumber(balanceAvailable)
+                    );
+
+                    amountField.requestFocus();
+                    return false;
+                }
+            }
+
+
         } catch (NumberFormatException exception) {
 
             showWarning(
@@ -1480,8 +2010,33 @@ public class AddPaymentController {
                             : "Please select payment date."
             );
 
-
             return false;
+        }
+
+        if (shouldCreateInstallmentSchedule()) {
+
+            if (installmentsComboBox.getValue() == null
+                    || installmentsComboBox.getValue() <= 0) {
+
+                showWarning(
+                        LanguageManager.isArabic()
+                                ? "يرجى اختيار عدد أقساط صحيح لباقي الاشتراك."
+                                : "Please select a valid installment count for the remaining balance."
+                );
+
+                return false;
+            }
+
+            if (firstInstallmentDatePicker.getValue() == null) {
+
+                showWarning(
+                        LanguageManager.isArabic()
+                                ? "يرجى اختيار تاريخ أول استحقاق."
+                                : "Please select the first installment due date."
+                );
+
+                return false;
+            }
         }
 
 
@@ -1819,7 +2374,12 @@ public class AddPaymentController {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                560.0,
+                330.0
+        );
     }
 
 
@@ -1860,7 +2420,30 @@ public class AddPaymentController {
         DialogStyler.style(alert);
 
 
-        alert.showAndWait();
+        WindowManager.showResponsiveDialogAndWait(
+                alert,
+                getOwnerWindow(),
+                600.0,
+                360.0
+        );
+    }
+
+
+    // =========================================================
+    // OWNER WINDOW
+    // =========================================================
+
+    private Window getOwnerWindow() {
+
+        if (amountField == null
+                || amountField.getScene() == null) {
+
+            return null;
+        }
+
+        return amountField
+                .getScene()
+                .getWindow();
     }
 
 

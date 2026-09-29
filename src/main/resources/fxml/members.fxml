@@ -149,13 +149,13 @@
 
                         <!-- =====================================
                              ACTIONS
-                             View / Edit / Delete
+                             View / Edit / Preview / Print Card / Delete
                              ===================================== -->
 
                         <TableColumn
                                 fx:id="actionsColumn"
                                 text="%members.table.actions"
-                                prefWidth="250.0"
+                                prefWidth="430.0"
                                 sortable="false"
                                 resizable="false"/>
 

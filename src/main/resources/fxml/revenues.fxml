@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox
+        spacing="18"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.mycompany.lazar_app.controller.RevenuesController"
+        style="-fx-background-color:#F5F7FB;">
+
+    <padding>
+        <Insets top="24" right="28" bottom="24" left="28"/>
+    </padding>
+
+    <children>
+
+        <HBox alignment="CENTER_LEFT" spacing="16">
+            <VBox spacing="5">
+                <Label fx:id="titleLabel"
+                       text="Revenues"
+                       style="-fx-font-size:27px;-fx-font-weight:bold;-fx-text-fill:#111827;"/>
+                <Label fx:id="subtitleLabel"
+                       text="Manage other revenues and source documents"
+                       style="-fx-font-size:13px;-fx-text-fill:#64748B;"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="newRevenueButton"
+                    text="+ New Revenue"
+                    onAction="#openNewRevenue"
+                    minHeight="42"
+                    style="-fx-background-color:#F97316;-fx-text-fill:white;-fx-font-weight:bold;-fx-background-radius:9;-fx-padding:10 20;-fx-cursor:hand;"/>
+        </HBox>
+
+        <HBox spacing="14">
+
+            <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
+                  style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:17;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),8,0,0,2);">
+                <Label fx:id="totalTitleLabel" text="Total Other Revenue"
+                       style="-fx-text-fill:#64748B;-fx-font-size:12px;"/>
+                <Label fx:id="totalRevenueLabel" text="0.00 EGP"
+                       style="-fx-text-fill:#16A34A;-fx-font-size:23px;-fx-font-weight:bold;"/>
+            </VBox>
+
+            <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
+                  style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:17;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),8,0,0,2);">
+                <Label fx:id="monthTitleLabel" text="This Month"
+                       style="-fx-text-fill:#64748B;-fx-font-size:12px;"/>
+                <Label fx:id="monthRevenueLabel" text="0.00 EGP"
+                       style="-fx-text-fill:#2563EB;-fx-font-size:23px;-fx-font-weight:bold;"/>
+            </VBox>
+
+            <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
+                  style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:17;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),8,0,0,2);">
+                <Label fx:id="transactionsTitleLabel" text="Transactions"
+                       style="-fx-text-fill:#64748B;-fx-font-size:12px;"/>
+                <Label fx:id="transactionsCountLabel" text="0"
+                       style="-fx-text-fill:#111827;-fx-font-size:23px;-fx-font-weight:bold;"/>
+            </VBox>
+
+            <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
+                  style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:17;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),8,0,0,2);">
+                <Label fx:id="typesTitleLabel" text="Revenue Types"
+                       style="-fx-text-fill:#64748B;-fx-font-size:12px;"/>
+                <Label fx:id="typesCountLabel" text="0"
+                       style="-fx-text-fill:#F97316;-fx-font-size:23px;-fx-font-weight:bold;"/>
+            </VBox>
+
+        </HBox>
+
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-background-color:white;-fx-background-radius:11;-fx-padding:13;">
+
+            <TextField fx:id="searchField"
+                       promptText="Search name, type, code or amount..."
+                       prefWidth="410"
+                       minHeight="38"/>
+
+            <ComboBox fx:id="typeFilter"
+                      prefWidth="220"
+                      minHeight="38"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="refreshButton"
+                    text="Refresh"
+                    onAction="#refreshAll"
+                    minHeight="38"
+                    style="-fx-background-color:#111827;-fx-text-fill:white;-fx-font-weight:bold;-fx-background-radius:8;-fx-padding:8 18;-fx-cursor:hand;"/>
+        </HBox>
+
+        <VBox spacing="10" VBox.vgrow="ALWAYS"
+              style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:12;">
+
+            <TableView fx:id="revenuesTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="codeColumn" text="Code" prefWidth="110"/>
+                    <TableColumn fx:id="nameColumn" text="Revenue Name" prefWidth="220"/>
+                    <TableColumn fx:id="typeColumn" text="Type" prefWidth="180"/>
+                    <TableColumn fx:id="amountColumn" text="Amount" prefWidth="145"/>
+                    <TableColumn fx:id="dateColumn" text="Date" prefWidth="125"/>
+                    <TableColumn fx:id="attachmentColumn" text="Attachment" prefWidth="110"/>
+                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="250"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+    </children>
+</VBox>

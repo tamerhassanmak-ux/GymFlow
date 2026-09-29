@@ -4,6 +4,7 @@ import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.Member;
 import com.mycompany.lazar_app.repository.MemberRepository;
 import com.mycompany.lazar_app.util.QrCodeGenerator;
+import com.mycompany.lazar_app.util.MemberCardPrinter;
 import com.mycompany.lazar_app.ui.dialog.AppDialog;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -23,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 
 
 public class AddMemberController {
@@ -35,6 +38,12 @@ public class AddMemberController {
 
     @FXML
     private TextField memberCodeField;
+
+    @FXML
+    private Button applyMemberCodeButton;
+
+    @FXML
+    private Label memberCodeHintLabel;
 
     @FXML
     private TextField nameField;
@@ -61,18 +70,13 @@ public class AddMemberController {
 
 
     // =====================================================
-    // MEMBERSHIP
+    // MEMBER STATUS
     // =====================================================
 
-    @FXML
-    private ComboBox<String> membershipComboBox;
-
-    @FXML
-    private DatePicker startDatePicker;
-
-    @FXML
-    private DatePicker endDatePicker;
-
+    /*
+     * Member master/account status only.
+     * Subscription status belongs to member_memberships.
+     */
     @FXML
     private ComboBox<String> statusComboBox;
 
@@ -133,7 +137,7 @@ public class AddMemberController {
     private Label cardMemberCodeLabel;
 
     @FXML
-    private Label cardMembershipLabel;
+    private Label printHintLabel;
 
 
     // =====================================================
@@ -160,11 +164,17 @@ public class AddMemberController {
     /*
      * Used while loading existing member data.
      *
-     * Without this flag, setting membership/start date while
-     * opening Edit mode could trigger listeners and overwrite
-     * the stored end date.
+     * Prevents listeners from treating programmatic field loading
+     * as user edits while opening Edit mode.
      */
     private boolean loadingMemberData = false;
+
+    /*
+     * Printing is restricted to persisted data only.
+     * If an existing member is edited, the card must not be printed
+     * until the changes are saved.
+     */
+    private boolean formDirty = false;
 
 
     // =====================================================
@@ -178,15 +188,19 @@ public class AddMemberController {
 
         initializeGender();
 
-        initializeMemberships();
-
         initializeStatuses();
 
         initializeDefaults();
 
+        initializeMemberCodeControls();
+
         initializeListeners();
 
+        initializeDirtyTracking();
+
         updateCardPreview();
+
+        updatePrintHint();
     }
 
 
@@ -200,23 +214,6 @@ public class AddMemberController {
                 FXCollections.observableArrayList(
                         bundle.getString("gender.male"),
                         bundle.getString("gender.female")
-                )
-        );
-    }
-
-
-    // =====================================================
-    // INITIALIZE MEMBERSHIPS
-    // =====================================================
-
-    private void initializeMemberships() {
-
-        membershipComboBox.setItems(
-                FXCollections.observableArrayList(
-                        bundle.getString("membership.monthly"),
-                        bundle.getString("membership.threeMonths"),
-                        bundle.getString("membership.halfYear"),
-                        bundle.getString("membership.yearly")
                 )
         );
     }
@@ -244,13 +241,42 @@ public class AddMemberController {
 
     private void initializeDefaults() {
 
-        startDatePicker.setValue(
-                LocalDate.now()
-        );
-
         statusComboBox.setValue(
                 bundle.getString("status.active")
         );
+    }
+
+
+    // =====================================================
+    // MEMBER CODE / QR MANUAL ENTRY
+    // =====================================================
+
+    private void initializeMemberCodeControls() {
+
+        memberCodeField.setEditable(true);
+        memberCodeField.setFocusTraversable(true);
+
+        memberCodeField.setPromptText(
+                LanguageManager.isArabic()
+                        ? "اختياري — اتركه فارغًا للتوليد التلقائي"
+                        : "Optional — leave blank for automatic code"
+        );
+
+        if (applyMemberCodeButton != null) {
+            applyMemberCodeButton.setText(
+                    LanguageManager.isArabic()
+                            ? "تطبيق وإنشاء QR"
+                            : "Apply & Generate QR"
+            );
+        }
+
+        if (memberCodeHintLabel != null) {
+            memberCodeHintLabel.setText(
+                    LanguageManager.isArabic()
+                            ? "يمكن كتابة الكود يدويًا أو مسحه بقارئ Barcode/QR. اترك الحقل فارغًا لاستخدام الكود التلقائي."
+                            : "Type the code manually or scan it with a Barcode/QR reader. Leave blank to use the automatic code."
+            );
+        }
     }
 
 
@@ -270,32 +296,33 @@ public class AddMemberController {
 
 
         /*
-         * Membership changed:
-         * recalculate end date only when user changes it.
+         * Member code is editable so the user can type/paste a code
+         * or scan it using a keyboard-wedge Barcode/QR reader.
          */
-        membershipComboBox.valueProperty().addListener(
+        memberCodeField.textProperty().addListener(
                 (observable, oldValue, newValue) -> {
 
-                    if (!loadingMemberData) {
-
-                        calculateEndDate();
-                    }
-
                     updateCardPreview();
+
+                    if (newValue == null || newValue.isBlank()) {
+                        clearQrCodePreview();
+                    }
                 }
         );
 
 
         /*
-         * Start date changed:
-         * recalculate end date only outside member loading.
+         * Generate QR when the user leaves the member-code field.
+         * This avoids regenerating a large QR image on every keystroke.
          */
-        startDatePicker.valueProperty().addListener(
-                (observable, oldValue, newValue) -> {
+        memberCodeField.focusedProperty().addListener(
+                (observable, oldValue, focused) -> {
 
-                    if (!loadingMemberData) {
+                    if (!focused
+                            && !loadingMemberData
+                            && !safeText(memberCodeField).isBlank()) {
 
-                        calculateEndDate();
+                        generateQrCode();
                     }
                 }
         );
@@ -331,29 +358,152 @@ public class AddMemberController {
 
 
     // =====================================================
+    // DIRTY TRACKING
+    // =====================================================
+
+    private void initializeDirtyTracking() {
+
+        memberCodeField.textProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+
+        nameField.textProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+
+        phoneField.textProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+
+        whatsappField.textProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+
+        emailField.textProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+
+        notesField.textProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+
+        genderComboBox.valueProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+
+        birthDatePicker.valueProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+
+        statusComboBox.valueProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        markFormDirty()
+        );
+    }
+
+
+    private void markFormDirty() {
+
+        if (loadingMemberData) {
+            return;
+        }
+
+        formDirty = true;
+
+        updatePrintHint();
+    }
+
+
+    private void updatePrintHint() {
+
+        if (printHintLabel == null) {
+            return;
+        }
+
+        if (!editMode
+                || editingMember == null
+                || editingMember.getId() <= 0) {
+
+            printHintLabel.setText(
+                    LanguageManager.isArabic()
+                            ? "احفظ العضو أولاً. بعد الحفظ يمكنك طباعة الكارت أو QR من جدول الأعضاء أو شاشة التفاصيل."
+                            : "Save the member first. After saving, you can print the card or QR from Members or Member Details."
+            );
+
+            printHintLabel.setStyle(
+                    "-fx-text-fill: #b45309;"
+                            + "-fx-font-size: 11px;"
+                            + "-fx-font-weight: bold;"
+            );
+
+            return;
+        }
+
+        if (formDirty) {
+
+            printHintLabel.setText(
+                    LanguageManager.isArabic()
+                            ? "يوجد تعديلات غير محفوظة. احفظ التعديلات أولاً لطباعة أحدث بيانات."
+                            : "There are unsaved changes. Save them before printing the latest member data."
+            );
+
+            printHintLabel.setStyle(
+                    "-fx-text-fill: #b45309;"
+                            + "-fx-font-size: 11px;"
+                            + "-fx-font-weight: bold;"
+            );
+
+            return;
+        }
+
+        printHintLabel.setText(
+                LanguageManager.isArabic()
+                        ? "العضو محفوظ — الطباعة متاحة."
+                        : "Saved member — printing is available."
+        );
+
+        printHintLabel.setStyle(
+                "-fx-text-fill: #15803d;"
+                        + "-fx-font-size: 11px;"
+                        + "-fx-font-weight: bold;"
+        );
+    }
+
+
+    // =====================================================
     // PREPARE ADD MODE
     // =====================================================
 
     public void prepareForAdd() {
 
+        loadingMemberData = true;
+
         editMode = false;
         editingMember = null;
 
-        memberCodeField.setText(NEW_MEMBER_CODE);
-        memberCodeField.setEditable(false);
+        /*
+         * Blank = automatic code after INSERT.
+         * Any nonblank value = manual code / scanned QR payload.
+         */
+        memberCodeField.clear();
+        memberCodeField.setEditable(true);
 
-        qrCodeLabel.setText(NEW_MEMBER_CODE);
-        cardMemberCodeLabel.setText(NEW_MEMBER_CODE);
+        clearQrCodePreview();
 
-        qrCodeImageView.setImage(null);
-        cardQrImageView.setImage(null);
-
-        qrPlaceholderLabel.setVisible(true);
-        qrPlaceholderLabel.setManaged(true);
-        cardQrPlaceholder.setVisible(true);
-        cardQrPlaceholder.setManaged(true);
+        loadingMemberData = false;
+        formDirty = false;
 
         updateCardPreview();
+
+        updatePrintHint();
     }
 
 
@@ -401,6 +551,8 @@ public class AddMemberController {
         memberCodeField.setText(
                 memberCode
         );
+
+        memberCodeField.setEditable(true);
 
 
         // =================================================
@@ -450,24 +602,14 @@ public class AddMemberController {
 
 
         // =================================================
-        // MEMBERSHIP
+        // MEMBER STATUS
         // =================================================
 
-        setMembershipDisplayValue(
-                member.getMembership()
-        );
-
-
-        startDatePicker.setValue(
-                member.getStartDate()
-        );
-
-
-        endDatePicker.setValue(
-                member.getEndDate()
-        );
-
-
+        /*
+         * This is the member master/account status only.
+         * Plan, subscription dates and subscription status are loaded
+         * exclusively from member_memberships elsewhere in the system.
+         */
         setStatusDisplayValue(
                 member.getStatus()
         );
@@ -523,6 +665,10 @@ public class AddMemberController {
         generateQrCode();
 
         updateCardPreview();
+
+        formDirty = false;
+
+        updatePrintHint();
     }
 
 
@@ -540,18 +686,104 @@ public class AddMemberController {
 
 
     // =====================================================
+    // APPLY MANUAL MEMBER CODE / QR VALUE
+    // =====================================================
+
+    @FXML
+    private void applyManualMemberCode() {
+
+        String memberCode =
+                safeText(memberCodeField);
+
+        if (memberCode.isBlank()) {
+
+            clearQrCodePreview();
+            updateCardPreview();
+
+            showInformation(
+                    LanguageManager.isArabic()
+                            ? "تم ترك الكود فارغًا. سيتم إنشاء كود العضو تلقائيًا بعد الحفظ."
+                            : "The code is blank. A member code will be generated automatically after saving."
+            );
+
+            return;
+        }
+
+        if (!validateMemberCode(memberCode)) {
+            return;
+        }
+
+        /*
+         * Store the trimmed value back in the field.
+         * This value can be typed, pasted or supplied by a scanner.
+         */
+        if (!memberCode.equals(memberCodeField.getText())) {
+            memberCodeField.setText(memberCode);
+        }
+
+        generateQrCode();
+        updateCardPreview();
+    }
+
+
+    private boolean validateMemberCode(String memberCode) {
+
+        if (memberCode == null || memberCode.isBlank()) {
+            return true;
+        }
+
+        /*
+         * members.member_code is VARCHAR(30) in the current schema.
+         */
+        if (memberCode.length() > 30) {
+
+            showValidation(
+                    LanguageManager.isArabic()
+                            ? "كود العضو يجب ألا يزيد عن 30 حرفًا."
+                            : "Member code must not exceed 30 characters."
+            );
+
+            memberCodeField.requestFocus();
+            memberCodeField.selectAll();
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private void clearQrCodePreview() {
+
+        qrCodeImageView.setImage(null);
+        cardQrImageView.setImage(null);
+
+        qrPlaceholderLabel.setVisible(true);
+        qrPlaceholderLabel.setManaged(true);
+
+        cardQrPlaceholder.setVisible(true);
+        cardQrPlaceholder.setManaged(true);
+    }
+
+
+    // =====================================================
     // GENERATE QR CODE
     // =====================================================
 
     private void generateQrCode() {
 
         String memberCode =
-                memberCodeField.getText();
+                safeText(memberCodeField);
 
 
-        if (memberCode == null
-                || memberCode.isBlank()) {
+        if (memberCode.isBlank()) {
 
+            clearQrCodePreview();
+
+            return;
+        }
+
+        if (!validateMemberCode(memberCode)) {
             return;
         }
 
@@ -717,6 +949,8 @@ public class AddMemberController {
                     false
             );
 
+            markFormDirty();
+
 
         } catch (Exception e) {
 
@@ -853,83 +1087,6 @@ public class AddMemberController {
 
 
     // =====================================================
-    // CALCULATE MEMBERSHIP END DATE
-    // =====================================================
-
-    private void calculateEndDate() {
-
-        LocalDate startDate =
-                startDatePicker.getValue();
-
-
-        String selected =
-                membershipComboBox.getValue();
-
-
-        if (startDate == null
-                || selected == null) {
-
-            endDatePicker.setValue(
-                    null
-            );
-
-            return;
-        }
-
-
-        LocalDate endDate;
-
-
-        if (selected.equals(
-                bundle.getString(
-                        "membership.monthly"
-                ))) {
-
-            endDate =
-                    startDate.plusMonths(1);
-
-
-        } else if (selected.equals(
-                bundle.getString(
-                        "membership.threeMonths"
-                ))) {
-
-            endDate =
-                    startDate.plusMonths(3);
-
-
-        } else if (selected.equals(
-                bundle.getString(
-                        "membership.halfYear"
-                ))) {
-
-            endDate =
-                    startDate.plusMonths(6);
-
-
-        } else if (selected.equals(
-                bundle.getString(
-                        "membership.yearly"
-                ))) {
-
-            endDate =
-                    startDate.plusYears(1);
-
-
-        } else {
-
-            endDate =
-                    null;
-        }
-
-
-        endDatePicker.setValue(
-                endDate
-        );
-    }
-
-
-    // =====================================================
     // UPDATE MEMBERSHIP CARD PREVIEW
     // =====================================================
 
@@ -966,31 +1123,6 @@ public class AddMemberController {
 
 
         // =================================================
-        // MEMBERSHIP
-        // =================================================
-
-        String membership =
-                membershipComboBox.getValue();
-
-
-        if (membership == null
-                || membership.isBlank()) {
-
-            cardMembershipLabel.setText(
-                    LanguageManager.isArabic()
-                            ? "خطة الاشتراك"
-                            : "Membership Plan"
-            );
-
-        } else {
-
-            cardMembershipLabel.setText(
-                    membership
-            );
-        }
-
-
-        // =================================================
         // MEMBER CODE
         // =================================================
 
@@ -1001,13 +1133,18 @@ public class AddMemberController {
         if (memberCode == null
                 || memberCode.isBlank()) {
 
+            String automaticLabel =
+                    LanguageManager.isArabic()
+                            ? "تلقائي بعد الحفظ"
+                            : "AUTO AFTER SAVE";
+
             cardMemberCodeLabel.setText(
-                    "LZR-000000"
+                    automaticLabel
             );
 
 
             qrCodeLabel.setText(
-                    "LZR-000000"
+                    automaticLabel
             );
 
         } else {
@@ -1047,6 +1184,9 @@ private void saveMember() {
 
     String email =
             safeText(emailField);
+
+    String requestedMemberCode =
+            safeText(memberCodeField);
 
     String notes =
             notesField.getText() == null
@@ -1141,43 +1281,82 @@ private void saveMember() {
 
 
     // =====================================================
-    // VALIDATION - MEMBERSHIP
+    // VALIDATION - MEMBER CODE / QR VALUE
     // =====================================================
 
-    if (membershipComboBox.getValue() == null) {
-
-        showValidation(
-                bundle.getString(
-                        "validation.membershipRequired"
-                )
-        );
-
-        membershipComboBox.requestFocus();
-
+    if (!validateMemberCode(requestedMemberCode)) {
         return;
+    }
+
+    /*
+     * Blank is valid and means: use automatic LZR-xxxxxx code.
+     * A manual/scanned code must be unique.
+     */
+    if (!requestedMemberCode.isBlank()) {
+
+        try {
+
+            Optional<Member> duplicateCode;
+
+            if (editMode && editingMember != null) {
+
+                duplicateCode =
+                        memberRepository.findAnotherByMemberCode(
+                                requestedMemberCode,
+                                editingMember.getId()
+                        );
+
+            } else {
+
+                duplicateCode =
+                        memberRepository.findByMemberCode(
+                                requestedMemberCode
+                        );
+            }
+
+            if (duplicateCode.isPresent()) {
+
+                AppDialog.warning(
+                        getStage(),
+                        LanguageManager.isArabic()
+                                ? "كود مستخدم بالفعل"
+                                : "Code Already In Use",
+                        LanguageManager.isArabic()
+                                ? "كود العضو/QR مستخدم بالفعل لعضو آخر. يرجى إدخال كود مختلف."
+                                : "This member/QR code is already assigned to another member. Enter a different code."
+                );
+
+                memberCodeField.requestFocus();
+                memberCodeField.selectAll();
+
+                return;
+            }
+
+        } catch (SQLException exception) {
+
+            System.err.println(
+                    "Unable to verify member code."
+            );
+
+            exception.printStackTrace();
+
+            AppDialog.error(
+                    getStage(),
+                    LanguageManager.isArabic()
+                            ? "تعذر التحقق من الكود"
+                            : "Unable to Verify Code",
+                    LanguageManager.isArabic()
+                            ? "تعذر التحقق من كود العضو في قاعدة البيانات. لم يتم حفظ العضو."
+                            : "The member code could not be verified in the database. The member was not saved."
+            );
+
+            return;
+        }
     }
 
 
     // =====================================================
-    // VALIDATION - START DATE
-    // =====================================================
-
-    if (startDatePicker.getValue() == null) {
-
-        showValidation(
-                LanguageManager.isArabic()
-                        ? "يرجى تحديد تاريخ بداية الاشتراك."
-                        : "Please select the membership start date."
-        );
-
-        startDatePicker.requestFocus();
-
-        return;
-    }
-
-
-    // =====================================================
-    // VALIDATION - STATUS
+    // VALIDATION - MEMBER STATUS
     // =====================================================
 
     if (statusComboBox.getValue() == null) {
@@ -1198,9 +1377,6 @@ private void saveMember() {
     // CONVERT UI VALUES TO SYSTEM VALUES
     // =====================================================
 
-    String membership =
-            getMembershipSystemValue();
-
     String status =
             getStatusSystemValue();
 
@@ -1218,43 +1394,24 @@ private void saveMember() {
     if (editMode && editingMember != null) {
 
         memberId = editingMember.getId();
-        memberCode = safeString(editingMember.getMemberCode());
+        memberCode = requestedMemberCode;
 
+        /*
+         * Clearing the field while editing restores the automatic
+         * code derived from the existing database ID.
+         */
         if (memberCode.isBlank()) {
             memberCode = generateMemberCode(memberId);
         }
 
     } else {
 
-        // Database will generate the real ID and permanent member code.
+        /*
+         * Nonblank = manual/scanned code.
+         * Blank = MemberRepository generates LZR-xxxxxx after INSERT.
+         */
         memberId = 0;
-        memberCode = "";
-    }
-
-
-    // =====================================================
-    // MEMBERSHIP END DATE
-    // =====================================================
-
-    LocalDate startDate =
-            startDatePicker.getValue();
-
-    LocalDate endDate =
-            endDatePicker.getValue();
-
-
-    /*
-     * Safety:
-     * if end date wasn't generated for any reason,
-     * calculate it before saving.
-     */
-
-    if (endDate == null) {
-
-        calculateEndDate();
-
-        endDate =
-                endDatePicker.getValue();
+        memberCode = requestedMemberCode;
     }
 
 
@@ -1283,12 +1440,14 @@ private void saveMember() {
      * 6  email
      * 7  gender
      * 8  birthDate
-     * 9  membership
-     * 10 startDate
-     * 11 endDate
-     * 12 status
+     * 9  legacy membership      -> intentionally blank
+     * 10 legacy startDate      -> intentionally null
+     * 11 legacy endDate        -> intentionally null
+     * 12 member account status
      * 13 notes
      * 14 photoPath
+     *
+     * Subscription data is created only through member_memberships.
      */
 
     newMember =
@@ -1301,9 +1460,9 @@ private void saveMember() {
                     email,
                     gender,
                     birthDate,
-                    membership,
-                    startDate,
-                    endDate,
+                    "",
+                    null,
+                    null,
                     status,
                     notes,
                     photoPath
@@ -1319,62 +1478,7 @@ private void saveMember() {
 
 
     // =====================================================
-    // MEMBERSHIP SYSTEM VALUE
-    // =====================================================
-
-    private String getMembershipSystemValue() {
-
-        String selected =
-                membershipComboBox.getValue();
-
-
-        if (selected == null) {
-            return "";
-        }
-
-
-        if (selected.equals(
-                bundle.getString(
-                        "membership.monthly"
-                ))) {
-
-            return "Monthly";
-        }
-
-
-        if (selected.equals(
-                bundle.getString(
-                        "membership.threeMonths"
-                ))) {
-
-            return "3 Months";
-        }
-
-
-        if (selected.equals(
-                bundle.getString(
-                        "membership.halfYear"
-                ))) {
-
-            return "6 Months";
-        }
-
-
-        if (selected.equals(
-                bundle.getString(
-                        "membership.yearly"
-                ))) {
-
-            return "Yearly";
-        }
-
-
-        return selected;
-    }
-
-
-    // =====================================================
-    // STATUS SYSTEM VALUE
+    // MEMBER STATUS SYSTEM VALUE
     // =====================================================
 
     private String getStatusSystemValue() {
@@ -1500,64 +1604,7 @@ private void saveMember() {
 
 
     // =====================================================
-    // SET MEMBERSHIP DISPLAY VALUE
-    // =====================================================
-
-    private void setMembershipDisplayValue(
-            String membership
-    ) {
-
-        if (membership == null
-                || membership.isBlank()) {
-
-            membershipComboBox.setValue(
-                    null
-            );
-
-            return;
-        }
-
-
-        switch (membership) {
-
-            case "Monthly" ->
-                    membershipComboBox.setValue(
-                            bundle.getString(
-                                    "membership.monthly"
-                            )
-                    );
-
-            case "3 Months" ->
-                    membershipComboBox.setValue(
-                            bundle.getString(
-                                    "membership.threeMonths"
-                            )
-                    );
-
-            case "6 Months" ->
-                    membershipComboBox.setValue(
-                            bundle.getString(
-                                    "membership.halfYear"
-                            )
-                    );
-
-            case "Yearly" ->
-                    membershipComboBox.setValue(
-                            bundle.getString(
-                                    "membership.yearly"
-                            )
-                    );
-
-            default ->
-                    membershipComboBox.setValue(
-                            membership
-                    );
-        }
-    }
-
-
-    // =====================================================
-    // SET STATUS DISPLAY VALUE
+    // SET MEMBER STATUS DISPLAY VALUE
     // =====================================================
 
     private void setStatusDisplayValue(
@@ -1607,56 +1654,150 @@ private void saveMember() {
 
 
     // =====================================================
-    // PRINT MEMBERSHIP CARD
+    // SAVED-ONLY PRINTING
     // =====================================================
 
     @FXML
     private void printMemberCard() {
 
-        if (qrCodeImageView.getImage() == null) {
+        Member printableMember =
+                getSavedMemberForPrinting();
 
-            showInformation(
-                    LanguageManager.isArabic()
-                            ? "لم يتم إنشاء QR Code بعد."
-                            : "QR Code has not been generated yet."
-            );
-
+        if (printableMember == null) {
             return;
         }
 
+        MemberCardPrinter.PrintResult result =
+                MemberCardPrinter.printCard(
+                        getStage(),
+                        printableMember,
+                        LanguageManager.isArabic()
+                );
 
-        showInformation(
+        handlePrintResult(
+                result,
                 LanguageManager.isArabic()
-                        ? "بطاقة العضوية جاهزة للطباعة."
-                        : "Membership card is ready for printing."
+                        ? "كارت العضو"
+                        : "Member Card"
         );
     }
 
 
-    // =====================================================
-    // PRINT QR LABEL
-    // =====================================================
-
     @FXML
     private void printQrCode() {
 
-        if (qrCodeImageView.getImage() == null) {
+        Member printableMember =
+                getSavedMemberForPrinting();
 
-            showInformation(
+        if (printableMember == null) {
+            return;
+        }
+
+        MemberCardPrinter.PrintResult result =
+                MemberCardPrinter.printQrLabel(
+                        getStage(),
+                        printableMember,
+                        LanguageManager.isArabic()
+                );
+
+        handlePrintResult(
+                result,
+                LanguageManager.isArabic()
+                        ? "QR العضو"
+                        : "Member QR"
+        );
+    }
+
+
+    private Member getSavedMemberForPrinting() {
+
+        if (!editMode
+                || editingMember == null
+                || !MemberCardPrinter.isSavedMember(
+                        editingMember
+                )) {
+
+            AppDialog.warning(
+                    getStage(),
                     LanguageManager.isArabic()
-                            ? "لم يتم إنشاء QR Code بعد."
-                            : "QR Code has not been generated yet."
+                            ? "الحفظ مطلوب قبل الطباعة"
+                            : "Save Required Before Printing",
+                    LanguageManager.isArabic()
+                            ? "احفظ العضو أولاً. بعد الحفظ يمكنك طباعة الكارت من جدول الأعضاء أو من شاشة تفاصيل العضو."
+                            : "Save the member first. After saving, print the card from the Members table or Member Details."
             );
+
+            return null;
+        }
+
+        if (formDirty) {
+
+            AppDialog.warning(
+                    getStage(),
+                    LanguageManager.isArabic()
+                            ? "تعديلات غير محفوظة"
+                            : "Unsaved Changes",
+                    LanguageManager.isArabic()
+                            ? "تم تعديل بيانات العضو ولم يتم حفظها بعد. احفظ التعديلات أولاً ثم اطبع الكارت."
+                            : "Member data has changed but is not saved yet. Save the changes before printing the card."
+            );
+
+            return null;
+        }
+
+        return editingMember;
+    }
+
+
+    private void handlePrintResult(
+            MemberCardPrinter.PrintResult result,
+            String itemName
+    ) {
+
+        if (result == null
+                || result == MemberCardPrinter.PrintResult.CANCELLED) {
 
             return;
         }
 
+        switch (result) {
 
-        showInformation(
-                LanguageManager.isArabic()
-                        ? "ملصق QR جاهز للطباعة."
-                        : "QR label is ready for printing."
-        );
+            case PRINTED ->
+                    AppDialog.info(
+                            getStage(),
+                            LanguageManager.isArabic()
+                                    ? "تم إرسال الطباعة"
+                                    : "Print Sent",
+                            LanguageManager.isArabic()
+                                    ? "تم إرسال " + itemName + " إلى الطابعة بنجاح."
+                                    : itemName + " was sent to the printer successfully."
+                    );
+
+            case NO_PRINTER ->
+                    AppDialog.warning(
+                            getStage(),
+                            LanguageManager.isArabic()
+                                    ? "لا توجد طابعة"
+                                    : "No Printer",
+                            LanguageManager.isArabic()
+                                    ? "لم يتم العثور على طابعة متاحة على النظام."
+                                    : "No available printer was found on this system."
+                    );
+
+            case FAILED ->
+                    AppDialog.error(
+                            getStage(),
+                            LanguageManager.isArabic()
+                                    ? "فشل الطباعة"
+                                    : "Print Failed",
+                            LanguageManager.isArabic()
+                                    ? "تعذر إتمام عملية الطباعة. راجع إعدادات الطابعة وحاول مرة أخرى."
+                                    : "The print operation could not be completed. Check the printer settings and try again."
+                    );
+
+            default -> {
+            }
+        }
     }
 
 

@@ -5,105 +5,315 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox
+<BorderPane
+        prefWidth="820.0"
+        prefHeight="780.0"
+        minWidth="680.0"
+        minHeight="560.0"
+        maxWidth="Infinity"
+        maxHeight="Infinity"
+        style="-fx-background-color:#F5F7FA;"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.AddPaymentController"
-        prefWidth="600"
-        spacing="20"
-        style="-fx-background-color: #F5F7FA;">
+        fx:controller="com.mycompany.lazar_app.controller.AddPaymentController">
 
-    <padding>
-        <Insets top="25" right="30" bottom="25" left="30"/>
-    </padding>
+    <top>
+        <VBox spacing="10" style="-fx-background-color:#FFFFFF;">
+            <padding>
+                <Insets top="24" right="30" bottom="16" left="30"/>
+            </padding>
 
-    <VBox spacing="5">
-        <Label text="%addPayment.title"
-               style="-fx-font-size:24px;-fx-font-weight:bold;-fx-text-fill:#1F2937;"/>
-        <Label text="%addPayment.subtitle"
-               style="-fx-font-size:13px;-fx-text-fill:#6B7280;"/>
-    </VBox>
+            <Label
+                    text="%addPayment.title"
+                    style="-fx-font-size:24px;-fx-font-weight:bold;-fx-text-fill:#1F2937;"/>
 
-    <GridPane hgap="15" vgap="15">
+            <Label
+                    text="%addPayment.subtitle"
+                    wrapText="true"
+                    style="-fx-font-size:13px;-fx-text-fill:#6B7280;"/>
 
-        <Label text="%addPayment.member"
-               GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="memberComboBox"
-                  promptText="%addPayment.selectMember"
-                  prefWidth="350" prefHeight="38"
-                  GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <Separator/>
+        </VBox>
+    </top>
 
-        <Label text="%addPayment.membership"
-               GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="membershipComboBox"
-                  promptText="%addPayment.selectMembership"
-                  prefWidth="350" prefHeight="38"
-                  GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+    <center>
+        <ScrollPane
+                fx:id="paymentFormScrollPane"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                pannable="false"
+                style="-fx-background-color:transparent;-fx-background:#F5F7FA;">
 
-        <Label text="%addPayment.amount"
-               GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="amountField"
-                   promptText="%addPayment.amountPlaceholder"
-                   prefHeight="38"
-                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <content>
+                <VBox spacing="18" maxWidth="Infinity" style="-fx-background-color:#F5F7FA;">
+                    <padding>
+                        <Insets top="22" right="30" bottom="24" left="30"/>
+                    </padding>
 
-        <Label text="%addPayment.paymentMethod"
-               GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="paymentMethodComboBox"
-                  promptText="%addPayment.selectPaymentMethod"
-                  prefWidth="350" prefHeight="38"
-                  GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <GridPane hgap="18" vgap="16" maxWidth="Infinity">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="70" hgrow="ALWAYS" fillWidth="true"/>
+                        </columnConstraints>
 
-        <Label text="%addPayment.status"
-               GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="statusComboBox"
-                  promptText="%addPayment.selectStatus"
-                  prefWidth="350" prefHeight="38"
-                  GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        <children>
+                            <Label
+                                    text="%addPayment.member"
+                                    styleClass="form-label"
+                                    GridPane.rowIndex="0"
+                                    GridPane.columnIndex="0"/>
 
-        <Label text="%addPayment.date"
-               GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-        <DatePicker fx:id="paymentDatePicker"
-                    prefWidth="350" prefHeight="38"
-                    GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                            <ComboBox
+                                    fx:id="memberComboBox"
+                                    promptText="%addPayment.selectMember"
+                                    prefHeight="44"
+                                    maxWidth="Infinity"
+                                    GridPane.rowIndex="0"
+                                    GridPane.columnIndex="1"/>
 
-        <Label text="%addPayment.reference"
-               GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-        <TextField fx:id="referenceField"
-                   promptText="%addPayment.referencePlaceholder"
-                   prefHeight="38"
-                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                            <Label
+                                    text="%addPayment.membership"
+                                    styleClass="form-label"
+                                    GridPane.rowIndex="1"
+                                    GridPane.columnIndex="0"/>
 
-        <Label text="%common.notes"
-               GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-        <TextArea fx:id="notesArea"
-                  promptText="%addPayment.notesPlaceholder"
-                  prefHeight="90"
-                  wrapText="true"
-                  GridPane.rowIndex="7" GridPane.columnIndex="1"/>
-    </GridPane>
+                            <ComboBox
+                                    fx:id="membershipComboBox"
+                                    promptText="%addPayment.selectMembership"
+                                    prefHeight="44"
+                                    maxWidth="Infinity"
+                                    GridPane.rowIndex="1"
+                                    GridPane.columnIndex="1"/>
+                        </children>
+                    </GridPane>
 
-    <HBox spacing="10">
-        <Region HBox.hgrow="ALWAYS"/>
+                    <!-- Financial snapshot for the selected membership -->
+                    <VBox
+                            fx:id="financialSummaryBox"
+                            spacing="10"
+                            visible="false"
+                            managed="false"
+                            style="-fx-background-color:#FFFFFF;-fx-background-radius:10;-fx-padding:14;-fx-border-color:#E5E7EB;-fx-border-radius:10;">
 
-        <Button text="%common.cancel"
-                mnemonicParsing="false"
-                onAction="#cancel"
-                prefHeight="40"
-                style="-fx-background-color:white;-fx-text-fill:#374151;-fx-border-color:#D1D5DB;-fx-border-radius:7;-fx-background-radius:7;-fx-padding:0 20;-fx-cursor:hand;"/>
+                        <Label
+                                fx:id="financialSummaryTitleLabel"
+                                text="Membership financial summary"
+                                style="-fx-font-size:14px;-fx-font-weight:bold;-fx-text-fill:#111827;"/>
 
-        <Button text="%addPayment.save"
-                mnemonicParsing="false"
-                onAction="#savePayment"
-                prefHeight="40"
-                style="-fx-background-color:#F97316;-fx-text-fill:white;-fx-font-weight:bold;-fx-background-radius:7;-fx-padding:0 22;-fx-cursor:hand;"/>
-    </HBox>
+                        <HBox spacing="10">
+                            <VBox spacing="4" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color:#F9FAFB;-fx-background-radius:8;-fx-padding:10;">
+                                <Label fx:id="membershipAmountCaptionLabel" text="Subscription amount"
+                                       style="-fx-font-size:11px;-fx-text-fill:#6B7280;"/>
+                                <Label fx:id="membershipAmountValueLabel" text="0.00 EGP"
+                                       style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#111827;"/>
+                            </VBox>
 
-</VBox>
+                            <VBox spacing="4" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color:#F0FDF4;-fx-background-radius:8;-fx-padding:10;">
+                                <Label fx:id="paidAmountCaptionLabel" text="Paid"
+                                       style="-fx-font-size:11px;-fx-text-fill:#15803D;"/>
+                                <Label fx:id="paidAmountValueLabel" text="0.00 EGP"
+                                       style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#15803D;"/>
+                            </VBox>
+
+                            <VBox spacing="4" HBox.hgrow="ALWAYS"
+                                  style="-fx-background-color:#FFF7ED;-fx-background-radius:8;-fx-padding:10;">
+                                <Label fx:id="balanceCaptionLabel" text="Remaining"
+                                       style="-fx-font-size:11px;-fx-text-fill:#C2410C;"/>
+                                <Label fx:id="balanceValueLabel" text="0.00 EGP"
+                                       style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#C2410C;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <GridPane hgap="18" vgap="16" maxWidth="Infinity">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="30" halignment="RIGHT"/>
+                            <ColumnConstraints percentWidth="70" hgrow="ALWAYS" fillWidth="true"/>
+                        </columnConstraints>
+
+                        <children>
+                            <Label
+                                    text="%addPayment.amount"
+                                    styleClass="form-label"
+                                    GridPane.rowIndex="0"
+                                    GridPane.columnIndex="0"/>
+
+                            <VBox spacing="6" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                                <TextField
+                                        fx:id="amountField"
+                                        promptText="%addPayment.amountPlaceholder"
+                                        prefHeight="44"
+                                        maxWidth="Infinity"/>
+                                <Label
+                                        fx:id="remainingAfterPaymentLabel"
+                                        text=""
+                                        wrapText="true"
+                                        style="-fx-font-size:12px;-fx-text-fill:#6B7280;"/>
+                            </VBox>
+
+                            <Label
+                                    text="%addPayment.paymentMethod"
+                                    styleClass="form-label"
+                                    GridPane.rowIndex="1"
+                                    GridPane.columnIndex="0"/>
+
+                            <ComboBox
+                                    fx:id="paymentMethodComboBox"
+                                    promptText="%addPayment.selectPaymentMethod"
+                                    prefHeight="44"
+                                    maxWidth="Infinity"
+                                    GridPane.rowIndex="1"
+                                    GridPane.columnIndex="1"/>
+
+                            <Label
+                                    text="%addPayment.status"
+                                    styleClass="form-label"
+                                    GridPane.rowIndex="2"
+                                    GridPane.columnIndex="0"/>
+
+                            <ComboBox
+                                    fx:id="statusComboBox"
+                                    promptText="%addPayment.selectStatus"
+                                    prefHeight="44"
+                                    maxWidth="Infinity"
+                                    GridPane.rowIndex="2"
+                                    GridPane.columnIndex="1"/>
+
+                            <Label
+                                    text="%addPayment.date"
+                                    styleClass="form-label"
+                                    GridPane.rowIndex="3"
+                                    GridPane.columnIndex="0"/>
+
+                            <DatePicker
+                                    fx:id="paymentDatePicker"
+                                    prefHeight="44"
+                                    maxWidth="Infinity"
+                                    GridPane.rowIndex="3"
+                                    GridPane.columnIndex="1"/>
+
+                            <Label
+                                    text="%addPayment.reference"
+                                    styleClass="form-label"
+                                    GridPane.rowIndex="4"
+                                    GridPane.columnIndex="0"/>
+
+                            <TextField
+                                    fx:id="referenceField"
+                                    promptText="%addPayment.referencePlaceholder"
+                                    prefHeight="44"
+                                    maxWidth="Infinity"
+                                    GridPane.rowIndex="4"
+                                    GridPane.columnIndex="1"/>
+
+                            <Label
+                                    text="%common.notes"
+                                    styleClass="form-label"
+                                    GridPane.rowIndex="5"
+                                    GridPane.columnIndex="0"/>
+
+                            <TextArea
+                                    fx:id="notesArea"
+                                    promptText="%addPayment.notesPlaceholder"
+                                    prefHeight="100"
+                                    minHeight="90"
+                                    maxWidth="Infinity"
+                                    wrapText="true"
+                                    GridPane.rowIndex="5"
+                                    GridPane.columnIndex="1"/>
+                        </children>
+                    </GridPane>
+
+                    <!-- Only appears when a PAID payment leaves a remaining balance -->
+                    <VBox
+                            fx:id="scheduleBox"
+                            spacing="12"
+                            visible="false"
+                            managed="false"
+                            style="-fx-background-color:#EFF6FF;-fx-background-radius:10;-fx-padding:16;-fx-border-color:#BFDBFE;-fx-border-radius:10;">
+
+                        <Label
+                                fx:id="scheduleTitleLabel"
+                                text="Remaining balance schedule"
+                                style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1E3A8A;"/>
+
+                        <Label
+                                fx:id="scheduleHintLabel"
+                                text="The remaining balance will be divided into monthly installments."
+                                wrapText="true"
+                                style="-fx-font-size:12px;-fx-text-fill:#475569;"/>
+
+                        <GridPane hgap="14" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="32"/>
+                                <ColumnConstraints percentWidth="68" hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label fx:id="installmentsCaptionLabel" text="Number of installments"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="installmentsComboBox" prefHeight="40" maxWidth="Infinity"
+                                      GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label fx:id="firstDueDateCaptionLabel" text="First due date"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <DatePicker fx:id="firstInstallmentDatePicker" prefHeight="40" maxWidth="Infinity"
+                                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label fx:id="installmentAmountCaptionLabel" text="Approx. installment"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="installmentAmountValueLabel" text="0.00 EGP"
+                                   style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1D4ED8;"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <VBox style="-fx-background-color:#FFFFFF;">
+            <Separator/>
+
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <padding>
+                    <Insets top="16" right="30" bottom="18" left="30"/>
+                </padding>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button
+                        text="%common.cancel"
+                        mnemonicParsing="false"
+                        onAction="#cancel"
+                        prefWidth="120"
+                        prefHeight="44"
+                        styleClass="secondary-button"/>
+
+                <Button
+                        text="%addPayment.save"
+                        mnemonicParsing="false"
+                        onAction="#savePayment"
+                        prefWidth="160"
+                        prefHeight="44"
+                        styleClass="primary-button"/>
+            </HBox>
+        </VBox>
+    </bottom>
+
+</BorderPane>
