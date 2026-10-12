@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build-windows:
@@ -21,6 +26,17 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+
+      - name: Resolve application version
+        shell: powershell
+        run: |
+          [xml]$pom = Get-Content pom.xml
+          $version = [string]$pom.project.version
+          if (-not $version) { throw "Version missing from pom.xml" }
+          if ($env:GITHUB_REF -like "refs/tags/v*" -and $env:GITHUB_REF_NAME -ne "v$version") {
+              throw "Git tag $env:GITHUB_REF_NAME does not match pom.xml version $version"
+          }
+          "APP_VERSION=$version" >> $env:GITHUB_ENV
 
       - name: Show Java and Maven versions
         shell: powershell
@@ -78,7 +94,7 @@ jobs:
           jpackage `
             --type exe `
             --name GymFlow `
-            --app-version 1.0.3 `
+            --app-version $env:APP_VERSION `
             --vendor "MAKSOFT Software Solutions" `
             --description "GymFlow Gym Management System" `
             --input target\jpackage-input `
@@ -103,7 +119,15 @@ jobs:
       - name: Upload GymFlow Windows Installer
         uses: actions/upload-artifact@v4
         with:
-          name: GymFlow-Windows-Installer-1.0.3
+          name: GymFlow-Windows-Installer-${{ env.APP_VERSION }}
           path: installer-output/*.exe
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish GitHub Release with Windows installer
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$env:GITHUB_REF_NAME" "installer-output/*.exe" --title "GymFlow $env:GITHUB_REF_NAME - Windows" --generate-notes --verify-tag
