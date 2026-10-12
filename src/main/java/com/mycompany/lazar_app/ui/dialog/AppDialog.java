@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
@@ -99,12 +100,9 @@ public final class AppDialog {
          * Keep every normal GymFlow message at the same professional size.
          * WindowManager will also enforce this on the native Stage.
          */
-        pane.setMinWidth(WindowManager.STANDARD_DIALOG_WIDTH);
+        // Responsive size is managed centrally, never lock the pane height.
         pane.setPrefWidth(WindowManager.STANDARD_DIALOG_WIDTH);
-        pane.setMaxWidth(WindowManager.STANDARD_DIALOG_WIDTH);
-        pane.setMinHeight(WindowManager.STANDARD_DIALOG_HEIGHT);
         pane.setPrefHeight(WindowManager.STANDARD_DIALOG_HEIGHT);
-        pane.setMaxHeight(WindowManager.STANDARD_DIALOG_HEIGHT);
 
         var css = AppDialog.class.getResource("/css/app.css");
         if (css != null) pane.getStylesheets().add(css.toExternalForm());

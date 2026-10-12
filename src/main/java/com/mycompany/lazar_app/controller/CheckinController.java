@@ -16,7 +16,9 @@ import com.mycompany.lazar_app.repository.MemberMembershipRepository;
 
 import java.sql.SQLException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
@@ -25,6 +27,9 @@ import java.util.Locale;
 import java.util.Optional;
 
 import javafx.application.Platform;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import javafx.beans.property.SimpleStringProperty;
 
@@ -147,6 +152,10 @@ public class CheckinController {
             );
 
 
+    // A midnight sweep is also retried at the next app launch.
+    private LocalDate lastDailySweep;
+    private Timeline dailyCleanupTimer;
+
     // =========================================================
     // INITIALIZE
     // =========================================================
@@ -158,9 +167,60 @@ public class CheckinController {
 
         configureSearch();
 
+        // Restore stale sessions before calculating any attendance counters.
+        try {
+            closePreviousDaySessions();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            showError(LanguageManager.isArabic()
+                    ? "تعذر إغلاق سجلات الحضور القديمة تلقائياً."
+                    : "Could not close old attendance sessions automatically.");
+        }
         loadData();
+        startDailyCleanupTimer();
     }
 
+
+    /**
+     * Closes only sessions from dates earlier than today; today's live
+     * check-ins are never touched. Checkout is the end of the original day,
+     * not the time when this cleanup happens.
+     *
+     * This uses the existing repository API. For large installations,
+     * a single indexed bulk UPDATE in CheckInRepository is preferable.
+     */
+    private void closePreviousDaySessions() throws SQLException {
+        checkInRepository.autoCheckOutPreviousDays();
+        lastDailySweep = LocalDate.now();
+    }
+
+    /**
+     * Run the cleanup after midnight while the screen is open, and on next
+     * launch if the application was closed at midnight.
+     */
+    private void startDailyCleanupTimer() {
+        dailyCleanupTimer = new Timeline(new KeyFrame(Duration.minutes(1), event -> {
+            if (LocalDate.now().equals(lastDailySweep)) {
+                return;
+            }
+            try {
+                closePreviousDaySessions();
+                loadData();
+                DashboardContentController.refreshCurrentSummary();
+            } catch (SQLException ex) {
+                ex.printStackTrace(); // Keep retrying at the next tick.
+            }
+        }));
+        dailyCleanupTimer.setCycleCount(Timeline.INDEFINITE);
+        dailyCleanupTimer.play();
+
+        // Stop the timer when the page is removed from the scene.
+        checkinTable.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (oldScene != null && newScene == null && dailyCleanupTimer != null) {
+                dailyCleanupTimer.stop();
+            }
+        });
+    }
 
     // =========================================================
     // CONFIGURE TABLE
@@ -1073,6 +1133,20 @@ public class CheckinController {
                                     member.getId()
                             );
 
+
+            if (openCheckIn.isPresent()
+                    && openCheckIn.get().getCheckInTime() != null
+                    && openCheckIn.get().getCheckInTime().toLocalDate()
+                            .isBefore(LocalDate.now())) {
+                // Repair this member immediately, even if the global sweep
+                // failed or the application crossed midnight while open.
+                CheckIn stale = openCheckIn.get();
+                stale.setCheckOutTime(stale.getCheckInTime()
+                        .toLocalDate().atTime(23, 59, 59));
+                stale.setStatus("OUT");
+                checkInRepository.update(stale);
+                openCheckIn = checkInRepository.findOpenByMemberId(member.getId());
+            }
 
             if (openCheckIn.isPresent()) {
 

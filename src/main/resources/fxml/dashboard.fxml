@@ -105,6 +105,14 @@
                     styleClass="sidebar-button"/>
 
                 <Button
+                    fx:id="attendanceHistoryButton"
+                    text="%nav.attendanceHistory"
+                    mnemonicParsing="false"
+                    onAction="#openAttendanceHistory"
+                    maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+
+                <Button
                     fx:id="paymentsButton"
                     text="%nav.payments"
                     mnemonicParsing="false"

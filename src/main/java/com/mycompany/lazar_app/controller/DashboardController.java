@@ -52,6 +52,9 @@ public class DashboardController {
     private Button checkInButton;
 
     @FXML
+    private Button attendanceHistoryButton;
+
+    @FXML
     private Button paymentsButton;
 
     @FXML
@@ -221,6 +224,8 @@ public class DashboardController {
         clearActiveButton(
                 checkInButton
         );
+
+        clearActiveButton(attendanceHistoryButton);
 
         clearActiveButton(
                 paymentsButton
@@ -437,6 +442,13 @@ public class DashboardController {
         }
     }
 
+
+    @FXML
+    private void openAttendanceHistory() {
+        if (loadView("attendance-history.fxml")) {
+            setActiveButton(attendanceHistoryButton);
+        }
+    }
 
     // ==========================================
     // PAYMENTS

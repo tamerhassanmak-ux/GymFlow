@@ -176,6 +176,64 @@ public class CheckInRepository {
     }
 
 
+    /**
+     * Close unfinished attendance from earlier calendar days.
+     * Uses Java date parsing so SQLite, MySQL and SQL Server work alike.
+     * Closed at 23:59:59 on the ORIGINAL attendance date, not today.
+     * Returns the number of records actually closed.
+     */
+    public int autoCheckOutPreviousDays() throws SQLException {
+        LocalDate today = LocalDate.now();
+        String selectSql = "SELECT id, check_in_time FROM check_ins "
+                + "WHERE status = 'IN' AND check_out_time IS NULL";
+        String updateSql = "UPDATE check_ins SET check_out_time = ?, "
+                + "status = 'OUT', updated_at = CURRENT_TIMESTAMP "
+                + "WHERE id = ? AND status = 'IN' AND check_out_time IS NULL";
+
+        try (Connection connection = DatabaseManager.getConnection()) {
+            // Read first and close the result set before writing, for DB portability.
+            List<Integer> ids = new ArrayList<>();
+            List<LocalDateTime> checkoutTimes = new ArrayList<>();
+            try (PreparedStatement query = connection.prepareStatement(selectSql);
+                 ResultSet results = query.executeQuery()) {
+                while (results.next()) {
+                    LocalDateTime checkedIn = getLocalDateTime(results, "check_in_time");
+                    if (checkedIn != null && checkedIn.toLocalDate().isBefore(today)) {
+                        ids.add(results.getInt("id"));
+                        checkoutTimes.add(checkedIn.toLocalDate().atTime(23, 59, 59));
+                    }
+                }
+            }
+            if (ids.isEmpty()) {
+                return 0;
+            }
+            boolean originalAutoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
+            try (PreparedStatement update = connection.prepareStatement(updateSql)) {
+                for (int i = 0; i < ids.size(); i++) {
+                    setLocalDateTime(update, 1, checkoutTimes.get(i));
+                    update.setInt(2, ids.get(i));
+                    update.addBatch();
+                }
+                int count = 0;
+                for (int result : update.executeBatch()) {
+                    if (result == Statement.SUCCESS_NO_INFO) {
+                        count++;
+                    } else if (result > 0) {
+                        count += result;
+                    }
+                }
+                connection.commit();
+                return count;
+            } catch (SQLException | RuntimeException exception) {
+                connection.rollback();
+                throw exception;
+            } finally {
+                connection.setAutoCommit(originalAutoCommit);
+            }
+        }
+    }
+
     // =========================================================
     // FIND OPEN CHECK-IN
     // =========================================================
@@ -183,6 +241,8 @@ public class CheckInRepository {
     public Optional<CheckIn> findOpenByMemberId(
             int memberId
     ) throws SQLException {
+
+        autoCheckOutPreviousDays();
 
         String sql =
                 BASE_SELECT

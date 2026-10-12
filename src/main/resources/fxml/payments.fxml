@@ -13,9 +13,9 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane
-        minHeight="600.0"
-        minWidth="900.0"
-        prefHeight="720.0"
+        minHeight="0.0"
+        minWidth="0.0"
+        prefHeight="680.0"
         prefWidth="1280.0"
         maxHeight="Infinity"
         maxWidth="Infinity"
@@ -108,21 +108,24 @@
                            style="-fx-font-size: 12px;-fx-text-fill: #6B7280;"/>
                 </HBox>
 
-                <TableView fx:id="paymentsTable" VBox.vgrow="ALWAYS">
+                <!-- Native TableView horizontal/vertical scrollbars.
+                     The table stays viewport-sized, while the sum of column
+                     minimum widths exceeds it and enables horizontal scroll. -->
+                <TableView fx:id="paymentsTable" nodeOrientation="LEFT_TO_RIGHT"
+                           minWidth="0.0" prefWidth="1100.0" maxWidth="Infinity"
+                           minHeight="220.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="idColumn" text="%payments.table.id" prefWidth="70" minWidth="65"/>
-                        <TableColumn fx:id="memberColumn" text="%payments.table.member" prefWidth="180" minWidth="150"/>
-                        <TableColumn fx:id="membershipColumn" text="%payments.table.membership" prefWidth="135" minWidth="120"/>
-
-                        <TableColumn fx:id="subscriptionAmountColumn" text="Subscription" prefWidth="125" minWidth="110"/>
-                        <TableColumn fx:id="amountColumn" text="%payments.table.amount" prefWidth="120" minWidth="105"/>
-                        <TableColumn fx:id="paidAmountColumn" text="Total Paid" prefWidth="120" minWidth="105"/>
-                        <TableColumn fx:id="remainingAmountColumn" text="Remaining" prefWidth="120" minWidth="105"/>
-
-                        <TableColumn fx:id="paymentMethodColumn" text="%payments.table.paymentMethod" prefWidth="130" minWidth="115"/>
-                        <TableColumn fx:id="dateColumn" text="%payments.table.date" prefWidth="145" minWidth="130"/>
+                        <TableColumn fx:id="actionsColumn" text="%payments.table.actions" prefWidth="320" minWidth="310"/>
                         <TableColumn fx:id="statusColumn" text="%payments.table.status" prefWidth="100" minWidth="90"/>
-                        <TableColumn fx:id="actionsColumn" text="%payments.table.actions" prefWidth="245" minWidth="230"/>
+                        <TableColumn fx:id="dateColumn" text="%payments.table.date" prefWidth="145" minWidth="130"/>
+                        <TableColumn fx:id="paymentMethodColumn" text="%payments.table.paymentMethod" prefWidth="130" minWidth="115"/>
+                        <TableColumn fx:id="remainingAmountColumn" text="Remaining" prefWidth="120" minWidth="105"/>
+                        <TableColumn fx:id="paidAmountColumn" text="Total Paid" prefWidth="120" minWidth="105"/>
+                        <TableColumn fx:id="amountColumn" text="%payments.table.amount" prefWidth="120" minWidth="105"/>
+                        <TableColumn fx:id="subscriptionAmountColumn" text="Subscription" prefWidth="125" minWidth="110"/>
+                        <TableColumn fx:id="membershipColumn" text="%payments.table.membership" prefWidth="135" minWidth="120"/>
+                        <TableColumn fx:id="memberColumn" text="%payments.table.member" prefWidth="180" minWidth="150"/>
+                        <TableColumn fx:id="idColumn" text="%payments.table.id" prefWidth="70" minWidth="65"/>
                     </columns>
                 </TableView>
             </VBox>

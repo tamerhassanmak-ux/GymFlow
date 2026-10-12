@@ -44,3 +44,16 @@ Thumbs.db
 *.pdf
 duplicate-backup/
 patches/
+
+# Local backups
+/backup/
+/backup-attendance-history-*/
+
+# Local databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Build outputs
+/target/

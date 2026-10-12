@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+ fx:controller="com.mycompany.lazar_app.controller.AttendanceHistoryController"
+ style="-fx-background-color:#F6F8FC;">
+ <top>
+   <VBox spacing="16" style="-fx-padding:22;">
+     <Label text="%history.title" style="-fx-font-size:25px;-fx-font-weight:bold;-fx-text-fill:#172033;"/>
+     <Label text="%history.subtitle" style="-fx-font-size:12px;-fx-text-fill:#64748B;"/>
+     <HBox spacing="10" alignment="CENTER_LEFT">
+       <TextField fx:id="searchField" promptText="%history.search" prefWidth="270" HBox.hgrow="ALWAYS"/>
+       <ComboBox fx:id="rangeFilter" prefWidth="160"/>
+       <DatePicker fx:id="fromDate" promptText="%history.from" prefWidth="150"/>
+       <DatePicker fx:id="toDate" promptText="%history.to" prefWidth="150"/>
+       <Button fx:id="refreshButton" text="%history.refresh" onAction="#refresh" mnemonicParsing="false"/>
+       <Button fx:id="resetButton" text="%history.reset" onAction="#reset" mnemonicParsing="false"/>
+     </HBox>
+     <HBox spacing="12">
+       <VBox spacing="6" style="-fx-background-color:white;-fx-padding:14;-fx-background-radius:10;" HBox.hgrow="ALWAYS"><Label text="%history.total"/><Label fx:id="recordsLabel" text="0" style="-fx-font-size:23px;-fx-font-weight:bold;"/></VBox>
+       <VBox spacing="6" style="-fx-background-color:white;-fx-padding:14;-fx-background-radius:10;" HBox.hgrow="ALWAYS"><Label text="%history.inside"/><Label fx:id="insideLabel" text="0" style="-fx-font-size:23px;-fx-font-weight:bold;-fx-text-fill:#16A34A;"/></VBox>
+       <VBox spacing="6" style="-fx-background-color:white;-fx-padding:14;-fx-background-radius:10;" HBox.hgrow="ALWAYS"><Label text="%history.checkedOut"/><Label fx:id="outLabel" text="0" style="-fx-font-size:23px;-fx-font-weight:bold;-fx-text-fill:#64748B;"/></VBox>
+     </HBox>
+     <Label fx:id="feedbackLabel" text="" style="-fx-text-fill:#DC2626;"/>
+   </VBox>
+ </top>
+ <center>
+   <TableView fx:id="historyTable" BorderPane.alignment="CENTER" style="-fx-background-color:white;">
+     <columns>
+       <TableColumn fx:id="idColumn" text="%history.col.id" prefWidth="65"/>
+       <TableColumn fx:id="codeColumn" text="%history.col.code" prefWidth="115"/>
+       <TableColumn fx:id="nameColumn" text="%history.col.name" prefWidth="180"/>
+       <TableColumn fx:id="dateColumn" text="%history.col.date" prefWidth="105"/>
+       <TableColumn fx:id="inColumn" text="%history.col.in" prefWidth="90"/>
+       <TableColumn fx:id="outColumn" text="%history.col.out" prefWidth="90"/>
+       <TableColumn fx:id="membershipColumn" text="%history.col.membership" prefWidth="165"/>
+       <TableColumn fx:id="statusColumn" text="%history.col.status" prefWidth="110"/>
+     </columns>
+   </TableView>
+ </center>
+ <padding><Insets top="0" bottom="24" left="22" right="22"/></padding>
+</BorderPane>

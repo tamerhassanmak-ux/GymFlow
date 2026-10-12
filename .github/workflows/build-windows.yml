@@ -78,7 +78,7 @@ jobs:
           jpackage `
             --type exe `
             --name GymFlow `
-            --app-version 1.0.2 `
+            --app-version 1.0.3 `
             --vendor "MAKSOFT Software Solutions" `
             --description "GymFlow Gym Management System" `
             --input target\jpackage-input `
@@ -103,7 +103,7 @@ jobs:
       - name: Upload GymFlow Windows Installer
         uses: actions/upload-artifact@v4
         with:
-          name: GymFlow-Windows-Installer-1.0.2
+          name: GymFlow-Windows-Installer-1.0.3
           path: installer-output/*.exe
           if-no-files-found: error
           retention-days: 30

@@ -16,8 +16,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Optional;
 
 import javafx.animation.PauseTransition;
@@ -360,6 +362,35 @@ public class PaymentsController {
                 TableView.UNCONSTRAINED_RESIZE_POLICY
         );
 
+        // Preserve actual column widths: the TableView's built-in horizontal
+        // scrollbar appears whenever the available width is insufficient.
+        // Its built-in vertical scrollbar handles long payment histories.
+        paymentsTable.setFixedCellSize(52.0);
+        paymentsTable.setMinHeight(220.0);
+
+        idColumn.setMinWidth(65.0);
+        idColumn.setPrefWidth(75.0);
+        memberColumn.setMinWidth(175.0);
+        memberColumn.setPrefWidth(210.0);
+        membershipColumn.setMinWidth(160.0);
+        membershipColumn.setPrefWidth(195.0);
+        subscriptionAmountColumn.setMinWidth(135.0);
+        subscriptionAmountColumn.setPrefWidth(150.0);
+        amountColumn.setMinWidth(135.0);
+        amountColumn.setPrefWidth(150.0);
+        paidAmountColumn.setMinWidth(135.0);
+        paidAmountColumn.setPrefWidth(150.0);
+        remainingAmountColumn.setMinWidth(135.0);
+        remainingAmountColumn.setPrefWidth(150.0);
+        paymentMethodColumn.setMinWidth(130.0);
+        paymentMethodColumn.setPrefWidth(145.0);
+        dateColumn.setMinWidth(155.0);
+        dateColumn.setPrefWidth(170.0);
+        statusColumn.setMinWidth(110.0);
+        statusColumn.setPrefWidth(120.0);
+        actionsColumn.setMinWidth(310.0);
+        actionsColumn.setPrefWidth(320.0);
+
         idColumn.setCellValueFactory(
                 data -> new SimpleLongProperty(
                         data.getValue().getId()
@@ -480,6 +511,14 @@ public class PaymentsController {
         );
 
         configureActionsColumn();
+
+        // Keep the action column physically LEFT and visible on opening.
+        // LTR table geometry avoids RTL horizontal-scroll starting at the
+        // opposite end; Arabic labels and values remain valid Unicode text.
+        paymentsTable.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+        paymentsTable.getColumns().remove(actionsColumn);
+        paymentsTable.getColumns().add(0, actionsColumn);
+
         paymentsTable.setItems(payments);
     }
 
@@ -578,6 +617,19 @@ public class PaymentsController {
 
                     {
                         box.setAlignment(Pos.CENTER);
+                        box.setMinWidth(278.0);
+                        box.setPrefWidth(280.0);
+                        box.setFillHeight(true);
+
+                        detailsButton.setMinWidth(95.0);
+                        detailsButton.setPrefWidth(100.0);
+                        editButton.setMinWidth(75.0);
+                        editButton.setPrefWidth(80.0);
+                        deleteButton.setMinWidth(75.0);
+                        deleteButton.setPrefWidth(80.0);
+                        detailsButton.setMinHeight(34.0);
+                        editButton.setMinHeight(34.0);
+                        deleteButton.setMinHeight(34.0);
 
                         detailsButton.setStyle(
                                 "-fx-background-color:#0F766E;"
@@ -2059,29 +2111,32 @@ public class PaymentsController {
                         );
 
 
-        BigDecimal pending =
-                payments.stream()
+        // Outstanding balance is a membership-level amount, not the sum
+        // of PENDING payment rows. Count each membership only once.
+        // Scope follows the currently loaded/filtered payments list.
+        BigDecimal pending = BigDecimal.ZERO;
+        Set<Long> countedMembershipIds = new HashSet<>();
 
-                        .filter(
-                                payment ->
-                                        isPending(
-                                                payment.getStatus()
-                                        )
-                        )
+        for (Payment payment : payments) {
+            Long membershipId = payment.getMembershipId();
+            if (membershipId == null
+                    || !countedMembershipIds.add(membershipId)) {
+                continue;
+            }
 
-                        .map(
-                                Payment::getAmount
-                        )
+            MembershipFinancialSummary summary =
+                    membershipFinancials.get(membershipId);
 
-                        .filter(
-                                amount ->
-                                        amount != null
-                        )
+            if (summary == null) {
+                continue;
+            }
 
-                        .reduce(
-                                BigDecimal.ZERO,
-                                BigDecimal::add
-                        );
+            BigDecimal balance = summary.getBalanceDue();
+            if (balance != null
+                    && balance.compareTo(BigDecimal.ZERO) > 0) {
+                pending = pending.add(balance);
+            }
+        }
 
 
         totalPaymentsLabel.setText(

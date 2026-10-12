@@ -10,6 +10,10 @@ import javafx.geometry.NodeOrientation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.Node;
 import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Dialog;
 import javafx.scene.Scene;
@@ -734,193 +738,76 @@ public final class WindowManager {
             double preferredWidth,
             double preferredHeight
     ) {
+        if (dialog == null) return Optional.empty();
+        if (owner != null && dialog.getOwner() == null) dialog.initOwner(owner);
 
-        if (dialog == null) {
-            return Optional.empty();
+        Rectangle2D bounds = getVisualBoundsForOwner(owner);
+        DialogPane pane = dialog.getDialogPane();
+        pane.getStyleClass().add("gymflow-responsive-dialog");
+
+        // Keep JavaFX's built-in button bar OUTSIDE the scrolling area.
+        // Long alert text and long form content scroll, while actions stay visible.
+        if (dialog instanceof Alert alert) {
+            String contentText = alert.getContentText();
+            if (contentText != null && !contentText.isBlank()
+                    && pane.getContent() == null) {
+                Label message = new Label(contentText);
+                message.setWrapText(true);
+                message.setMaxWidth(Double.MAX_VALUE);
+                alert.setContentText("");
+                pane.setContent(message);
+            }
+        }
+        Node content = pane.getContent();
+        if (content != null && !(content instanceof ScrollPane)) {
+            ScrollPane scroll = new ScrollPane(content);
+            scroll.setFitToWidth(true);
+            scroll.setFitToHeight(false);
+            scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scroll.setPannable(true);
+            scroll.getStyleClass().add("gymflow-dialog-scroll");
+            pane.setContent(scroll);
         }
 
-        if (owner != null
-                && dialog.getOwner() == null) {
+        boolean smallAlert = dialog instanceof Alert
+                && preferredWidth <= SMALL_DIALOG_MAX_WIDTH
+                && preferredHeight <= SMALL_DIALOG_MAX_HEIGHT;
+        double desiredWidth = smallAlert ? STANDARD_DIALOG_WIDTH : preferredWidth;
+        double desiredHeight = smallAlert ? STANDARD_DIALOG_HEIGHT : preferredHeight;
+        final double width = Math.min(Math.max(desiredWidth, 360.0),
+                Math.max(280.0, bounds.getWidth() - 36.0));
+        final double targetHeight = Math.min(Math.max(desiredHeight, 300.0),
+                Math.max(240.0, bounds.getHeight() - 60.0));
 
-            dialog.initOwner(owner);
-        }
+        dialog.setResizable(true);
+        pane.setMinWidth(Math.min(300.0, width));
+        pane.setPrefWidth(width);
+        pane.setMaxWidth(Double.MAX_VALUE);
+        pane.setMinHeight(Region.USE_COMPUTED_SIZE);
+        pane.setPrefHeight(targetHeight);
+        pane.setMaxHeight(Double.MAX_VALUE);
 
-        Rectangle2D bounds =
-                getVisualBoundsForOwner(owner);
-
-        /*
-         * Any normal/small message is forced to ONE standard size.
-         *
-         * Larger custom dialogs are not affected and keep their requested
-         * responsive dimensions.
-         */
-        boolean standardSmallDialog =
-                dialog instanceof javafx.scene.control.Alert
-                        && preferredWidth <= SMALL_DIALOG_MAX_WIDTH
-                        && preferredHeight <= SMALL_DIALOG_MAX_HEIGHT;
-
-        final double requestedWidth =
-                standardSmallDialog
-                        ? STANDARD_DIALOG_WIDTH
-                        : preferredWidth;
-
-        final double requestedHeight =
-                standardSmallDialog
-                        ? STANDARD_DIALOG_HEIGHT
-                        : preferredHeight;
-
-        final double width =
-                Math.min(
-                        Math.max(
-                                requestedWidth,
-                                360.0
-                        ),
-                        bounds.getWidth() * 0.92
-                );
-
-        final double height =
-                Math.min(
-                        Math.max(
-                                requestedHeight,
-                                240.0
-                        ),
-                        bounds.getHeight() * 0.90
-                );
-
-        DialogPane pane =
-                dialog.getDialogPane();
-
-        if (standardSmallDialog) {
-
-            /*
-             * Fixed, natural size for normal alerts.
-             * Do not let text length make one alert large and another small.
-             */
-            dialog.setResizable(false);
-
-            pane.setMinWidth(width);
-            pane.setPrefWidth(width);
-            pane.setMaxWidth(width);
-
-            pane.setMinHeight(height);
-            pane.setPrefHeight(height);
-            pane.setMaxHeight(height);
-
-        } else {
-
-            /*
-             * Larger/custom dialogs remain responsive.
-             */
-            dialog.setResizable(true);
-
-            pane.setMinWidth(
-                    Math.min(
-                            420.0,
-                            width
-                    )
-            );
-
-            pane.setPrefWidth(width);
-            pane.setMaxWidth(Double.MAX_VALUE);
-
-            pane.setMinHeight(
-                    Math.min(
-                            240.0,
-                            height
-                    )
-            );
-
-            pane.setPrefHeight(height);
-            pane.setMaxHeight(Double.MAX_VALUE);
-        }
-
-        /*
-         * Apply the final native Stage size after JavaFX creates the dialog
-         * window. Using addEventHandler preserves any existing focus handler
-         * installed by a controller.
-         */
-        dialog.addEventHandler(
-                DialogEvent.DIALOG_SHOWN,
-                event ->
-                        Platform.runLater(
-                                () -> {
-
-                                    if (pane.getScene() == null
-                                            || pane.getScene().getWindow() == null) {
-                                        return;
-                                    }
-
-                                    Window window =
-                                            pane.getScene().getWindow();
-
-                                    if (!(window instanceof Stage stage)) {
-                                        return;
-                                    }
-
-                                    Rectangle2D shownBounds =
-                                            getVisualBoundsForOwner(
-                                                    owner != null
-                                                            ? owner
-                                                            : stage
-                                            );
-
-                                    double finalWidth =
-                                            Math.min(
-                                                    width,
-                                                    shownBounds.getWidth() * 0.92
-                                            );
-
-                                    double finalHeight =
-                                            Math.min(
-                                                    height,
-                                                    shownBounds.getHeight() * 0.90
-                                            );
-
-                                    stage.setMaximized(false);
-                                    stage.setFullScreen(false);
-
-                                    if (standardSmallDialog) {
-
-                                        stage.setResizable(false);
-
-                                        stage.setMinWidth(finalWidth);
-                                        stage.setMaxWidth(finalWidth);
-
-                                        stage.setMinHeight(finalHeight);
-                                        stage.setMaxHeight(finalHeight);
-
-                                    } else {
-
-                                        stage.setResizable(true);
-
-                                        stage.setMinWidth(
-                                                Math.min(
-                                                        420.0,
-                                                        finalWidth
-                                                )
-                                        );
-
-                                        stage.setMinHeight(
-                                                Math.min(
-                                                        240.0,
-                                                        finalHeight
-                                                )
-                                        );
-                                    }
-
-                                    stage.setWidth(finalWidth);
-                                    stage.setHeight(finalHeight);
-
-                                    centerInsideBounds(
-                                            stage,
-                                            shownBounds,
-                                            finalWidth,
-                                            finalHeight
-                                    );
-                                }
-                        )
-        );
-
+        dialog.addEventHandler(DialogEvent.DIALOG_SHOWN, event -> Platform.runLater(() -> {
+            if (pane.getScene() == null || !(pane.getScene().getWindow() instanceof Stage stage)) return;
+            Rectangle2D screen = getVisualBoundsForOwner(owner != null ? owner : stage);
+            double safeWidth = Math.min(width, Math.max(280.0, screen.getWidth() - 36.0));
+            double safeMaxHeight = Math.max(240.0, screen.getHeight() - 60.0);
+            // CSS/layout can need more vertical room than the originally requested size.
+            // Never force a smaller fixed height over the measured DialogPane.
+            pane.applyCss();
+            pane.layout();
+            double measured = pane.prefHeight(safeWidth) + 32.0;
+            double safeHeight = Math.min(safeMaxHeight, Math.max(targetHeight, measured));
+            stage.setMaximized(false);
+            stage.setFullScreen(false);
+            stage.setResizable(true);
+            stage.setMinWidth(Math.min(300.0, safeWidth));
+            stage.setMinHeight(Math.min(220.0, safeHeight));
+            stage.setWidth(safeWidth);
+            stage.setHeight(safeHeight);
+            centerInsideBounds(stage, screen, safeWidth, safeHeight);
+        }));
         return dialog.showAndWait();
     }
 
