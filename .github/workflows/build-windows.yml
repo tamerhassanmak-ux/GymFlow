@@ -130,4 +130,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$env:GITHUB_REF_NAME" "installer-output/*.exe" --title "GymFlow $env:GITHUB_REF_NAME - Windows" --generate-notes --verify-tag
+          $installer = Get-ChildItem installer-output -Filter *.exe | Select-Object -First 1
+          if (-not $installer) { throw "Windows installer not found" }
+          gh release create "$env:GITHUB_REF_NAME" "$($installer.FullName)" --title "GymFlow $env:GITHUB_REF_NAME - Windows" --generate-notes --verify-tag
