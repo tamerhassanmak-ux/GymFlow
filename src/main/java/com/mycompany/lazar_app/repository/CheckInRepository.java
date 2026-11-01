@@ -152,13 +152,12 @@ public class CheckInRepository {
     // =========================================================
 
     public List<CheckIn> findToday() throws SQLException {
-        // Query MySQL directly: do not transfer the entire attendance history
-        // on every screen refresh. Keep the legacy Java filter for other DBs,
-        // whose stored date formats can differ (including legacy SQLite epochs).
+        LocalDate today = LocalDate.now();
+        List<CheckIn> records = new ArrayList<>();
+
+        // Other database engines retain their existing legacy date handling.
         if (com.mycompany.lazar_app.database.DatabaseConfigManager.load()
                 .getType() != com.mycompany.lazar_app.database.DatabaseType.MYSQL) {
-            LocalDate today = LocalDate.now();
-            List<CheckIn> records = new ArrayList<>();
             for (CheckIn item : findAll()) {
                 if (item.getCheckInTime() != null
                         && today.equals(item.getCheckInTime().toLocalDate())) {
@@ -168,23 +167,45 @@ public class CheckInRepository {
             return records;
         }
 
-        LocalDate today = LocalDate.now();
-        String sql = BASE_SELECT + " WHERE ci.check_in_time >= ? "
-                + "AND ci.check_in_time < ? ORDER BY ci.check_in_time DESC, ci.id DESC";
-        List<CheckIn> records = new ArrayList<>();
+        // Bind DATETIME boundaries as calendar strings, not JDBC Timestamps,
+        // to avoid client default-time-zone conversion while binding.
+        // With a MySQL TIMESTAMP column, session time_zone still matters.
+        String sql = BASE_SELECT + """
+                WHERE ci.check_in_time >= ?
+                  AND ci.check_in_time < ?
+                ORDER BY ci.check_in_time DESC, ci.id DESC
+                """;
+
+        String startOfDay = today.atStartOfDay().format(DATE_TIME_FORMAT);
+        String startOfNextDay = today.plusDays(1).atStartOfDay()
+                .format(DATE_TIME_FORMAT);
+
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setTimestamp(1, java.sql.Timestamp.valueOf(today.atStartOfDay()));
-            statement.setTimestamp(2, java.sql.Timestamp.valueOf(today.plusDays(1).atStartOfDay()));
+            statement.setString(1, startOfDay);
+            statement.setString(2, startOfNextDay);
+
             try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
-                    records.add(mapCheckIn(results));
+                    CheckIn record = mapCheckIn(results);
+
+                    // Defensive check: the attendance screen must never show
+                    // a different local calendar date.
+                    if (record.getCheckInTime() != null
+                            && today.equals(record.getCheckInTime().toLocalDate())) {
+                        records.add(record);
+                    } else {
+                        System.err.println(
+                                "[GymFlow] Attendance date mismatch: id="
+                                        + record.getId()
+                                        + ", checkInTime=" + record.getCheckInTime()
+                                        + ", appDate=" + today);
+                    }
                 }
             }
         }
         return records;
     }
-
 
     /**
      * Close unfinished attendance from earlier calendar days.
