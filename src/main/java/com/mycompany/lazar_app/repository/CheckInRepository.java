@@ -151,28 +151,38 @@ public class CheckInRepository {
     // FIND TODAY
     // =========================================================
 
-    public List<CheckIn> findToday()
-            throws SQLException {
-
-        LocalDate today =
-                LocalDate.now();
-
-        List<CheckIn> result =
-                new ArrayList<>();
-
-
-        for (CheckIn checkIn : findAll()) {
-
-            if (checkIn.getCheckInTime() != null
-                    && checkIn.getCheckInTime()
-                            .toLocalDate()
-                            .equals(today)) {
-
-                result.add(checkIn);
+    public List<CheckIn> findToday() throws SQLException {
+        // Query MySQL directly: do not transfer the entire attendance history
+        // on every screen refresh. Keep the legacy Java filter for other DBs,
+        // whose stored date formats can differ (including legacy SQLite epochs).
+        if (com.mycompany.lazar_app.database.DatabaseConfigManager.load()
+                .getType() != com.mycompany.lazar_app.database.DatabaseType.MYSQL) {
+            LocalDate today = LocalDate.now();
+            List<CheckIn> records = new ArrayList<>();
+            for (CheckIn item : findAll()) {
+                if (item.getCheckInTime() != null
+                        && today.equals(item.getCheckInTime().toLocalDate())) {
+                    records.add(item);
+                }
             }
+            return records;
         }
 
-        return result;
+        LocalDate today = LocalDate.now();
+        String sql = BASE_SELECT + " WHERE ci.check_in_time >= ? "
+                + "AND ci.check_in_time < ? ORDER BY ci.check_in_time DESC, ci.id DESC";
+        List<CheckIn> records = new ArrayList<>();
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setTimestamp(1, java.sql.Timestamp.valueOf(today.atStartOfDay()));
+            statement.setTimestamp(2, java.sql.Timestamp.valueOf(today.plusDays(1).atStartOfDay()));
+            try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    records.add(mapCheckIn(results));
+                }
+            }
+        }
+        return records;
     }
 
 
@@ -944,49 +954,23 @@ public class CheckInRepository {
     }
 
 
-    private LocalDateTime getLocalDateTime(
-            ResultSet resultSet,
-            String column
-    ) throws SQLException {
-
-        String value =
-                resultSet.getString(
-                        column
-                );
-
-
-        if (value == null
-                || value.isBlank()) {
-
+    private LocalDateTime getLocalDateTime(ResultSet resultSet, String column)
+            throws SQLException {
+        String value = resultSet.getString(column);
+        if (value == null || value.isBlank()) {
             return null;
         }
-
-
-        value = value.trim();
-
-
+        String normalized = value.trim();
+        // Some JDBC drivers return microsecond precision, e.g.
+        // 2026-11-01 10:20:30.123456. ISO parsing accepts that precision.
         try {
-
-            return LocalDateTime.parse(
-                    value,
-                    DATE_TIME_FORMAT
-            );
-
-        } catch (Exception ignored) {
+            return LocalDateTime.parse(normalized.replace(' ', 'T'));
+        } catch (java.time.format.DateTimeParseException ex) {
+            // Do not silently change an invalid date to NULL: the calling
+            // controller can log the real data conversion problem.
+            throw new SQLException("Invalid datetime in " + column + ": "
+                    + normalized, ex);
         }
-
-
-        try {
-
-            return LocalDateTime.parse(
-                    value
-            );
-
-        } catch (Exception ignored) {
-        }
-
-
-        return null;
     }
 
 

@@ -745,29 +745,31 @@ public final class WindowManager {
         DialogPane pane = dialog.getDialogPane();
         pane.getStyleClass().add("gymflow-responsive-dialog");
 
-        // Keep JavaFX's built-in button bar OUTSIDE the scrolling area.
-        // Long alert text and long form content scroll, while actions stay visible.
+        // Preserve Alert's built-in content text. Clearing it and reparenting
+        // its label can result in visually empty alerts on some JavaFX skins.
         if (dialog instanceof Alert alert) {
-            String contentText = alert.getContentText();
-            if (contentText != null && !contentText.isBlank()
+            String header = alert.getHeaderText();
+            String body = alert.getContentText();
+            if ((header == null || header.isBlank())
+                    && (body == null || body.isBlank())
                     && pane.getContent() == null) {
-                Label message = new Label(contentText);
-                message.setWrapText(true);
-                message.setMaxWidth(Double.MAX_VALUE);
-                alert.setContentText("");
-                pane.setContent(message);
+                alert.setContentText(LanguageManager.isArabic()
+                        ? "حدث خطأ غير متوقع. راجع سجل الأخطاء."
+                        : "An unexpected error occurred. Check the error log.");
             }
-        }
-        Node content = pane.getContent();
-        if (content != null && !(content instanceof ScrollPane)) {
-            ScrollPane scroll = new ScrollPane(content);
-            scroll.setFitToWidth(true);
-            scroll.setFitToHeight(false);
-            scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-            scroll.setPannable(true);
-            scroll.getStyleClass().add("gymflow-dialog-scroll");
-            pane.setContent(scroll);
+        } else {
+            // Scroll long custom forms only, while keeping action buttons visible.
+            Node content = pane.getContent();
+            if (content != null && !(content instanceof ScrollPane)) {
+                ScrollPane scroll = new ScrollPane(content);
+                scroll.setFitToWidth(true);
+                scroll.setFitToHeight(false);
+                scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                scroll.setPannable(true);
+                scroll.getStyleClass().add("gymflow-dialog-scroll");
+                pane.setContent(scroll);
+            }
         }
 
         boolean smallAlert = dialog instanceof Alert

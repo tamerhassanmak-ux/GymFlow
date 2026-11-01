@@ -42,6 +42,12 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -162,13 +168,18 @@ public class MembershipsController {
                 "MembershipsController loaded successfully."
         );
 
-        configureTable();
-
-        configureFilters();
-
-        configureFilterListeners();
-
-        loadData();
+        try {
+            configureTable();
+            configureFilters();
+            configureFilterListeners();
+            loadData();
+        } catch (RuntimeException exception) {
+            logFailure("MembershipsController.initialize", exception);
+            // Do not let an unchecked exception disappear behind FXMLLoader.
+            showError(LanguageManager.isArabic()
+                    ? "فشل تهيئة شاشة الاشتراكات."
+                    : "Membership screen initialization failed.", exception);
+        }
     }
 
 
@@ -637,9 +648,9 @@ public class MembershipsController {
                     + memberships.size()
             );
 
-        } catch (SQLException exception) {
+        } catch (SQLException | RuntimeException exception) {
 
-            exception.printStackTrace();
+            logFailure("MembershipsController.loadData", exception);
 
             showError(
                     LanguageManager.isArabic()
@@ -1333,53 +1344,40 @@ public class MembershipsController {
     // ERROR
     // =========================================================
 
-    private void showError(
-            String message,
-            Exception exception
-    ) {
-
-        Alert alert =
-                new Alert(
-                        Alert.AlertType.ERROR
-                );
-
-
-        alert.setTitle(
-                LanguageManager.isArabic()
-                        ? "خطأ"
-                        : "Error"
-        );
-
-
-        alert.setHeaderText(
-                message
-        );
-
-
-        String details =
-                exception == null
-                        ? ""
-                        : exception.getMessage();
-
-
-        alert.setContentText(
-                details == null
-                        ? ""
-                        : details
-        );
-
-
-        DialogStyler.style(alert);
-
-
-        WindowManager.showResponsiveDialogAndWait(
-                alert,
-                getOwnerWindow(),
-                620.0,
-                380.0
-        );
+    private void showError(String message, Exception exception) {
+        logFailure("MembershipsController.showError", exception);
+        String details = exception == null ? "Unknown error"
+                : (exception.getMessage() == null || exception.getMessage().isBlank()
+                        ? exception.getClass().getName() : exception.getMessage());
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(LanguageManager.isArabic() ? "خطأ" : "Error");
+        alert.setHeaderText(message);
+        alert.setContentText(details);
+        try {
+            DialogStyler.style(alert);
+            WindowManager.showResponsiveDialogAndWait(alert, getOwnerWindow(), 620.0, 380.0);
+        } catch (RuntimeException dialogFailure) {
+            logFailure("MembershipsController.errorDialog", dialogFailure);
+            System.err.println(message + " | " + details);
+        }
     }
 
+    private static void logFailure(String context, Throwable failure) {
+        if (failure == null) return;
+        failure.printStackTrace();
+        try {
+            Path directory = Path.of(System.getProperty("user.home"), "GymFlow", "logs");
+            Files.createDirectories(directory);
+            StringWriter buffer = new StringWriter();
+            failure.printStackTrace(new PrintWriter(buffer));
+            Files.writeString(directory.resolve("gymflow-errors.log"),
+                    "[" + LocalDateTime.now() + "] " + context + System.lineSeparator()
+                    + buffer + System.lineSeparator(),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException | RuntimeException loggingFailure) {
+            loggingFailure.printStackTrace();
+        }
+    }
 
     // =========================================================
     // OWNER WINDOW

@@ -1817,48 +1817,17 @@ public class MemberMembershipRepository {
     // READ LOCAL DATE TIME
     // =========================================================
 
-    private LocalDateTime getLocalDateTime(
-            ResultSet resultSet,
-            String column
-    ) throws SQLException {
-
-        String value =
-                resultSet.getString(
-                        column
-                );
-
-
-        if (value == null
-                || value.isBlank()) {
-
+    private LocalDateTime getLocalDateTime(ResultSet resultSet, String column)
+            throws SQLException {
+        String value = resultSet.getString(column);
+        if (value == null || value.isBlank()) {
             return null;
         }
-
-
-        String normalized =
-                value.trim()
-                        .replace(
-                                " ",
-                                "T"
-                        );
-
-
         try {
-
-            return LocalDateTime.parse(
-                    normalized
-            );
-
-
-        } catch (Exception exception) {
-
-            throw new SQLException(
-                    "Unsupported datetime format in column '"
-                    + column
-                    + "': "
-                    + value,
-                    exception
-            );
+            return LocalDateTime.parse(value.trim().replace(' ', 'T'));
+        } catch (java.time.format.DateTimeParseException exception) {
+            throw new SQLException("Invalid datetime in membership column '"
+                    + column + "': " + value, exception);
         }
     }
 

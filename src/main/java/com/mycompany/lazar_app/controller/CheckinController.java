@@ -983,50 +983,20 @@ public class CheckinController {
 
         try {
 
-            List<Member> members =
-                    memberRepository.findAll();
+            String search = normalize(searchValue);
 
-
-            String search =
-                    normalize(
-                            searchValue
-                    );
-
-
-            // =================================================
-            // 1. EXACT MEMBER CODE
-            // Barcode scanner uses this first.
-            // =================================================
-
-            for (Member member : members) {
-
-                if (normalize(
-                        member.getMemberCode()
-                ).equals(search)) {
-
-                    return registerCheckInAndReturnResult(
-                            member
-                    );
-                }
+            // Fast exact lookup: no need to load 500+ rows for barcode scans.
+            Optional<Member> byCode = memberRepository.findByMemberCode(searchValue);
+            if (byCode.isPresent()) {
+                return registerCheckInAndReturnResult(byCode.get());
+            }
+            Optional<Member> byPhone = memberRepository.findByPhone(searchValue);
+            if (byPhone.isPresent()) {
+                return registerCheckInAndReturnResult(byPhone.get());
             }
 
-
-            // =================================================
-            // 2. EXACT PHONE
-            // =================================================
-
-            for (Member member : members) {
-
-                if (normalize(
-                        member.getPhone()
-                ).equals(search)) {
-
-                    return registerCheckInAndReturnResult(
-                            member
-                    );
-                }
-            }
-
+            // Only name searches need the full list for fuzzy matching.
+            List<Member> members = memberRepository.findAll();
 
             // =================================================
             // 3. MEMBER NAME
@@ -1332,7 +1302,12 @@ public class CheckinController {
              * call safely does nothing and its next load will show the new
              * value.
              */
-            DashboardContentController.refreshCurrentSummary();
+            try {
+                DashboardContentController.refreshCurrentSummary();
+            } catch (RuntimeException dashboardError) {
+                System.err.println("Check-in saved, but dashboard refresh failed:");
+                dashboardError.printStackTrace();
+            }
 
 
             /*
