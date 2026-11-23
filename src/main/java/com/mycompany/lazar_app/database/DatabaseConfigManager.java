@@ -133,7 +133,7 @@ public final class DatabaseConfigManager {
                     Boolean.parseBoolean(
                             properties.getProperty(
                                     "encryptConnection",
-                                    "false"
+                                    "true"
                             )
                     )
             );
