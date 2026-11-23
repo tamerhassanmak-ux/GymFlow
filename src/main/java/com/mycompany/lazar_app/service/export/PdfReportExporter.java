@@ -675,6 +675,20 @@ public class PdfReportExporter {
     // =========================================================
 
     private BaseFont createUnicodeFont() throws Exception {
+        String bundledFont = "/fonts/NotoNaskhArabic-Regular.ttf";
+        try (InputStream input = PdfReportExporter.class.getResourceAsStream(bundledFont)) {
+            if (input != null) {
+                return BaseFont.createFont(
+                        bundledFont,
+                        BaseFont.IDENTITY_H,
+                        BaseFont.EMBEDDED,
+                        true,
+                        input.readAllBytes(),
+                        null
+                );
+            }
+        }
+
         String[] fonts = {
                 "/usr/share/fonts/truetype/noto/NotoNaskhArabic-Regular.ttf",
                 "/usr/share/fonts/opentype/noto/NotoNaskhArabic-Regular.ttf",
