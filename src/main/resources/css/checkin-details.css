@@ -1,0 +1,29 @@
+/* Explicit paired foreground/background colors prevent inherited dark-theme text
+   from disappearing on the native dialog's light surfaces. Scoped to this popup. */
+.checkin-details-dialog { -fx-background-color: #f1f5f9; }
+.checkin-details-dialog .scroll-pane,
+.checkin-details-dialog .scroll-pane > .viewport { -fx-background-color: #f1f5f9; -fx-background: #f1f5f9; -fx-border-color: transparent; }
+.checkin-details-dialog .checkin-details { -fx-padding: 20; -fx-spacing: 12; -fx-background-color: #f1f5f9; }
+.checkin-details-dialog .checkin-details .label { -fx-text-fill: #172b45; -fx-opacity: 1; }
+.checkin-details-dialog .checkin-header { -fx-padding: 20; -fx-background-color: #ffffff; -fx-background-radius: 14; -fx-border-color: #dbe3ed; -fx-border-radius: 14; }
+.checkin-details-dialog .checkin-details .checkin-member-name { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #10243d; }
+.checkin-details-dialog .checkin-detail-card { -fx-padding: 12 16; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #dbe3ed; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.05), 5, 0, 0, 2); }
+.checkin-details-dialog .checkin-details .checkin-caption { -fx-font-size: 12px; -fx-text-fill: #52647a; }
+.checkin-details-dialog .checkin-details .checkin-value { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #172b45; }
+.checkin-details-dialog .checkin-financial-card { -fx-background-color: #eef6ff; -fx-border-color: #c7def7; }
+.checkin-details-dialog .checkin-details .checkin-outstanding { -fx-text-fill: #b42318; -fx-font-size: 20px; }
+.checkin-details-dialog .checkin-avatar { -fx-background-color: #e8eff7; -fx-background-radius: 14; -fx-border-color: #cbd8e7; -fx-border-radius: 14; -fx-padding: 4; }
+.checkin-details-dialog .checkin-financial-summary .checkin-detail-card {
+    -fx-min-height: 105;
+    -fx-max-height: Infinity;
+}
+.checkin-details-dialog .checkin-financial-summary .checkin-value { -fx-font-size: 22px; }
+.checkin-details-dialog .checkin-details .checkin-status-active,
+.checkin-details-dialog .checkin-details .checkin-status-inactive {
+    -fx-padding: 6 14;
+    -fx-background-radius: 20;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+.checkin-details-dialog .checkin-details .checkin-status-active { -fx-background-color: #E5F5EF; -fx-text-fill: #166548; }
+.checkin-details-dialog .checkin-details .checkin-status-inactive { -fx-background-color: #FEF2F2; -fx-text-fill: #B42318; }

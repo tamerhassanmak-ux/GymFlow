@@ -11,6 +11,7 @@ public class DatabaseConfig {
     private String databaseName = "lazar_gym";
     private String username = "";
     private String password = "";
+    // Local customer databases may not have TLS configured; encryption remains opt-in.
     private boolean encryptConnection = false;
 
     public DatabaseType getType() { return type; }

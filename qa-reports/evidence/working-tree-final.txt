@@ -1,0 +1,48 @@
+ M .github/workflows/build-windows.yml
+ M pom.xml
+ M src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java
+ M src/main/java/com/mycompany/lazar_app/Lazar_APP.java
+ M src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java
+ M src/main/java/com/mycompany/lazar_app/controller/AttendanceHistoryController.java
+ M src/main/java/com/mycompany/lazar_app/controller/CheckinController.java
+ M src/main/java/com/mycompany/lazar_app/controller/DashboardController.java
+ M src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java
+ M src/main/java/com/mycompany/lazar_app/controller/PaymentsController.java
+ M src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java
+ M src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java
+ M src/main/java/com/mycompany/lazar_app/license/ProgramLicenseGate.java
+ M src/main/java/com/mycompany/lazar_app/repository/CheckInRepository.java
+ M src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java
+ M src/main/java/com/mycompany/lazar_app/ui/WindowManager.java
+ M src/main/java/com/mycompany/lazar_app/ui/dialog/AppDialog.java
+ M src/main/resources/css/app.css
+ M src/main/resources/fxml/add-member.fxml
+ M src/main/resources/fxml/add-membership.fxml
+ M src/main/resources/fxml/add-payment.fxml
+ M src/main/resources/fxml/attendance-history.fxml
+ M src/main/resources/fxml/checkin.fxml
+ M src/main/resources/fxml/dashboard-content.fxml
+ M src/main/resources/fxml/dashboard.fxml
+ M src/main/resources/fxml/database-auth.fxml
+ M src/main/resources/fxml/database-settings.fxml
+ M src/main/resources/fxml/expense-form.fxml
+ M src/main/resources/fxml/expenses.fxml
+ M src/main/resources/fxml/member-details.fxml
+ M src/main/resources/fxml/payments.fxml
+ M src/main/resources/fxml/program-license-settings.fxml
+ M src/main/resources/fxml/reports.fxml
+ M src/main/resources/fxml/revenue-form.fxml
+ M src/main/resources/fxml/revenues.fxml
+ M src/main/resources/fxml/settings.fxml
+ M src/main/resources/fxml/super-admin-setup.fxml
+ M src/main/resources/i18n/messages_ar.properties
+ M src/main/resources/i18n/messages_en.properties
+?? README.txt
+?? backup-before-1.0.4-20261101-225751/
+?? qa-reports/
+?? src/main/java/com/mycompany/lazar_app/repository/PagingSql.java
+?? src/main/java/com/mycompany/lazar_app/ui/PageViewport.java
+?? src/main/java/com/mycompany/lazar_app/ui/dialog/CameraCaptureDialog.java
+?? src/main/java/com/mycompany/lazar_app/ui/dialog/CheckinDetailsDialog.java
+?? src/main/java/com/mycompany/lazar_app/ui/paging/
+?? src/main/resources/css/checkin-details.css

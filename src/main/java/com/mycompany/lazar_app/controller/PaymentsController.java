@@ -2,6 +2,11 @@ package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
 import com.mycompany.lazar_app.ui.WindowManager;
+import com.mycompany.lazar_app.ui.paging.TablePager;
+import com.mycompany.lazar_app.repository.PaymentRepository.PaymentFilter;
+import com.mycompany.lazar_app.repository.PaymentRepository.PaymentOrder;
+import com.mycompany.lazar_app.repository.PaymentRepository.PaymentField;
+import com.mycompany.lazar_app.repository.PaymentRepository.DisplayPayment;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.model.Payment;
@@ -16,10 +21,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Optional;
 
 import javafx.animation.PauseTransition;
@@ -91,6 +94,8 @@ public class PaymentsController {
     @FXML
     private TableColumn<Payment, String> memberColumn;
 
+    @FXML private TableColumn<Payment, String> memberCodeColumn;
+
     @FXML
     private TableColumn<Payment, String> membershipColumn;
 
@@ -130,6 +135,15 @@ public class PaymentsController {
     // =========================================================
     // DATA
     // =========================================================
+
+    @FXML private HBox paginationHost;
+    @FXML private BorderPane paymentsPage;
+    @FXML private ScrollPane paymentsHeaderViewport;
+    @FXML private VBox paymentsFooter;
+    @FXML private ScrollBar paymentsHorizontalScroll;
+    private ScrollBar nativeHorizontalScroll;
+    private TablePager<Payment> pager;
+    private boolean resettingFilters;
 
     private final ObservableList<Payment> payments =
             FXCollections.observableArrayList();
@@ -175,10 +189,22 @@ public class PaymentsController {
 
     @FXML
     public void initialize() {
+        // The header may scroll on shorter screens, while the table's bottom
+        // scrollbar and page navigation retain their own visible space.
+        paymentsHeaderViewport.maxHeightProperty().bind(javafx.beans.binding.Bindings.createDoubleBinding(() -> {
+            double height = paymentsPage.getHeight();
+            double footerWidth = Math.max(1, paymentsPage.getWidth()
+                    - paymentsPage.getInsets().getLeft() - paymentsPage.getInsets().getRight());
+            double footerHeight = Math.max(paymentsFooter.getHeight(), paymentsFooter.prefHeight(footerWidth));
+            // Reserve space for the table, its horizontal bar, footer and page margins.
+            return Math.max(0, Math.min(height * 0.42, height - footerHeight - 280));
+        }, paymentsPage.heightProperty(), paymentsPage.widthProperty(), paymentsFooter.heightProperty()));
 
         configureFilters();
 
         configureTable();
+
+        configurePager();
 
         configureSmartSearch();
 
@@ -365,8 +391,8 @@ public class PaymentsController {
         // Preserve actual column widths: the TableView's built-in horizontal
         // scrollbar appears whenever the available width is insufficient.
         // Its built-in vertical scrollbar handles long payment histories.
-        paymentsTable.setFixedCellSize(52.0);
-        paymentsTable.setMinHeight(220.0);
+        paymentsTable.setFixedCellSize(-1.0);
+        paymentsTable.setMinHeight(80.0);
 
         idColumn.setMinWidth(65.0);
         idColumn.setPrefWidth(75.0);
@@ -397,13 +423,20 @@ public class PaymentsController {
                 )
         );
 
-        memberColumn.setCellValueFactory(
-                data -> new SimpleStringProperty(
-                        getMemberName(
-                                data.getValue().getMemberId()
-                        )
-                )
-        );
+        memberCodeColumn.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue() instanceof DisplayPayment row ? row.memberCode() : "—"));
+        memberColumn.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue() instanceof DisplayPayment row ? row.memberName()
+                        : getMemberName(data.getValue().getMemberId())));
+
+        memberColumn.setCellFactory(column -> new TableCell<>() {
+            { setWrapText(true); }
+            @Override protected void updateItem(String name, boolean empty) {
+                super.updateItem(name, empty);
+                setText(empty ? null : name);
+                setTooltip(empty || name == null ? null : new Tooltip(name));
+            }
+        });
 
         membershipColumn.setCellValueFactory(
                 data -> {
@@ -512,14 +545,48 @@ public class PaymentsController {
 
         configureActionsColumn();
 
-        // Keep the action column physically LEFT and visible on opening.
-        // LTR table geometry avoids RTL horizontal-scroll starting at the
-        // opposite end; Arabic labels and values remain valid Unicode text.
+        // Start with member identity; remaining columns stay accessible via the table scrollbar.
         paymentsTable.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-        paymentsTable.getColumns().remove(actionsColumn);
-        paymentsTable.getColumns().add(0, actionsColumn);
+        paymentsTable.getColumns().removeAll(List.of(memberCodeColumn, memberColumn, actionsColumn));
+        paymentsTable.getColumns().addAll(0, List.of(memberCodeColumn, memberColumn, actionsColumn));
 
         paymentsTable.setItems(payments);
+        paymentsHorizontalScroll.setDisable(true);
+        paymentsTable.skinProperty().addListener((o, before, after) ->
+                javafx.application.Platform.runLater(this::connectHorizontalScroll));
+        paymentsTable.sceneProperty().addListener((o, before, after) -> {
+            if (after != null) javafx.application.Platform.runLater(this::connectHorizontalScroll);
+        });
+    }
+
+    private void connectHorizontalScroll() {
+        if (paymentsTable.getScene() == null) return;
+        paymentsTable.applyCss();
+        paymentsTable.layout();
+        ScrollBar bar = paymentsTable.lookupAll(".scroll-bar").stream()
+                .filter(node -> node instanceof ScrollBar scroll
+                        && scroll.getOrientation() == javafx.geometry.Orientation.HORIZONTAL)
+                .map(node -> (ScrollBar) node).findFirst().orElse(null);
+        if (bar == null || bar == nativeHorizontalScroll) return;
+        if (nativeHorizontalScroll != null) {
+            paymentsHorizontalScroll.valueProperty().unbindBidirectional(nativeHorizontalScroll.valueProperty());
+        }
+        paymentsHorizontalScroll.minProperty().unbind();
+        paymentsHorizontalScroll.maxProperty().unbind();
+        paymentsHorizontalScroll.visibleAmountProperty().unbind();
+        paymentsHorizontalScroll.unitIncrementProperty().unbind();
+        paymentsHorizontalScroll.blockIncrementProperty().unbind();
+        paymentsHorizontalScroll.disableProperty().unbind();
+        nativeHorizontalScroll = bar;
+        paymentsHorizontalScroll.minProperty().bind(bar.minProperty());
+        paymentsHorizontalScroll.maxProperty().bind(bar.maxProperty());
+        paymentsHorizontalScroll.visibleAmountProperty().bind(bar.visibleAmountProperty());
+        paymentsHorizontalScroll.unitIncrementProperty().bind(bar.unitIncrementProperty());
+        paymentsHorizontalScroll.blockIncrementProperty().bind(bar.blockIncrementProperty());
+        paymentsHorizontalScroll.setValue(bar.getValue());
+        paymentsHorizontalScroll.valueProperty().bindBidirectional(bar.valueProperty());
+        paymentsHorizontalScroll.disableProperty().bind(bar.visibleProperty().not()
+                .or(bar.maxProperty().lessThanOrEqualTo(bar.minProperty())));
     }
 
 
@@ -702,143 +769,61 @@ public class PaymentsController {
     // LOAD PAYMENTS
     // =========================================================
 
+    private void configurePager() {
+        pager = new TablePager<>(paymentsTable, paginationHost, (page, size) -> {
+            PaymentFilter filter = new PaymentFilter(searchField.getText(),
+                    normalizePaymentMethodFilter(paymentMethodFilter.getValue()),
+                    normalizeStatusFilter(statusFilter.getValue()),
+                    LanguageManager.isArabic(), paymentSort());
+            return () -> paymentRepository.findPage(filter, page, size);
+        }, result -> {
+            memberNames.clear();
+            membershipNames.clear();
+            membershipFinancials.clear();
+            for (Payment payment : result.items()) {
+                DisplayPayment row = (DisplayPayment) payment;
+                memberNames.put(row.getMemberId(), row.memberName());
+                if (row.getMembershipId() != null) {
+                    membershipNames.put(row.getMembershipId(), row.planName());
+                    if (row.finance() != null) membershipFinancials.put(row.getMembershipId(), row.finance());
+                }
+            }
+            paymentsTable.refresh();
+            totalPaymentsLabel.setText(formatMoney(result.amounts().get("total")));
+            monthPaymentsLabel.setText(formatMoney(result.amounts().get("month")));
+            paidPaymentsLabel.setText(formatMoney(result.amounts().get("paid")));
+            pendingPaymentsLabel.setText(formatMoney(result.amounts().get("pending")));
+            transactionsCountLabel.setText(result.total() + (LanguageManager.isArabic() ? " عملية" : " Transactions"));
+        }, error -> {
+            error.printStackTrace();
+            memberNames.clear(); membershipNames.clear(); membershipFinancials.clear();
+            totalPaymentsLabel.setText("—"); monthPaymentsLabel.setText("—");
+            paidPaymentsLabel.setText("—"); pendingPaymentsLabel.setText("—");
+            transactionsCountLabel.setText(LanguageManager.getBundle().getString("paging.error"));
+        });
+        actionsColumn.setSortable(false);
+    }
+
+    private List<PaymentOrder> paymentSort() {
+        List<PaymentOrder> orders = new ArrayList<>();
+        for (TableColumn<Payment, ?> column : paymentsTable.getSortOrder()) {
+            PaymentField field = column == idColumn ? PaymentField.ID
+                    : column == memberCodeColumn ? PaymentField.MEMBER_CODE
+                    : column == memberColumn ? PaymentField.MEMBER
+                    : column == membershipColumn ? PaymentField.PLAN
+                    : column == subscriptionAmountColumn ? PaymentField.SUBSCRIPTION
+                    : column == amountColumn ? PaymentField.AMOUNT
+                    : column == paidAmountColumn ? PaymentField.PAID
+                    : column == remainingAmountColumn ? PaymentField.REMAINING
+                    : column == paymentMethodColumn ? PaymentField.METHOD
+                    : column == statusColumn ? PaymentField.STATUS : PaymentField.DATE;
+            orders.add(new PaymentOrder(field, column.getSortType() == TableColumn.SortType.ASCENDING));
+        }
+        return orders;
+    }
+
     private void loadPayments() {
-
-        try {
-
-            payments.setAll(
-                    paymentRepository.findAll()
-            );
-
-
-            refreshPaymentView();
-
-
-        } catch (Exception exception) {
-
-            exception.printStackTrace();
-
-
-            showError(
-                    LanguageManager.isArabic()
-                            ? "تعذر تحميل المدفوعات."
-                            : "Unable to load payments.",
-                    exception.getMessage()
-            );
-        }
-    }
-
-
-    // =========================================================
-    // REFRESH VIEW
-    // =========================================================
-
-    private void refreshPaymentView() {
-
-        rebuildDisplayCaches();
-
-        paymentsTable.refresh();
-
-        updateStatistics();
-    }
-
-
-    // =========================================================
-    // DISPLAY CACHE
-    // =========================================================
-
-    private void rebuildDisplayCaches() {
-
-        memberNames.clear();
-
-        membershipNames.clear();
-
-        membershipFinancials.clear();
-
-
-        for (Payment payment : payments) {
-
-            long memberId =
-                    payment.getMemberId();
-
-
-            if (!memberNames.containsKey(
-                    memberId
-            )) {
-
-                try {
-
-                    memberNames.put(
-                            memberId,
-                            paymentRepository
-                                    .findMemberDisplayName(
-                                            memberId
-                                    )
-                    );
-
-                } catch (Exception exception) {
-
-                    memberNames.put(
-                            memberId,
-                            "#" + memberId
-                    );
-                }
-            }
-
-
-            Long membershipId =
-                    payment.getMembershipId();
-
-
-            if (membershipId != null
-                    && !membershipNames
-                            .containsKey(
-                                    membershipId
-                            )) {
-
-                try {
-
-                    membershipNames.put(
-                            membershipId,
-                            paymentRepository
-                                    .findMembershipDisplayName(
-                                            membershipId,
-                                            LanguageManager
-                                                    .isArabic()
-                                    )
-                    );
-
-                } catch (Exception exception) {
-
-                    membershipNames.put(
-                            membershipId,
-                            "#" + membershipId
-                    );
-                }
-
-                if (!membershipFinancials.containsKey(membershipId)) {
-                    try {
-                        membershipFinancials.put(
-                                membershipId,
-                                paymentRepository
-                                        .findMembershipFinancialSummary(
-                                                membershipId
-                                        )
-                        );
-                    } catch (Exception exception) {
-                        membershipFinancials.put(
-                                membershipId,
-                                new MembershipFinancialSummary(
-                                        membershipId,
-                                        BigDecimal.ZERO,
-                                        BigDecimal.ZERO,
-                                        BigDecimal.ZERO
-                                )
-                        );
-                    }
-                }
-            }
-        }
+        if (pager != null) pager.reload();
     }
 
 
@@ -915,14 +900,18 @@ public class PaymentsController {
             }
 
 
-            paymentRepository.save(
-                    payment
-            );
+            com.mycompany.lazar_app.database.DatabaseManager.inTransaction(() -> {
+                paymentRepository.save(
+                        payment
+                );
 
-            synchronizeScheduleAfterSave(
-                    controller,
-                    payment
-            );
+                synchronizeScheduleAfterSave(
+                        controller,
+                        payment
+                );
+
+                return null;
+            });
 
             refreshAfterDataChange();
 
@@ -999,21 +988,25 @@ public class PaymentsController {
             }
 
 
-            paymentRepository.update(
-                    edited
-            );
+            com.mycompany.lazar_app.database.DatabaseManager.inTransaction(() -> {
+                paymentRepository.update(
+                        edited
+                );
 
-            synchronizeScheduleAfterSave(
-                    controller,
-                    edited
-            );
+                synchronizeScheduleAfterSave(
+                        controller,
+                        edited
+                );
 
-            if (originalMembershipId != null
-                    && !originalMembershipId.equals(
-                            edited.getMembershipId()
-                    )) {
-                reconcileExistingSchedule(originalMembershipId);
-            }
+                if (originalMembershipId != null
+                        && !originalMembershipId.equals(
+                                edited.getMembershipId()
+                        )) {
+                    reconcileExistingSchedule(originalMembershipId);
+                }
+
+                return null;
+            });
 
             refreshAfterDataChange();
 
@@ -1582,14 +1575,7 @@ public class PaymentsController {
                 )
         );
 
-        table.getColumns().addAll(
-                numberColumn,
-                date,
-                amount,
-                method,
-                status,
-                reference
-        );
+        table.getColumns().addAll(List.of(numberColumn, date, amount, method, status, reference));
 
         return table;
     }
@@ -1645,7 +1631,7 @@ public class PaymentsController {
                 )
         );
 
-        table.getColumns().addAll(no, due, amount, status);
+        table.getColumns().addAll(List.of(no, due, amount, status));
         return table;
     }
 
@@ -1677,53 +1663,8 @@ public class PaymentsController {
     // =========================================================
 
     private void refreshAfterDataChange() {
-
-        if (hasActiveSearchOrFilter()) {
-
-            searchPayments();
-
-        } else {
-
-            loadPayments();
-        }
-    }
-
-
-    // =========================================================
-    // ACTIVE SEARCH?
-    // =========================================================
-
-    private boolean hasActiveSearchOrFilter() {
-
-        boolean hasKeyword =
-                searchField != null
-                && searchField.getText() != null
-                && !searchField
-                        .getText()
-                        .isBlank();
-
-
-        String method =
-                paymentMethodFilter == null
-                        ? null
-                        : normalizePaymentMethodFilter(
-                                paymentMethodFilter
-                                        .getValue()
-                        );
-
-
-        String status =
-                statusFilter == null
-                        ? null
-                        : normalizeStatusFilter(
-                                statusFilter
-                                        .getValue()
-                        );
-
-
-        return hasKeyword
-                || method != null
-                || status != null;
+        searchDelay.stop();
+        if (pager != null) pager.reload();
     }
 
 
@@ -1836,6 +1777,7 @@ public class PaymentsController {
     private void deletePayment(
             Payment payment
     ) {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         if (payment == null) {
 
@@ -1893,15 +1835,19 @@ public class PaymentsController {
 
         try {
 
-            paymentRepository.deleteById(
-                    payment.getId()
-            );
-
-            if (payment.getMembershipId() != null) {
-                reconcileExistingSchedule(
-                        payment.getMembershipId()
+            com.mycompany.lazar_app.database.DatabaseManager.inTransaction(() -> {
+                paymentRepository.deleteById(
+                        payment.getId()
                 );
-            }
+
+                if (payment.getMembershipId() != null) {
+                    reconcileExistingSchedule(
+                            payment.getMembershipId()
+                    );
+                }
+
+                return null;
+            });
 
             refreshAfterDataChange();
 
@@ -1927,245 +1873,22 @@ public class PaymentsController {
 
     @FXML
     private void searchPayments() {
-
-        try {
-
-            String keyword =
-                    searchField == null
-                            || searchField.getText() == null
-                            ? ""
-                            : searchField
-                                    .getText()
-                                    .trim();
-
-
-            String method =
-                    paymentMethodFilter == null
-                            ? null
-                            : normalizePaymentMethodFilter(
-                                    paymentMethodFilter
-                                            .getValue()
-                            );
-
-
-            String status =
-                    statusFilter == null
-                            ? null
-                            : normalizeStatusFilter(
-                                    statusFilter
-                                            .getValue()
-                            );
-
-
-            payments.setAll(
-                    paymentRepository.search(
-                            keyword,
-                            method,
-                            status
-                    )
-            );
-
-
-            refreshPaymentView();
-
-
-        } catch (Exception exception) {
-
-            exception.printStackTrace();
-
-
-            showError(
-                    LanguageManager.isArabic()
-                            ? "تعذر تنفيذ البحث."
-                            : "Unable to search payments.",
-                    exception.getMessage()
-            );
-        }
+        searchDelay.stop();
+        if (!resettingFilters && pager != null) pager.first();
     }
-
-
-    // =========================================================
-    // REFRESH
-    // =========================================================
 
     @FXML
     private void refreshPayments() {
-
-        searchDelay.stop();
-
-
-        if (searchField != null) {
-
+        resettingFilters = true;
+        try {
             searchField.clear();
+            paymentMethodFilter.getSelectionModel().selectFirst();
+            statusFilter.getSelectionModel().selectFirst();
+        } finally {
+            resettingFilters = false;
         }
-
-
-        if (paymentMethodFilter != null) {
-
-            paymentMethodFilter
-                    .getSelectionModel()
-                    .selectFirst();
-        }
-
-
-        if (statusFilter != null) {
-
-            statusFilter
-                    .getSelectionModel()
-                    .selectFirst();
-        }
-
-
-        loadPayments();
-    }
-
-
-    // =========================================================
-    // STATISTICS
-    // =========================================================
-
-    private void updateStatistics() {
-
-        BigDecimal total =
-                payments.stream()
-                        .map(
-                                Payment::getAmount
-                        )
-                        .filter(
-                                amount ->
-                                        amount != null
-                        )
-                        .reduce(
-                                BigDecimal.ZERO,
-                                BigDecimal::add
-                        );
-
-
-        LocalDate today =
-                LocalDate.now();
-
-
-        BigDecimal month =
-                payments.stream()
-
-                        .filter(
-                                payment ->
-                                        payment
-                                                .getPaymentDate()
-                                                != null
-                        )
-
-                        .filter(
-                                payment -> {
-
-                                    LocalDate date =
-                                            payment
-                                                    .getPaymentDate()
-                                                    .toLocalDate();
-
-
-                                    return date.getYear()
-                                                    == today.getYear()
-                                            && date.getMonth()
-                                                    == today.getMonth();
-                                }
-                        )
-
-                        .map(
-                                Payment::getAmount
-                        )
-
-                        .filter(
-                                amount ->
-                                        amount != null
-                        )
-
-                        .reduce(
-                                BigDecimal.ZERO,
-                                BigDecimal::add
-                        );
-
-
-        BigDecimal paid =
-                payments.stream()
-
-                        .filter(
-                                payment ->
-                                        isPaid(
-                                                payment.getStatus()
-                                        )
-                        )
-
-                        .map(
-                                Payment::getAmount
-                        )
-
-                        .filter(
-                                amount ->
-                                        amount != null
-                        )
-
-                        .reduce(
-                                BigDecimal.ZERO,
-                                BigDecimal::add
-                        );
-
-
-        // Outstanding balance is a membership-level amount, not the sum
-        // of PENDING payment rows. Count each membership only once.
-        // Scope follows the currently loaded/filtered payments list.
-        BigDecimal pending = BigDecimal.ZERO;
-        Set<Long> countedMembershipIds = new HashSet<>();
-
-        for (Payment payment : payments) {
-            Long membershipId = payment.getMembershipId();
-            if (membershipId == null
-                    || !countedMembershipIds.add(membershipId)) {
-                continue;
-            }
-
-            MembershipFinancialSummary summary =
-                    membershipFinancials.get(membershipId);
-
-            if (summary == null) {
-                continue;
-            }
-
-            BigDecimal balance = summary.getBalanceDue();
-            if (balance != null
-                    && balance.compareTo(BigDecimal.ZERO) > 0) {
-                pending = pending.add(balance);
-            }
-        }
-
-
-        totalPaymentsLabel.setText(
-                formatMoney(total)
-        );
-
-
-        monthPaymentsLabel.setText(
-                formatMoney(month)
-        );
-
-
-        paidPaymentsLabel.setText(
-                formatMoney(paid)
-        );
-
-
-        pendingPaymentsLabel.setText(
-                formatMoney(pending)
-        );
-
-
-        transactionsCountLabel.setText(
-                LanguageManager.isArabic()
-                        ? payments.size()
-                            + " عملية"
-                        : payments.size()
-                            + " Transactions"
-        );
+        searchDelay.stop();
+        if (pager != null) pager.first();
     }
 
 
@@ -2404,7 +2127,7 @@ public class PaymentsController {
                         RoundingMode.HALF_UP
                 )
                 .toPlainString()
-                + " EGP";
+                + " " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic());
     }
 
 

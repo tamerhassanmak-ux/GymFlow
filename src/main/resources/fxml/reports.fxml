@@ -22,8 +22,8 @@
         prefWidth="950.0"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.ReportsController"
-        style="-fx-background-color: #F5F7FA;">
+        fx:controller="com.mycompany.lazar_app.controller.ReportsController" styleClass="app-page"
+        >
 
     <children>
 
@@ -41,8 +41,8 @@
             <content>
 
                 <VBox
-                        spacing="20"
-                        style="-fx-background-color: #F5F7FA;">
+                        spacing="20" styleClass="app-page"
+                        >
 
                     <padding>
                         <Insets
@@ -68,13 +68,13 @@
                                     text="Reports &amp; Analytics"
                                     style="-fx-font-size: 26px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #1F2937;"/>
+                                           " styleClass="ui-text"/>
 
                             <Label
                                     fx:id="subtitleLabel"
                                     text="Monitor gym financial and membership performance"
                                     style="-fx-font-size: 13px;
-                                           -fx-text-fill: #6B7280;"/>
+                                           " styleClass="ui-muted"/>
 
                         </VBox>
 
@@ -83,13 +83,7 @@
                         <Button
                                 fx:id="exportButton"
                                 text="Export Report"
-                                style="-fx-background-color: #F97316;
-                                       -fx-text-fill: white;
-                                       -fx-font-size: 14px;
-                                       -fx-font-weight: bold;
-                                       -fx-background-radius: 8;
-                                       -fx-padding: 10 20;
-                                       -fx-cursor: hand;"/>
+                                style="-fx-padding: 10 20; -fx-cursor: hand;" styleClass="primary-button"/>
 
                     </HBox>
 
@@ -109,7 +103,7 @@
                                 fx:id="reportLabel"
                                 text="Report:"
                                 style="-fx-font-weight: bold;
-                                       -fx-text-fill: #374151;"/>
+                                       " styleClass="ui-text"/>
 
                         <ComboBox
                                 fx:id="reportTypeComboBox"
@@ -118,8 +112,7 @@
 
                         <Label
                                 fx:id="fromLabel"
-                                text="From:"
-                                style="-fx-text-fill: #6B7280;"/>
+                                text="From:" styleClass="ui-muted"/>
 
                         <DatePicker
                                 fx:id="fromDatePicker"
@@ -127,8 +120,7 @@
 
                         <Label
                                 fx:id="toLabel"
-                                text="To:"
-                                style="-fx-text-fill: #6B7280;"/>
+                                text="To:" styleClass="ui-muted"/>
 
                         <DatePicker
                                 fx:id="toDatePicker"
@@ -139,12 +131,7 @@
                         <Button
                                 fx:id="generateButton"
                                 text="Generate"
-                                style="-fx-background-color: #1F2937;
-                                       -fx-text-fill: white;
-                                       -fx-font-weight: bold;
-                                       -fx-background-radius: 7;
-                                       -fx-padding: 8 20;
-                                       -fx-cursor: hand;"/>
+                                style="-fx-padding: 8 20; -fx-cursor: hand;" styleClass="neutral-button"/>
 
                     </HBox>
 
@@ -161,24 +148,17 @@
                                 spacing="8"
                                 HBox.hgrow="ALWAYS"
                                 prefWidth="210"
-                                style="-fx-background-color: white;
-                                       -fx-background-radius: 10;
-                                       -fx-padding: 18;
-                                       -fx-effect: dropshadow(
-                                           gaussian,
-                                           rgba(0,0,0,0.07),
-                                           8,0,0,2
-                                       );">
+                                style="-fx-padding: 18;" styleClass="surface-card">
 
                             <Label
                                     fx:id="totalRevenueTitleLabel"
                                     text="Total Revenue"
                                     style="-fx-font-size: 13px;
-                                           -fx-text-fill: #6B7280;"/>
+                                           " styleClass="ui-muted"/>
 
                             <Label
                                     fx:id="totalRevenueValueLabel"
-                                    text="0.00 EGP"
+                                    text="0.00"
                                     style="-fx-font-size: 22px;
                                            -fx-font-weight: bold;
                                            -fx-text-fill: #16A34A;"/>
@@ -199,24 +179,17 @@
                                 spacing="8"
                                 HBox.hgrow="ALWAYS"
                                 prefWidth="210"
-                                style="-fx-background-color: white;
-                                       -fx-background-radius: 10;
-                                       -fx-padding: 18;
-                                       -fx-effect: dropshadow(
-                                           gaussian,
-                                           rgba(0,0,0,0.07),
-                                           8,0,0,2
-                                       );">
+                                style="-fx-padding: 18;" styleClass="surface-card">
 
                             <Label
                                     fx:id="totalExpensesTitleLabel"
                                     text="Total Expenses"
                                     style="-fx-font-size: 13px;
-                                           -fx-text-fill: #6B7280;"/>
+                                           " styleClass="ui-muted"/>
 
                             <Label
                                     fx:id="totalExpensesValueLabel"
-                                    text="0.00 EGP"
+                                    text="0.00"
                                     style="-fx-font-size: 22px;
                                            -fx-font-weight: bold;
                                            -fx-text-fill: #DC2626;"/>
@@ -225,7 +198,7 @@
                                     fx:id="transactionsLabel"
                                     text="0 transactions"
                                     style="-fx-font-size: 11px;
-                                           -fx-text-fill: #6B7280;"/>
+                                           " styleClass="ui-muted"/>
 
                         </VBox>
 
@@ -236,24 +209,17 @@
                                 spacing="8"
                                 HBox.hgrow="ALWAYS"
                                 prefWidth="210"
-                                style="-fx-background-color: white;
-                                       -fx-background-radius: 10;
-                                       -fx-padding: 18;
-                                       -fx-effect: dropshadow(
-                                           gaussian,
-                                           rgba(0,0,0,0.07),
-                                           8,0,0,2
-                                       );">
+                                style="-fx-padding: 18;" styleClass="surface-card">
 
                             <Label
                                     fx:id="netProfitTitleLabel"
                                     text="Net Profit"
                                     style="-fx-font-size: 13px;
-                                           -fx-text-fill: #6B7280;"/>
+                                           " styleClass="ui-muted"/>
 
                             <Label
                                     fx:id="netProfitValueLabel"
-                                    text="0.00 EGP"
+                                    text="0.00"
                                     style="-fx-font-size: 22px;
                                            -fx-font-weight: bold;
                                            -fx-text-fill: #2563EB;"/>
@@ -262,7 +228,7 @@
                                     fx:id="revenueMinusExpensesLabel"
                                     text="Revenue - Expenses"
                                     style="-fx-font-size: 11px;
-                                           -fx-text-fill: #6B7280;"/>
+                                           " styleClass="ui-muted"/>
 
                         </VBox>
 
@@ -273,20 +239,13 @@
                                 spacing="8"
                                 HBox.hgrow="ALWAYS"
                                 prefWidth="210"
-                                style="-fx-background-color: white;
-                                       -fx-background-radius: 10;
-                                       -fx-padding: 18;
-                                       -fx-effect: dropshadow(
-                                           gaussian,
-                                           rgba(0,0,0,0.07),
-                                           8,0,0,2
-                                       );">
+                                style="-fx-padding: 18;" styleClass="surface-card">
 
                             <Label
                                     fx:id="activeMembersTitleLabel"
                                     text="Active Members"
                                     style="-fx-font-size: 13px;
-                                           -fx-text-fill: #6B7280;"/>
+                                           " styleClass="ui-muted"/>
 
                             <Label
                                     fx:id="activeMembersValueLabel"
@@ -299,7 +258,7 @@
                                     fx:id="newMembersLabel"
                                     text="+0 new members"
                                     style="-fx-font-size: 11px;
-                                           -fx-text-fill: #6B7280;"/>
+                                           " styleClass="ui-muted"/>
 
                         </VBox>
 
@@ -320,21 +279,14 @@
                         <VBox
                                 spacing="10"
                                 HBox.hgrow="ALWAYS"
-                                style="-fx-background-color: white;
-                                       -fx-background-radius: 10;
-                                       -fx-padding: 15;
-                                       -fx-effect: dropshadow(
-                                           gaussian,
-                                           rgba(0,0,0,0.05),
-                                           8,0,0,2
-                                       );">
+                                style="-fx-padding: 15;" styleClass="surface-card">
 
                             <Label
                                     fx:id="revenueExpensesTitleLabel"
                                     text="Revenue &amp; Expenses"
                                     style="-fx-font-size: 17px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #1F2937;"/>
+                                           " styleClass="ui-text"/>
 
                             <BarChart
                                     fx:id="financialChart"
@@ -358,7 +310,7 @@
 
                                     <NumberAxis
                                             fx:id="amountAxis"
-                                            label="Amount (EGP)"
+                                            label=""
                                             side="LEFT"
                                             forceZeroInRange="true"/>
 
@@ -375,21 +327,14 @@
                                 spacing="15"
                                 prefWidth="285"
                                 minWidth="260"
-                                style="-fx-background-color: white;
-                                       -fx-background-radius: 10;
-                                       -fx-padding: 20;
-                                       -fx-effect: dropshadow(
-                                           gaussian,
-                                           rgba(0,0,0,0.05),
-                                           8,0,0,2
-                                       );">
+                                style="-fx-padding: 20;" styleClass="surface-card">
 
                             <Label
                                     fx:id="summaryTitleLabel"
                                     text="Report Summary"
                                     style="-fx-font-size: 17px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #1F2937;"/>
+                                           " styleClass="ui-text"/>
 
 
                             <!-- MEMBERSHIP REVENUE -->
@@ -398,15 +343,14 @@
 
                                 <Label
                                         fx:id="membershipRevenueLabel"
-                                        text="Membership Revenue"
-                                        style="-fx-text-fill: #6B7280;"/>
+                                        text="Membership Revenue" styleClass="ui-muted"/>
 
                                 <Label
                                         fx:id="membershipRevenueValueLabel"
-                                        text="0.00 EGP"
+                                        text="0.00"
                                         style="-fx-font-size: 17px;
                                                -fx-font-weight: bold;
-                                               -fx-text-fill: #1F2937;"/>
+                                               " styleClass="ui-text"/>
 
                             </VBox>
 
@@ -417,15 +361,14 @@
 
                                 <Label
                                         fx:id="otherRevenueLabel"
-                                        text="Other Revenue"
-                                        style="-fx-text-fill: #6B7280;"/>
+                                        text="Other Revenue" styleClass="ui-muted"/>
 
                                 <Label
                                         fx:id="otherRevenueValueLabel"
-                                        text="0.00 EGP"
+                                        text="0.00"
                                         style="-fx-font-size: 17px;
                                                -fx-font-weight: bold;
-                                               -fx-text-fill: #1F2937;"/>
+                                               " styleClass="ui-text"/>
 
                             </VBox>
 
@@ -436,12 +379,11 @@
 
                                 <Label
                                         fx:id="operatingExpensesLabel"
-                                        text="Operating Expenses"
-                                        style="-fx-text-fill: #6B7280;"/>
+                                        text="Operating Expenses" styleClass="ui-muted"/>
 
                                 <Label
                                         fx:id="operatingExpensesValueLabel"
-                                        text="0.00 EGP"
+                                        text="0.00"
                                         style="-fx-font-size: 17px;
                                                -fx-font-weight: bold;
                                                -fx-text-fill: #DC2626;"/>
@@ -462,8 +404,7 @@
 
                                 <Label
                                         fx:id="profitMarginLabel"
-                                        text="Profit Margin"
-                                        style="-fx-text-fill: #6B7280;"/>
+                                        text="Profit Margin" styleClass="ui-muted"/>
 
                                 <Label
                                         fx:id="profitMarginValueLabel"
@@ -485,14 +426,7 @@
 
                     <VBox
                             spacing="12"
-                            style="-fx-background-color: white;
-                                   -fx-background-radius: 10;
-                                   -fx-padding: 15;
-                                   -fx-effect: dropshadow(
-                                       gaussian,
-                                       rgba(0,0,0,0.05),
-                                       8,0,0,2
-                                   );">
+                            style="-fx-padding: 15;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -501,7 +435,7 @@
                                     text="Recent Financial Activity"
                                     style="-fx-font-size: 17px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #1F2937;"/>
+                                           " styleClass="ui-text"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 

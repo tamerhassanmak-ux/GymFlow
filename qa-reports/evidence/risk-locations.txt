@@ -1,0 +1,292 @@
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:10:public final class SuperAdminAuthService {
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:16:    private SuperAdminAuthService() {}
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:22:    public static void setPassword(String password) {
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:23:        if (password == null || password.length() < 8) {
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:24:            throw new IllegalArgumentException("Super Admin password must contain at least 8 characters.");
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:28:            Files.writeString(HASH_FILE, BCrypt.hashpw(password, BCrypt.gensalt(12)));
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:34:    public static boolean verify(String password) {
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:35:        if (!isConfigured() || password == null) return false;
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java:38:            return BCrypt.checkpw(password, hash);
+src/main/java/com/mycompany/lazar_app/controller/MemberDetailsController.java:342:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MemberDetailsController.java:695:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MemberDetailsController.java:761:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MemberDetailsController.java:832:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MemberDetailsController.java:1374:                    exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MemberDetailsController.java:1391:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddPaymentController.java:615:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddPaymentController.java:1452:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/service/export/PdfReportExporter.java:666:            } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/controller/ReportsController.java:915:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/ReportsController.java:1286:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/ReportsController.java:1534:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/Lazar_APP.java:70:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/Lazar_APP.java:194:                    .ensureSuperAdminConfigured(stage);
+src/main/java/com/mycompany/lazar_app/Lazar_APP.java:199:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipPlansController.java:804:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipPlansController.java:1065:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipPlansController.java:1124:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipPlansController.java:1211:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipPlanFormController.java:856:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java:856:            e.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java:970:            e.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java:1058:            e.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java:1281:                "Unable to verify member phone."
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java:1284:        exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java:1347:                    "Unable to verify member code."
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java:1350:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java:1409:         * Clearing the field while editing restores the automatic
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:368:                    exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:934:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:974:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:1421:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:1427:                            : "Could not verify the member's membership.",
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:1799:                exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:1805:                                : "Could not verify the member's membership status.",
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:1979:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java:2001:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/AttendanceHistoryController.java:101:            error.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:4:import com.mycompany.lazar_app.security.SuperAdminAuthService;
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:14:import javafx.scene.control.PasswordField;
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:22:    private PasswordField passwordField;
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:36:                (Stage) passwordField
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:45:        if (!SuperAdminAuthService.isConfigured()) {
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:50:                        .ensureSuperAdminConfigured(
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:69:        String password =
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:70:                passwordField.getText();
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:73:        if (password == null
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:74:                || password.isBlank()) {
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:80:            passwordField.requestFocus();
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:90:        if (!SuperAdminAuthService.verify(password)) {
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:96:            passwordField.clear();
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:98:            passwordField.requestFocus();
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:140:                (Stage) passwordField
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:295:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java:303:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java:557:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java:972:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java:989:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java:1105:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java:1367:        failure.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java:1372:            failure.printStackTrace(new PrintWriter(buffer));
+src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java:1378:            loggingFailure.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembersController.java:1021:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembersController.java:1181:                exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembersController.java:1275:                exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembersController.java:1444:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/MembersController.java:1784:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:80:    @FXML private PasswordField currentPasswordField;
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:81:    @FXML private PasswordField newPasswordField;
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:82:    @FXML private PasswordField confirmPasswordField;
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:83:    @FXML private Button changePasswordButton;
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:85:    @FXML private Label backupTitleLabel;
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:87:    @FXML private Button backupDatabaseButton;
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:88:    @FXML private Button restoreBackupButton;
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:120:        backupDatabaseButton.setOnAction(e -> backupDatabase());
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:121:        restoreBackupButton.setOnAction(e -> restoreDatabase());
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:122:        changePasswordButton.setOnAction(e -> showPasswordManagementInfo());
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:212:            ex.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:243:    private void backupDatabase() {
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:249:                       "In-app backup currently supports SQLite only."));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:264:        chooser.setInitialFileName("gymflow-backup-"
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:272:            Files.copy(source, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:278:                       "Database backup created successfully."));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:280:            ex.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:282:                    ar("تعذر إنشاء النسخة الاحتياطية.", "Could not create database backup."));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:286:    private void restoreDatabase() {
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:291:                       "In-app restore currently supports SQLite only."));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:308:                                  "Create a backup first. Do you want to continue?"));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:328:                    "pre-restore-" +
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:332:                Files.copy(target, safety, StandardCopyOption.REPLACE_EXISTING);
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:335:            Files.copy(source.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:340:                       "Database restored. Close and reopen GymFlow before continuing."));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:342:            ex.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:344:                    ar("تعذر استعادة قاعدة البيانات.", "Could not restore database."));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:352:                                       "Last backup: None"));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:359:                                       "Last backup: " + formatted));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:362:                                       "Last backup: " + raw));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:366:    private void showPasswordManagementInfo() {
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:369:                ar("تغيير كلمة مرور السوبر أدمن يجب أن يتم من خلال خدمة SuperAdminAuthService بعد إضافة API مخصص لتغيير كلمة المرور. لم يتم تعديل بيانات الدخول بصورة غير آمنة.",
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:370:                   "Super Admin password changes must go through SuperAdminAuthService after adding a dedicated password-change API. Login credentials were not modified insecurely."));
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:525:            currentPasswordField.setPromptText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:529:            newPasswordField.setPromptText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:533:            confirmPasswordField.setPromptText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:537:            changePasswordButton.setText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:543:            backupTitleLabel.setText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:551:            backupDatabaseButton.setText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:555:            restoreBackupButton.setText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:668:            currentPasswordField.setPromptText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:669:                    "Current Password"
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:672:            newPasswordField.setPromptText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:673:                    "New Password"
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:676:            confirmPasswordField.setPromptText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:677:                    "Confirm Password"
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:680:            changePasswordButton.setText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:681:                    "Change Password"
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:686:            backupTitleLabel.setText("Data & Backup");
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:689:                    "Last backup: Today, 10:30 AM"
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:692:            backupDatabaseButton.setText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:696:            restoreBackupButton.setText(
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:745:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java:797:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:176:            ex.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:213:                ex.printStackTrace(); // Keep retrying at the next tick.
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:555:            error.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:1001:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:1248:                dashboardError.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:1271:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:1335:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:1455:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java:1518:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:3:import com.mycompany.lazar_app.security.SuperAdminAuthService;
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:6:import javafx.scene.control.PasswordField;
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:9:public class SuperAdminSetupController {
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:12:    private PasswordField passwordField;
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:15:    private PasswordField confirmPasswordField;
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:23:        String password = passwordField.getText();
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:24:        String confirmation = confirmPasswordField.getText();
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:26:        if (password == null || password.length() < 8) {
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:33:        if (!password.equals(confirmation)) {
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:42:            SuperAdminAuthService.setPassword(password);
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java:45:                    (Stage) passwordField
+src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java:4:import com.mycompany.lazar_app.security.SuperAdminAuthService;
+src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java:31:    public static void ensureSuperAdminConfigured(
+src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java:35:        ensureSuperAdminPassword(owner);
+src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java:53:        ensureSuperAdminPassword(owner);
+src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java:65:    private static void ensureSuperAdminPassword(
+src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java:69:        if (SuperAdminAuthService.isConfigured()) {
+src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java:97:            if (!SuperAdminAuthService.isConfigured()) {
+src/main/java/com/mycompany/lazar_app/license/ProgramLicenseManager.java:334:            } catch (AtomicMoveNotSupportedException ignored) {
+src/main/java/com/mycompany/lazar_app/license/ProgramLicenseManager.java:417:        } catch (UnsupportedOperationException ignored) {
+src/main/java/com/mycompany/lazar_app/license/ProgramLicenseManager.java:419:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/util/MemberCardPrinter.java:516:                exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/util/MemberCardPrinter.java:903:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/util/MemberCardPrinter.java:1045:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/util/MemberCardPrinter.java:1506:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/util/MemberCardPrinter.java:1588:                exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/util/MemberCardPrinter.java:1699:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/PaymentsController.java:798:            error.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/PaymentsController.java:917:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/PaymentsController.java:1008:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/PaymentsController.java:1417:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/PaymentsController.java:1851:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/license/ProgramLicenseGate.java:114:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/util/RevenueAttachmentStorage.java:42:        Files.copy(
+src/main/java/com/mycompany/lazar_app/controller/DashboardController.java:193:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/DashboardController.java:352:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/util/AppPaths.java:67:    public static Path backupsDirectory() {
+src/main/java/com/mycompany/lazar_app/util/AppPaths.java:68:        return dataDirectory().resolve("backups");
+src/main/java/com/mycompany/lazar_app/controller/DashboardContentController.java:225:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/DashboardContentController.java:246:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/DashboardContentController.java:1913:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M004CreateCheckInsTable.java:42:            MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/database/DatabaseInitializer.java:102:            statement.execute(
+src/main/java/com/mycompany/lazar_app/database/DatabaseInitializer.java:107:            statement.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M008MakeMemberPhoneUnique.java:122:        MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java:26:                    config.getUsername(), config.getPassword());
+src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java:32:                    config.getUsername(), config.getPassword());
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:623:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:712:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:924:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:954:        ProcessBuilder processBuilder;
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:961:                    new ProcessBuilder(
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:974:                    new ProcessBuilder(
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:982:                    new ProcessBuilder(
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:994:                        ProcessBuilder.Redirect.DISCARD
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java:997:                        ProcessBuilder.Redirect.DISCARD
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfigManager.java:38:         * explicitly through a dedicated import/restore operation.
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfigManager.java:126:            config.setPassword(
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfigManager.java:128:                            "password",
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfigManager.java:253:             * Password storage should later be moved to the
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfigManager.java:259:                    "password",
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfigManager.java:261:                            config.getPassword()
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfig.java:13:    private String password = "";
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfig.java:34:    public String getPassword() { return password; }
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfig.java:35:    public void setPassword(String password) { this.password = password; }
+src/main/java/com/mycompany/lazar_app/database/migration/M003CreateMemberMembershipsTable.java:49:        MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationRunner.java:115:                } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationRunner.java:130:                } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationRunner.java:189:        MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationRunner.java:269:            statement.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationRunner.java:288:            e.printStackTrace();
+src/main/java/com/mycompany/lazar_app/repository/DashboardRepository.java:1223:        } catch (DateTimeParseException ignored) {
+src/main/java/com/mycompany/lazar_app/repository/DashboardRepository.java:1233:        } catch (DateTimeParseException ignored) {
+src/main/java/com/mycompany/lazar_app/repository/DashboardRepository.java:1252:        } catch (DateTimeParseException ignored) {
+src/main/java/com/mycompany/lazar_app/repository/DashboardRepository.java:1285:        } catch (DateTimeParseException ignored) {
+src/main/java/com/mycompany/lazar_app/repository/DashboardRepository.java:1298:        } catch (DateTimeParseException ignored) {
+src/main/java/com/mycompany/lazar_app/repository/DashboardRepository.java:1308:        } catch (DateTimeParseException ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M002CreateMembershipPlansTable.java:42:        MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/ui/dialog/CheckinDetailsDialog.java:53:            task.getException().printStackTrace();
+src/main/java/com/mycompany/lazar_app/ui/dialog/CheckinDetailsDialog.java:79:            error.printStackTrace();
+src/main/java/com/mycompany/lazar_app/ui/dialog/CheckinDetailsDialog.java:221:        } catch (RuntimeException ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M006EnsureSessionLimitColumns.java:25:            MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M006EnsureSessionLimitColumns.java:39:            MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/repository/ReportRepository.java:1573:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/ReportRepository.java:1583:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/ReportRepository.java:1592:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java:73:        MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java:148:        MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java:159:            MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java:163:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java:167:            MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java:171:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java:175:            MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java:179:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/MemberRepository.java:669:                } catch (SQLException ignored) {
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:7:import com.mycompany.lazar_app.security.SuperAdminAuthService;
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:19:import javafx.scene.control.PasswordField;
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:50:    @FXML private Label passwordLabel;
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:51:    @FXML private PasswordField superAdminPasswordField;
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:246:        if (!SuperAdminAuthService.isConfigured()) {
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:250:                            "The Super Admin password has not been configured yet."
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:257:        String password =
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:258:                superAdminPasswordField.getText() == null
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:260:                        : superAdminPasswordField.getText();
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:262:        if (!SuperAdminAuthService.verify(password)) {
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:266:                            "Invalid Super Admin password."
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:271:            superAdminPasswordField.clear();
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:272:            superAdminPasswordField.requestFocus();
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:366:            superAdminPasswordField.clear();
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:380:            exception.printStackTrace();
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:555:        passwordLabel.setText(
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:558:                        "Super Admin Password"
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:562:        superAdminPasswordField.setPromptText(
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java:565:                        "Enter Super Admin password to activate"
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationSupport.java:122:    static void execute(Connection connection, String sql)
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationSupport.java:126:            statement.execute(sql);
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationSupport.java:170:        execute(
+src/main/java/com/mycompany/lazar_app/controller/DatabaseSettingsController.java:25:    @FXML private PasswordField passwordField;
+src/main/java/com/mycompany/lazar_app/controller/DatabaseSettingsController.java:47:        passwordField.setText(c.getPassword());
+src/main/java/com/mycompany/lazar_app/controller/DatabaseSettingsController.java:129:            c.setPassword(passwordField.getText());
+src/main/java/com/mycompany/lazar_app/database/migration/M005CreatePaymentsTable.java:45:            MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/settings/AppSettingsManager.java:179:                            "backup.lastBackup",
+src/main/java/com/mycompany/lazar_app/settings/AppSettingsManager.java:320:                    "backup.lastBackup",
+src/main/java/com/mycompany/lazar_app/settings/AppSettingsManager.java:385:            Files.copy(
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java:75:        MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java:152:        MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java:163:            MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java:167:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java:171:            MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java:175:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java:179:            MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java:183:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/RevenueRepository.java:546:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/RevenueRepository.java:551:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/ExpenseRepository.java:731:            } catch (NumberFormatException ignored) {
+src/main/java/com/mycompany/lazar_app/repository/ExpenseRepository.java:920:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/ExpenseRepository.java:928:            } catch (Exception ignoredAgain) {
+src/main/java/com/mycompany/lazar_app/repository/MemberMembershipRepository.java:1720:            } catch (NumberFormatException ignored) {
+src/main/java/com/mycompany/lazar_app/repository/MemberMembershipRepository.java:1739:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/MemberMembershipRepository.java:1761:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/database/migration/M007CreateExpensesTable.java:179:        MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/database/migration/M007CreateExpensesTable.java:191:        MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M007CreateExpensesTable.java:199:        MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M007CreateExpensesTable.java:207:        MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M007CreateExpensesTable.java:215:        MigrationSupport.execute(
+src/main/java/com/mycompany/lazar_app/database/migration/M001CreateMembersTable.java:47:        MigrationSupport.execute(connection, sql);
+src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java:2159:            } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java:2169:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java:2486:            } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java:2497:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java:2508:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java:2518:        } catch (Exception ignored) {
+src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java:2561:            } catch (Exception ignored) {

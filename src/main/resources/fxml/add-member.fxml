@@ -147,6 +147,9 @@
                                         prefHeight="36.0"
                                         styleClass="secondary-button"/>
 
+                                <Button text="%addMember.camera" onAction="#capturePhoto"
+                                        mnemonicParsing="false" prefWidth="115.0" prefHeight="36.0"
+                                        styleClass="secondary-button"/>
                             </VBox>
 
 
@@ -670,7 +673,7 @@
             <Button
                     text="%addMember.save"
                     mnemonicParsing="false"
-                    onAction="#saveMember"
+                    fx:id="submitMemberButton" onAction="#saveMember"
                     prefHeight="40.0"
                     prefWidth="170.0"
                     styleClass="primary-button"/>

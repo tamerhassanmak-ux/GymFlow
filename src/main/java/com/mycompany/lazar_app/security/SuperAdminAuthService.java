@@ -19,15 +19,38 @@ public final class SuperAdminAuthService {
         return Files.exists(HASH_FILE);
     }
 
-    public static void setPassword(String password) {
-        if (password == null || password.length() < 8) {
-            throw new IllegalArgumentException("Super Admin password must contain at least 8 characters.");
+    public static synchronized void setPassword(String password) {
+        if (isConfigured()) throw new SecurityException("Use password change with the current password.");
+        writePassword(password);
+    }
+
+    public static synchronized void changePassword(String currentPassword, String newPassword) {
+        if (!verify(currentPassword)) throw new SecurityException("Current password is incorrect.");
+        writePassword(newPassword);
+        AuthorizationService.logout();
+    }
+
+    private static void writePassword(String password) {
+        if (password == null || password.length() < 8
+                || password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            throw new IllegalArgumentException("Password must contain at least 8 characters and at most 72 UTF-8 bytes.");
         }
+        Path temporary = null;
         try {
             Files.createDirectories(SECURITY_DIR);
-            Files.writeString(HASH_FILE, BCrypt.hashpw(password, BCrypt.gensalt(12)));
+            temporary = Files.createTempFile(SECURITY_DIR, ".superadmin-", ".tmp");
+            try {
+                Files.setPosixFilePermissions(temporary, java.nio.file.attribute.PosixFilePermissions.fromString("rw-------"));
+            } catch (UnsupportedOperationException ignored) { /* Windows inherits profile ACLs. */ }
+            Files.writeString(temporary, BCrypt.hashpw(password, BCrypt.gensalt(12)));
+            Files.move(temporary, HASH_FILE, java.nio.file.StandardCopyOption.ATOMIC_MOVE,
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new IllegalStateException("Could not save Super Admin credentials.", e);
+        } finally {
+            if (temporary != null) {
+                try { Files.deleteIfExists(temporary); } catch (IOException ignored) { }
+            }
         }
     }
 

@@ -22,6 +22,8 @@ public class ExpenseRepository {
     // =========================================================
 
     public Expense save(Expense expense) {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
+        if (expense == null) throw new IllegalArgumentException("Expense is required.");
 
         String sql = """
                 INSERT INTO expenses
@@ -175,6 +177,8 @@ public class ExpenseRepository {
     // =========================================================
 
     public void update(Expense expense) {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
+        if (expense == null) throw new IllegalArgumentException("Expense is required.");
 
         String sql = """
                 UPDATE expenses
@@ -293,6 +297,7 @@ public class ExpenseRepository {
     // =========================================================
 
     public void delete(long id) {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         String sql = """
                 DELETE FROM expenses

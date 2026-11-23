@@ -23,8 +23,8 @@
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.mycompany.lazar_app.controller.ExpenseFormController"
         prefWidth="1100"
-        prefHeight="720"
-        style="-fx-background-color: #f4f7fb;">
+        prefHeight="720" styleClass="app-page"
+        >
 
     <!-- ===================================================== -->
     <!-- HEADER -->
@@ -63,8 +63,8 @@
                             fx:id="formSubtitleLabel"
                             style="
                                 -fx-font-size: 13px;
-                                -fx-text-fill: #6b7280;
-                            "/>
+
+                            " styleClass="ui-muted"/>
 
                 </VBox>
 
@@ -78,8 +78,8 @@
                             fx:id="expenseCodeTitleLabel"
                             style="
                                 -fx-font-size: 11px;
-                                -fx-text-fill: #9ca3af;
-                            "/>
+
+                            " styleClass="ui-muted"/>
 
                     <Label
                             fx:id="expenseCodeLabel"
@@ -148,15 +148,15 @@
                                     style="
                                         -fx-font-size: 18px;
                                         -fx-font-weight: bold;
-                                        -fx-text-fill: #1f2937;
-                                    "/>
+
+                                    " styleClass="ui-text"/>
 
                             <Label
                                     fx:id="informationSubtitleLabel"
                                     style="
                                         -fx-font-size: 12px;
-                                        -fx-text-fill: #9ca3af;
-                                    "/>
+
+                                    " styleClass="ui-muted"/>
 
                         </VBox>
 
@@ -322,8 +322,8 @@
                                     fx:id="paymentDetailsSubtitleLabel"
                                     style="
                                         -fx-font-size: 12px;
-                                        -fx-text-fill: #9ca3af;
-                                    "/>
+
+                                    " styleClass="ui-muted"/>
 
                         </VBox>
 
@@ -458,12 +458,7 @@
                     onAction="#handleCancel"
                     prefWidth="110"
                     prefHeight="42"
-                    style="
-                        -fx-background-color: white;
-                        -fx-border-color: #d1d5db;
-                        -fx-border-radius: 8;
-                        -fx-background-radius: 8;
-                    "/>
+                     styleClass="secondary-button"/>
 
             <Button
                     fx:id="saveButton"

@@ -870,6 +870,15 @@ public class AddMemberController {
     // =====================================================
 
     @FXML
+    private void capturePhoto() {
+        com.mycompany.lazar_app.ui.dialog.CameraCaptureDialog.show(getStage(), file -> {
+            photoPath = file.toAbsolutePath().toString();
+            loadExistingPhoto(photoPath);
+            markFormDirty();
+        });
+    }
+
+    @FXML
     private void uploadPhoto() {
 
         FileChooser chooser =

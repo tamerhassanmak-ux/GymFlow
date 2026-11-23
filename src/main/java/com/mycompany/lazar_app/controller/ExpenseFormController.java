@@ -867,6 +867,7 @@ public class ExpenseFormController {
 
     @FXML
     private void handleSave() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         clearValidation();
 

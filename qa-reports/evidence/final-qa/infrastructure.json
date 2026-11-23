@@ -1,0 +1,18 @@
+{
+  "os": "Linux",
+  "platform": "Linux-6.17.0-41-generic-x86_64-with-glibc2.42",
+  "available_tools": {
+    "mysqld": null,
+    "mariadbd": null,
+    "docker": null,
+    "podman": null,
+    "sqlservr": null,
+    "sqlcmd": null,
+    "Xvfb": null,
+    "dpkg-deb": "/usr/bin/dpkg-deb",
+    "fakeroot": "/usr/bin/fakeroot",
+    "jpackage": "/usr/bin/jpackage"
+  },
+  "production_services_probed": false,
+  "historical_customer_fixtures_used": false
+}

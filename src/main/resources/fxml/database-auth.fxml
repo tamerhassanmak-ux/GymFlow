@@ -15,14 +15,13 @@
       style="-fx-background-color: white;">
     <padding><Insets top="28" right="30" bottom="28" left="30"/></padding>
 
-    <Label text="🔒 Super Admin"
-           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
-    <Label text="Authentication is required to change database configuration."
-           wrapText="true"
-           style="-fx-text-fill: #6B7280;"/>
+    <Label text="%database.auth.title"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; " styleClass="ui-text"/>
+    <Label text="%database.auth.description"
+           wrapText="true" styleClass="ui-muted"/>
 
     <PasswordField fx:id="passwordField"
-                   promptText="Super Admin Password"
+                   promptText="%database.auth.password"
                    prefHeight="42"/>
 
     <Label fx:id="messageLabel" wrapText="true"
@@ -30,9 +29,9 @@
 
     <HBox spacing="10">
         <Region HBox.hgrow="ALWAYS"/>
-        <Button text="Cancel" onAction="#handleCancel"/>
-        <Button text="Verify" onAction="#handleVerify"
+        <Button text="%common.cancel" onAction="#handleCancel"/>
+        <Button text="%database.auth.verify" onAction="#handleVerify"
                 defaultButton="true"
-                style="-fx-background-color: #F97316; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                 styleClass="primary-button"/>
     </HBox>
 </VBox>

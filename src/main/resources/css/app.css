@@ -2081,101 +2081,6 @@
     -fx-alignment: CENTER-RIGHT;
 }
 
-
-/* ============================================================
-   GYMFLOW — PROFESSIONAL NATIVE DIALOGS / ALERTS
-   ============================================================ */
-
-.gymflow-native-dialog {
-    -fx-background-color: transparent;
-    -fx-padding: 0;
-}
-
-.gymflow-native-dialog > .content,
-.gymflow-native-dialog > .header-panel,
-.gymflow-native-dialog > .button-bar {
-    -fx-background-color: white;
-}
-
-.gymflow-native-dialog > .header-panel {
-    -fx-padding: 22 24 12 24;
-    -fx-background-radius: 20 20 0 0;
-}
-
-.gymflow-native-dialog > .header-panel .label {
-    -fx-font-size: 17px;
-    -fx-font-weight: 800;
-    -fx-text-fill: #0F172A;
-}
-
-.gymflow-native-dialog > .content {
-    -fx-padding: 8 24 22 24;
-    -fx-font-size: 14px;
-    -fx-text-fill: #475569;
-}
-
-.gymflow-native-dialog > .button-bar {
-    -fx-padding: 14 24 20 24;
-    -fx-background-radius: 0 0 20 20;
-    -fx-border-color: #E2E8F0 transparent transparent transparent;
-}
-
-.gymflow-native-dialog .button {
-    -fx-min-height: 42px;
-    -fx-padding: 0 20 0 20;
-    -fx-background-radius: 11px;
-    -fx-cursor: hand;
-    -fx-font-size: 13px;
-    -fx-font-weight: 800;
-}
-
-.gymflow-dialog-info > .header-panel {
-    -fx-border-color: #0EA5E9 transparent transparent transparent;
-    -fx-border-width: 4 0 0 0;
-}
-
-.gymflow-dialog-warning > .header-panel,
-.gymflow-dialog-confirm > .header-panel {
-    -fx-border-color: #F97316 transparent transparent transparent;
-    -fx-border-width: 4 0 0 0;
-}
-
-.gymflow-dialog-error > .header-panel {
-    -fx-border-color: #EF4444 transparent transparent transparent;
-    -fx-border-width: 4 0 0 0;
-}
-
-.gymflow-dialog-form > .header-panel {
-    -fx-border-color: #0F172A transparent transparent transparent;
-    -fx-border-width: 4 0 0 0;
-}
-
-.gymflow-native-dialog .combo-box,
-.gymflow-native-dialog .text-field,
-.gymflow-native-dialog .text-area {
-    -fx-background-color: #F8FAFC;
-    -fx-border-color: #CBD5E1;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-}
-
-.gymflow-native-dialog .combo-box:focused,
-.gymflow-native-dialog .text-field:focused,
-.gymflow-native-dialog .text-area:focused {
-    -fx-border-color: #F97316;
-    -fx-border-width: 1.5px;
-}
-
-.gymflow-native-dialog .dialog-pane {
-    -fx-background-radius: 20px;
-}
-
-.gymflow-native-dialog:rtl .label,
-.gymflow-native-dialog:rtl .text-field,
-.gymflow-native-dialog:rtl .text-area {
-    -fx-alignment: CENTER-RIGHT;
-}
-
 /* Central responsive dialog: scroll content, fixed-access action bar */
 .gymflow-responsive-dialog > .content,
 .gymflow-responsive-dialog > .button-bar {
@@ -2195,4 +2100,366 @@
 }
 .gymflow-responsive-dialog .button-bar .button {
     -fx-min-height: 38px;
+}
+
+/* Shared dialog surface, spacing and typography (Arabic and English). */
+.gymflow-responsive-dialog {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+    -fx-padding: 0;
+}
+.gymflow-responsive-dialog > .header-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 20 24 12 24;
+}
+.gymflow-responsive-dialog > .header-panel .label {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+    -fx-wrap-text: true;
+}
+.gymflow-responsive-dialog > .content {
+    -fx-padding: 12 24 16 24;
+}
+.gymflow-responsive-dialog .gymflow-dialog-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+    -fx-padding: 0;
+}
+.gymflow-responsive-dialog > .button-bar {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 0 0 16 16;
+    -fx-border-color: #E2E8F0 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12 24 16 24;
+    -fx-min-height: 68px;
+}
+.gymflow-responsive-dialog > .button-bar .button {
+    -fx-min-width: 96px;
+    -fx-min-height: 40px;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+.gymflow-responsive-dialog .app-dialog-body {
+    -fx-padding: 8 0;
+}
+.gymflow-responsive-dialog .app-dialog-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+}
+
+/* =========================================================
+   GYMFLOW UI — shared surfaces and interaction states
+   Looked-up colors also let the existing dark-theme toggle work.
+   ========================================================= */
+.root {
+    -gf-canvas: #F2F5FA;
+    -gf-surface: #FFFFFF;
+    -gf-soft: #F8FAFD;
+    -gf-ink: #17243B;
+    -gf-muted: #64748B;
+    -gf-line: #E2E8F2;
+    -gf-accent: #C94B0C;
+    -gf-accent-hover: #AD3D08;
+    -gf-selection: #FFF0E3;
+    -gf-hover: #F3F6FC;
+    -fx-background-color: -gf-canvas;
+    -fx-accent: -gf-accent;
+    -fx-focus-color: -gf-accent;
+    -fx-faint-focus-color: rgba(201, 75, 12, 0.14);
+    -fx-selection-bar: -gf-selection;
+    -fx-selection-bar-non-focused: -gf-selection;
+}
+.dark-theme {
+    -gf-canvas: #0D1525;
+    -gf-surface: #162136;
+    -gf-soft: #1C2A40;
+    -gf-ink: #EDF2FA;
+    -gf-muted: #A2B1C7;
+    -gf-line: #30415A;
+    -gf-selection: #493022;
+    -gf-hover: #22324A;
+}
+.app-page, .content-area, .members-page, .members-container,
+.member-modal, .member-modal-body, .member-details-root {
+    -fx-background-color: -gf-canvas;
+}
+.page-title, .member-modal-title, .member-details-name {
+    -fx-text-fill: -gf-ink;
+    -fx-font-weight: bold;
+}
+.page-title { -fx-font-size: 26px; }
+.page-subtitle, .card-title, .table-footer-text,
+.member-modal-subtitle, .member-field-title, .member-kpi-description {
+    -fx-text-fill: -gf-muted;
+}
+.card-value, .member-kpi-value, .member-field-value,
+.form-label, .member-info-title, .member-preview-title {
+    -fx-text-fill: -gf-ink;
+}
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #17243B, #0D1627);
+    -fx-border-color: transparent #29364B transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-spacing: 4;
+    -fx-padding: 10 12;
+}
+.sidebar-button {
+    -fx-background-radius: 10;
+    -fx-text-fill: #B9C6D9;
+    -fx-padding: 4 12;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+}
+.sidebar-button:hover { -fx-background-color: #26354C; -fx-text-fill: #FFFFFF; }
+.sidebar-button-active {
+    -fx-background-color: linear-gradient(to right, #C94B0C, #B84008);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.16), 10, 0, 0, 3);
+}
+.sidebar-button-active:hover { -fx-background-color: #AD3D08; }
+.sidebar-button:focused { -fx-border-color: #FDBA74; }
+.surface-card, .dashboard-card, .form-container, .table-card,
+.members-toolbar, .member-info-card, .member-kpi-card, .member-preview-card {
+    -fx-background-color: -gf-surface;
+    -fx-background-radius: 16;
+    -fx-border-color: -gf-line;
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(25, 43, 73, 0.06), 16, 0.05, 0, 4);
+}
+.dashboard-card:hover, .surface-card:hover, .member-kpi-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(25, 43, 73, 0.10), 20, 0.05, 0, 5);
+}
+.primary-button, .secondary-button, .neutral-button,
+.member-details-edit-button, .member-details-close-button {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 18;
+    -fx-cursor: hand;
+}
+.primary-button, .app-dialog-primary-button, .member-details-edit-button {
+    -fx-background-color: -gf-accent;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(164, 61, 8, 0.17), 8, 0, 0, 3);
+}
+.primary-button:hover, .app-dialog-primary-button:hover, .member-details-edit-button:hover {
+    -fx-background-color: -gf-accent-hover;
+}
+.primary-button:pressed, .app-dialog-primary-button:pressed {
+    -fx-background-color: #923306;
+    -fx-effect: none;
+}
+.secondary-button, .member-details-close-button {
+    -fx-background-color: -gf-surface;
+    -fx-border-color: -gf-line;
+    -fx-text-fill: -gf-ink;
+}
+.secondary-button:hover, .member-details-close-button:hover {
+    -fx-background-color: -gf-hover;
+    -fx-border-color: -gf-muted;
+}
+.neutral-button { -fx-background-color: #253650; -fx-text-fill: #FFFFFF; }
+.neutral-button:hover { -fx-background-color: #344B6B; }
+.primary-button:focused, .secondary-button:focused, .neutral-button:focused,
+.member-details-edit-button:focused, .member-details-close-button:focused {
+    -fx-border-color: #E99A64;
+    -fx-effect: dropshadow(gaussian, rgba(201, 75, 12, 0.25), 7, 0.25, 0, 0);
+}
+.button:disabled { -fx-opacity: 0.48; -fx-effect: none; }
+.text-field, .password-field, .text-area, .combo-box, .date-picker,
+.form-input, .form-combo, .members-toolbar .text-field, .members-page .combo-box {
+    -fx-background-color: -gf-soft;
+    -fx-border-color: -gf-line;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 1;
+    -fx-text-fill: -gf-ink;
+    -fx-prompt-text-fill: -gf-muted;
+    -fx-highlight-fill: -gf-accent;
+    -fx-highlight-text-fill: #FFFFFF;
+}
+.text-field, .password-field { -fx-padding: 9 12; }
+.text-field:hover, .password-field:hover, .text-area:hover,
+.combo-box:hover, .date-picker:hover { -fx-border-color: #A6B5CB; }
+.text-field:focused, .password-field:focused, .text-area:focused,
+.combo-box:focused, .date-picker:focused, .date-picker:contains-focus,
+.form-input:focused, .form-combo:focused,
+.members-toolbar .text-field:focused, .members-page .combo-box:focused {
+    -fx-background-color: -gf-surface;
+    -fx-border-color: -gf-accent;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(201, 75, 12, 0.12), 6, 0.15, 0, 0);
+}
+.text-area .content, .text-area:focused .content { -fx-background-color: -gf-soft; }
+.combo-box > .list-cell { -fx-text-fill: -gf-ink; }
+.date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-effect: none;
+}
+.combo-box > .arrow-button, .date-picker > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+.combo-box .arrow, .date-picker .arrow { -fx-background-color: -gf-muted; }
+.table-view { -fx-background-color: -gf-surface; -fx-background-radius: 14; }
+.table-view .virtual-flow { -fx-background-color: -gf-surface; }
+.table-view .column-header-background, .table-view .corner {
+    -fx-background-color: -gf-soft;
+    -fx-background-radius: 14 14 0 0;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -gf-line transparent;
+    -fx-padding: 13 10;
+}
+.table-view .column-header .label { -fx-text-fill: -gf-muted; -fx-font-size: 12px; }
+.table-view .table-cell { -fx-text-fill: -gf-ink; -fx-font-size: 13px; -fx-padding: 12 10; }
+.table-row-cell { -fx-background-color: -gf-surface; -fx-border-color: transparent transparent -gf-line transparent; }
+.table-row-cell:odd { -fx-background-color: -gf-soft; }
+.table-row-cell:filled:hover { -fx-background-color: -gf-hover; }
+.table-row-cell:filled:selected { -fx-background-color: -gf-selection; }
+.table-row-cell:filled:selected .table-cell { -fx-text-fill: -gf-ink; }
+.table-row-cell:empty { -fx-background-color: -gf-surface; -fx-border-color: transparent; }
+.table-view:rtl .column-header .label, .table-view:rtl .table-cell { -fx-alignment: CENTER_RIGHT; }
+.table-view .placeholder .label { -fx-text-fill: -gf-muted; -fx-padding: 24; }
+.scroll-bar:vertical, .scroll-bar:horizontal { -fx-background-color: transparent; -fx-padding: 2; }
+.scroll-bar .track { -fx-background-color: transparent; -fx-border-color: transparent; }
+.scroll-bar .thumb { -fx-background-color: #B7C4D6; -fx-background-radius: 8; -fx-background-insets: 2; }
+.scroll-bar .thumb:hover { -fx-background-color: #8D9FB8; }
+.scroll-bar .increment-button, .scroll-bar .decrement-button { -fx-background-color: transparent; -fx-padding: 3; }
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow { -fx-background-color: -gf-muted; }
+.context-menu, .combo-box-popup .list-view {
+    -fx-background-color: -gf-surface;
+    -fx-background-radius: 10;
+    -fx-border-color: -gf-line;
+    -fx-border-radius: 10;
+    -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.15), 16, 0, 0, 4);
+}
+.menu-item { -fx-padding: 9 14; -fx-background-radius: 6; }
+.menu-item .label, .combo-box-popup .list-cell { -fx-text-fill: -gf-ink; }
+.menu-item:focused, .combo-box-popup .list-cell:filled:hover,
+.combo-box-popup .list-cell:filled:selected { -fx-background-color: -gf-selection; }
+.combo-box-popup .list-cell { -fx-background-color: -gf-surface; -fx-padding: 9 12; }
+.tooltip {
+    -fx-background-color: #17243B;
+    -fx-text-fill: #F8FAFC;
+    -fx-background-radius: 8;
+    -fx-padding: 9 13;
+    -fx-font-size: 12px;
+}
+.check-box .box { -fx-background-color: -gf-surface; -fx-border-color: -gf-line; -fx-border-radius: 5; -fx-background-radius: 5; }
+.check-box:selected .box { -fx-background-color: -gf-accent; -fx-border-color: -gf-accent; }
+.check-box:selected .mark { -fx-background-color: #FFFFFF; }
+.check-box:focused .box { -fx-border-color: -gf-accent; }
+.member-modal-header, .member-modal-footer, .member-details-header,
+.member-details-footer { -fx-background-color: -gf-surface; -fx-border-color: -gf-line; }
+.ui-text { -fx-text-fill: -gf-ink; }
+.ui-muted { -fx-text-fill: -gf-muted; }
+
+/* Fixed modal frame: scroll the body, retain the action bar. */
+.gymflow-modal-viewport, .gymflow-modal-viewport > .viewport {
+    -fx-background-color: -gf-canvas;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+.gymflow-dialog-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+.gymflow-dialog-scroll > .viewport { -fx-background-color: transparent; }
+.gymflow-responsive-dialog .gymflow-dialog-header-scroll {
+    -fx-padding: 18 24 8 24;
+    -fx-background-color: transparent;
+}
+.gymflow-dialog-heading {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -gf-ink;
+}
+.gymflow-dialog-message-text {
+    -fx-font-size: 14px;
+    -fx-fill: -gf-muted;
+}
+.gymflow-dialog-heading-text {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-fill: -gf-ink;
+}
+.gymflow-responsive-dialog > .button-bar .button {
+    -fx-min-height: 44px;
+    -fx-padding: 0 20;
+    -fx-alignment: CENTER;
+}
+.checkin-details-button {
+    -fx-background-color: #253650;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 6 10;
+    -fx-cursor: hand;
+}
+.checkin-details-button:hover { -fx-background-color: #344B6B; }
+.checkin-details-button:focused { -fx-border-color: #F97316; -fx-border-radius: 8; }
+
+/* Main page viewport: both axes remain available on smaller windows. */
+.app-page-viewport {
+    -fx-background-color: -gf-canvas;
+    -fx-background: -gf-canvas;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+.app-page-viewport > .viewport,
+.app-page-viewport > .corner {
+    -fx-background-color: -gf-canvas;
+}
+.table-pagination {
+    -fx-padding: 14 16;
+    -fx-background-color: -gf-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -gf-line;
+    -fx-border-radius: 12;
+}
+.table-pagination .label { -fx-text-fill: -gf-muted; -fx-font-size: 12px; }
+.table-pagination .combo-box { -fx-pref-width: 90; }
+.payments-header-scroll,
+.payments-header-scroll > .viewport {
+    -fx-background-color: -gf-canvas;
+    -fx-background: -gf-canvas;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+/* Dedicated, always-visible column navigation above the payment pager. */
+.payments-horizontal-scroll:horizontal {
+    -fx-min-height: 24;
+    -fx-pref-height: 24;
+    -fx-background-color: #E2E8F0;
+    -fx-background-radius: 8;
+    -fx-padding: 2;
+}
+.payments-horizontal-scroll:horizontal .track {
+    -fx-background-color: #E2E8F0;
+    -fx-background-radius: 8;
+}
+.payments-horizontal-scroll:horizontal .thumb {
+    -fx-background-color: #64748B;
+    -fx-background-radius: 7;
+    -fx-background-insets: 1;
+}
+.payments-horizontal-scroll:horizontal .thumb:hover {
+    -fx-background-color: #C94B0C;
 }

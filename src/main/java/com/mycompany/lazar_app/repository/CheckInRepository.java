@@ -61,6 +61,135 @@ public class CheckInRepository {
             """;
 
 
+    public enum AttendanceField { ID, CODE, NAME, PHONE, PLAN_AR, PLAN_EN, CHECK_IN, CHECK_OUT, STATUS }
+    public record AttendanceOrder(AttendanceField field, boolean ascending) {}
+    public record AttendanceFilter(LocalDate from, LocalDate to, String search,
+                                   boolean extendedSearch, List<AttendanceOrder> order) {
+        public AttendanceFilter { order = List.copyOf(order); }
+    }
+
+    public com.mycompany.lazar_app.ui.paging.PageResult<CheckIn> findPage(
+            AttendanceFilter filter, int page, int size) throws SQLException {
+        try (Connection connection = DatabaseManager.getConnection()) {
+            return findPage(connection, filter, page, size);
+        }
+    }
+
+    // Connection overload enables isolated repository checks with temporary fixtures.
+    com.mycompany.lazar_app.ui.paging.PageResult<CheckIn> findPage(
+            Connection connection, AttendanceFilter filter, int page, int size) throws SQLException {
+        if (size < 1 || size > 100 || page < 0) throw new IllegalArgumentException("Invalid page bounds");
+        if (filter.from() != null && filter.to() != null && filter.from().isAfter(filter.to())) {
+            throw new IllegalArgumentException("Invalid attendance date range");
+        }
+        List<String> values = new ArrayList<>();
+        String where = pageWhere(filter, values);
+        java.util.Map<String, Long> stats = new java.util.HashMap<>(pageStatistics(connection, where, values));
+        long total = stats.get("total");
+        int safePage = (int) Math.min(page, Math.max(0, (total - 1) / size));
+        if (filter.extendedSearch()) {
+            // Daily KPI cards are independent of the current search and page.
+            List<String> dailyValues = new ArrayList<>();
+            String dailyWhere = pageWhere(new AttendanceFilter(filter.from(), filter.to(), "", false, List.of()), dailyValues);
+            java.util.Map<String, Long> daily = pageStatistics(connection, dailyWhere, dailyValues);
+            stats.put("today", daily.get("total"));
+            stats.put("todayInside", daily.get("inside"));
+            stats.put("todayOut", daily.get("out"));
+            try (PreparedStatement active = connection.prepareStatement("""
+                    SELECT COUNT(*) FROM member_memberships mm
+                    WHERE mm.id = (SELECT MAX(latest.id) FROM member_memberships latest WHERE latest.member_id = mm.member_id)
+                      AND UPPER(COALESCE(mm.status, '')) = 'ACTIVE'
+                      AND mm.start_date <= ? AND mm.end_date >= ?
+                    """)) {
+                active.setString(1, LocalDate.now().toString());
+                active.setString(2, LocalDate.now().toString());
+                try (ResultSet result = active.executeQuery()) {
+                    stats.put("activeMembers", result.next() ? result.getLong(1) : 0);
+                }
+            }
+        }
+        List<CheckIn> rows = new ArrayList<>();
+        if (total > 0) {
+            String sql = BASE_SELECT + where + pageOrder(filter.order()) + PagingSql.limit(connection);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                int position = 1;
+                for (String value : values) statement.setString(position++, value);
+                long offset = (long) safePage * size;
+                if (PagingSql.offsetFirst(connection)) {
+                    statement.setLong(position++, offset);
+                    statement.setInt(position, size);
+                } else {
+                    statement.setInt(position++, size);
+                    statement.setLong(position, offset);
+                }
+                try (ResultSet result = statement.executeQuery()) {
+                    while (result.next()) rows.add(mapCheckIn(result));
+                }
+            }
+        }
+        return new com.mycompany.lazar_app.ui.paging.PageResult<>(rows, total, safePage, stats);
+    }
+
+    private java.util.Map<String, Long> pageStatistics(Connection connection, String where,
+                                                      List<String> values) throws SQLException {
+        String from = BASE_SELECT.substring(BASE_SELECT.indexOf("FROM check_ins"));
+        String sql = "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN UPPER(COALESCE(ci.status,'')) = 'IN' "
+                + "AND ci.check_out_time IS NULL THEN 1 ELSE 0 END),0) AS inside_count " + from + where;
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < values.size(); i++) statement.setString(i + 1, values.get(i));
+            try (ResultSet result = statement.executeQuery()) {
+                result.next();
+                long total = result.getLong("total");
+                long inside = result.getLong("inside_count");
+                return java.util.Map.of("total", total, "inside", inside, "out", total - inside);
+            }
+        }
+    }
+
+    private String pageWhere(AttendanceFilter filter, List<String> values) {
+        StringBuilder where = new StringBuilder(" WHERE ci.check_in_time IS NOT NULL ");
+        if (filter.from() != null) {
+            where.append(" AND ci.check_in_time >= ? ");
+            values.add(filter.from().atStartOfDay().format(DATE_TIME_FORMAT));
+        }
+        if (filter.to() != null && !filter.to().equals(LocalDate.MAX)) {
+            where.append(" AND ci.check_in_time < ? ");
+            values.add(filter.to().plusDays(1).atStartOfDay().format(DATE_TIME_FORMAT));
+        }
+        if (!PagingSql.normalize(filter.search()).isBlank()) {
+            List<String> columns = new ArrayList<>(List.of("m.name", "m.member_code", "m.phone"));
+            if (filter.extendedSearch()) columns.addAll(List.of("mp.name_ar", "mp.name_en", "ci.status"));
+            where.append(" AND (");
+            for (int i = 0; i < columns.size(); i++) {
+                if (i > 0) where.append(" OR ");
+                where.append(PagingSql.normalizedColumn(columns.get(i))).append(" LIKE ? ESCAPE '!' ");
+                values.add(PagingSql.pattern(filter.search()));
+            }
+            where.append(") ");
+        }
+        return where.toString();
+    }
+
+    private String pageOrder(List<AttendanceOrder> orders) {
+        StringBuilder sql = new StringBuilder(" ORDER BY ");
+        for (AttendanceOrder order : orders) {
+            String field = switch (order.field()) {
+                case ID -> "ci.id";
+                case CODE -> "m.member_code";
+                case NAME -> "m.name";
+                case PHONE -> "m.phone";
+                case PLAN_AR -> "COALESCE(NULLIF(mp.name_ar,''),mp.name_en,'')";
+                case PLAN_EN -> "COALESCE(mp.name_en,'')";
+                case CHECK_IN -> "ci.check_in_time";
+                case CHECK_OUT -> "ci.check_out_time";
+                case STATUS -> "CASE WHEN UPPER(COALESCE(ci.status,'')) = 'IN' AND ci.check_out_time IS NULL THEN 0 ELSE 1 END";
+            };
+            sql.append(field).append(order.ascending() ? " ASC, " : " DESC, ");
+        }
+        // Unique tie-breaker keeps adjacent pages disjoint even with equal dates/names.
+        return sql.append("ci.check_in_time DESC, ci.id DESC ").toString();
+    }
+
     // =========================================================
     // FIND ALL
     // =========================================================

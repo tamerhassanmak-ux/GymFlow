@@ -785,7 +785,7 @@ public class PdfReportExporter {
                 Locale.US,
                 "%,.2f %s",
                 safe(value).doubleValue(),
-                arabic ? "ج.م" : "EGP"
+                com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(arabic)
         );
     }
 

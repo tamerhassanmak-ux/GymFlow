@@ -991,7 +991,7 @@ public class MembershipPlansController {
 
             Locale locale =
                     LanguageManager.isArabic()
-                            ? new Locale("ar")
+                            ? Locale.forLanguageTag("ar")
                             : Locale.ENGLISH;
 
 
@@ -1141,6 +1141,7 @@ public class MembershipPlansController {
     private void deletePlan(
             MembershipPlan plan
     ) {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         Alert confirmation =
                 new Alert(
@@ -1279,9 +1280,7 @@ public class MembershipPlansController {
                 value
         )
                 + (
-                    LanguageManager.isArabic()
-                            ? " ج.م"
-                            : " EGP"
+                    " " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic())
                 );
     }
 

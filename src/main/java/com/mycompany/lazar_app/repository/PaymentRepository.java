@@ -18,6 +18,233 @@ public class PaymentRepository {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
+    public enum PaymentField { ID, MEMBER_CODE, MEMBER, PLAN, SUBSCRIPTION, AMOUNT, PAID, REMAINING, METHOD, DATE, STATUS }
+    public record PaymentOrder(PaymentField field, boolean ascending) {}
+    public record PaymentFilter(String search, String method, String status,
+                                boolean arabic, List<PaymentOrder> order) {
+        public PaymentFilter { order = List.copyOf(order); }
+    }
+
+    /** Payment projection with all display data already loaded; no per-cell IO. */
+    public static final class DisplayPayment extends Payment {
+        private final String memberName;
+        private final String memberCode;
+        private final String planName;
+        private MembershipFinancialSummary finance;
+        DisplayPayment(Payment payment, String memberName, String memberCode, String planName) {
+            super(payment.getId(), payment.getMemberId(), payment.getMembershipId(), payment.getAmount(),
+                    payment.getPaymentMethod(), payment.getStatus(), payment.getPaymentDate(),
+                    payment.getReferenceNumber(), payment.getNotes());
+            this.memberName = memberName;
+            this.memberCode = memberCode;
+            this.planName = planName;
+        }
+        public String memberName() { return memberName; }
+        public String memberCode() { return memberCode; }
+        public String planName() { return planName; }
+        public MembershipFinancialSummary finance() { return finance; }
+    }
+
+    private static final String PAGE_FROM = """
+            FROM payments p
+            LEFT JOIN members m ON m.id = p.member_id
+            LEFT JOIN member_memberships mm ON mm.id = p.membership_id
+            LEFT JOIN membership_plans mp ON mp.id = mm.membership_plan_id
+            """;
+    private static final String PAGE_PAID = """
+            (SELECT COALESCE(SUM(ledger.amount),0) FROM payments ledger
+             WHERE ledger.membership_id = p.membership_id AND UPPER(COALESCE(ledger.status,'')) = 'PAID')
+            """;
+    private static final String PAGE_BALANCE = "CASE WHEN COALESCE(mm.final_price,0) > " + PAGE_PAID
+            + " THEN COALESCE(mm.final_price,0) - " + PAGE_PAID + " ELSE 0 END";
+
+    public com.mycompany.lazar_app.ui.paging.PageResult<Payment> findPage(
+            PaymentFilter filter, int page, int size) throws SQLException {
+        try (Connection connection = DatabaseManager.getConnection()) {
+            return findPage(connection, filter, page, size);
+        }
+    }
+
+    com.mycompany.lazar_app.ui.paging.PageResult<Payment> findPage(
+            Connection connection, PaymentFilter filter, int page, int size) throws SQLException {
+        if (size < 1 || size > 100 || page < 0) throw new IllegalArgumentException("Invalid page bounds");
+        List<String> params = new ArrayList<>();
+        String where = paymentPageWhere(filter, params);
+        java.util.Map<String, BigDecimal> amounts = new java.util.HashMap<>();
+        String date = "p.payment_date";
+        if (connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("SQLite")) {
+            // Legacy SQLite stores milliseconds; match Java's local-date interpretation.
+            date = "CASE WHEN typeof(p.payment_date) IN ('integer','real') "
+                    + "OR (p.payment_date <> '' AND p.payment_date NOT GLOB '*[^0-9]*') "
+                    + "THEN datetime(CAST(p.payment_date AS REAL)/1000,'unixepoch','localtime') "
+                    + "ELSE REPLACE(p.payment_date,'T',' ') END";
+        }
+        String totalsSql = "SELECT COUNT(*) AS total_count, COALESCE(SUM(p.amount),0) AS total_amount, "
+                + "COALESCE(SUM(CASE WHEN " + date + " >= ? AND " + date + " < ? THEN p.amount ELSE 0 END),0) AS month_amount, "
+                + "COALESCE(SUM(CASE WHEN UPPER(COALESCE(p.status,''))='PAID' THEN p.amount ELSE 0 END),0) AS paid_amount "
+                + PAGE_FROM + where;
+        long total;
+        try (PreparedStatement statement = connection.prepareStatement(totalsSql)) {
+            LocalDate month = LocalDate.now().withDayOfMonth(1);
+            statement.setString(1, month.atStartOfDay().format(DB_DATE_TIME));
+            statement.setString(2, month.plusMonths(1).atStartOfDay().format(DB_DATE_TIME));
+            bindPageStrings(statement, 3, params);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                total = rs.getLong("total_count");
+                amounts.put("total", rs.getBigDecimal("total_amount"));
+                amounts.put("month", rs.getBigDecimal("month_amount"));
+                amounts.put("paid", rs.getBigDecimal("paid_amount"));
+            }
+        }
+        // Match the existing KPI semantics: each matching subscription once,
+        // but deduct ALL its paid receipts, including receipts outside the filter/page.
+        String outstandingSql = """
+                SELECT COALESCE(SUM(CASE WHEN balance.membership_amount > balance.paid_amount
+                       THEN balance.membership_amount - balance.paid_amount ELSE 0 END),0)
+                FROM (
+                    SELECT sub.id, COALESCE(sub.final_price,0) AS membership_amount,
+                           COALESCE(SUM(CASE WHEN UPPER(COALESCE(receipt.status,''))='PAID'
+                                            THEN receipt.amount ELSE 0 END),0) AS paid_amount
+                    FROM member_memberships sub
+                    LEFT JOIN payments receipt ON receipt.membership_id = sub.id
+                    WHERE sub.id IN (SELECT p.membership_id
+                """ + PAGE_FROM + where + " GROUP BY p.membership_id) GROUP BY sub.id, sub.final_price) balance";
+        if (total == 0) amounts.put("pending", BigDecimal.ZERO);
+        else try (PreparedStatement statement = connection.prepareStatement(outstandingSql)) {
+            bindPageStrings(statement, 1, params);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                amounts.put("pending", rs.getBigDecimal(1));
+            }
+        }
+        int safePage = (int) Math.min(page, Math.max(0, (total - 1) / size));
+        List<Payment> rows = new ArrayList<>();
+        if (total > 0) {
+            String sql = """
+                    SELECT p.id,p.member_id,p.membership_id,p.amount,p.payment_method,p.status,
+                           p.payment_date,p.reference_number,p.notes,
+                           m.member_code AS display_code,m.name AS display_member,
+                           mp.name_ar AS display_plan_ar,mp.name_en AS display_plan_en
+                    """ + PAGE_FROM + where + paymentPageOrder(filter) + PagingSql.limit(connection);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                int at = bindPageStrings(statement, 1, params);
+                long offset = (long) safePage * size;
+                if (PagingSql.offsetFirst(connection)) {
+                    statement.setLong(at++, offset); statement.setInt(at, size);
+                } else {
+                    statement.setInt(at++, size); statement.setLong(at, offset);
+                }
+                try (ResultSet rs = statement.executeQuery()) {
+                    while (rs.next()) {
+                        Payment payment = mapPayment(rs);
+                        String code = rs.getString("display_code");
+                        String name = rs.getString("display_member");
+                        String member = name == null || name.isBlank() ? "#" + payment.getMemberId() : name;
+                        String memberCode = code == null || code.isBlank() ? "—" : code;
+                        String primary = rs.getString(filter.arabic() ? "display_plan_ar" : "display_plan_en");
+                        String fallback = rs.getString(filter.arabic() ? "display_plan_en" : "display_plan_ar");
+                        String plan = primary == null || primary.isBlank() ? fallback : primary;
+                        if (plan == null || plan.isBlank()) plan = payment.getMembershipId() == null ? "-" : "#" + payment.getMembershipId();
+                        rows.add(new DisplayPayment(payment, member, memberCode, plan));
+                    }
+                }
+            }
+            hydratePageFinances(connection, rows);
+        }
+        return new com.mycompany.lazar_app.ui.paging.PageResult<>(rows, total, safePage,
+                java.util.Map.of("total", total), amounts);
+    }
+
+    private static int bindPageStrings(PreparedStatement statement, int at, List<String> values) throws SQLException {
+        for (String value : values) statement.setString(at++, value);
+        return at;
+    }
+
+    private void hydratePageFinances(Connection connection, List<Payment> rows) throws SQLException {
+        java.util.Set<Long> ids = new java.util.LinkedHashSet<>();
+        for (Payment row : rows) if (row.getMembershipId() != null) ids.add(row.getMembershipId());
+        if (ids.isEmpty()) return;
+        String placeholders = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
+        String sql = """
+                SELECT sub.id,COALESCE(sub.final_price,0) AS membership_amount,
+                       COALESCE(SUM(CASE WHEN UPPER(COALESCE(receipt.status,''))='PAID'
+                                        THEN receipt.amount ELSE 0 END),0) AS paid_amount
+                FROM member_memberships sub LEFT JOIN payments receipt ON receipt.membership_id = sub.id
+                WHERE sub.id IN (
+                """ + placeholders + ") GROUP BY sub.id, sub.final_price";
+        java.util.Map<Long, MembershipFinancialSummary> summaries = new java.util.HashMap<>();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            int at = 1;
+            for (Long id : ids) statement.setLong(at++, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    BigDecimal amount = rs.getBigDecimal("membership_amount");
+                    BigDecimal paid = rs.getBigDecimal("paid_amount");
+                    long id = rs.getLong("id");
+                    summaries.put(id, new MembershipFinancialSummary(id, amount, paid, calculateBalance(amount, paid)));
+                }
+            }
+        }
+        for (Payment row : rows) ((DisplayPayment) row).finance = summaries.get(row.getMembershipId());
+    }
+
+    private String paymentPageWhere(PaymentFilter filter, List<String> values) {
+        StringBuilder sql = new StringBuilder(" WHERE 1=1 ");
+        String search = PagingSql.normalize(filter.search());
+        if (!search.isBlank()) {
+            List<String> textColumns = List.of("m.name","m.member_code","m.phone","m.whatsapp","m.email",
+                    "p.reference_number","p.notes","mp.name_ar","mp.name_en","p.payment_method","p.status");
+            List<String> numericColumns = List.of("p.id","p.member_id","p.amount","p.payment_date");
+            for (String word : search.split("\\s+")) {
+                sql.append(" AND (");
+                boolean first = true;
+                for (String column : textColumns) {
+                    if (!first) sql.append(" OR ");
+                    first = false;
+                    sql.append(PagingSql.normalizedColumn(column)).append(" LIKE ? ESCAPE '!' ");
+                    values.add(PagingSql.pattern(word));
+                }
+                for (String column : numericColumns) {
+                    sql.append(" OR CAST(").append(column).append(" AS VARCHAR(50)) LIKE ? ESCAPE '!' ");
+                    values.add(PagingSql.pattern(word));
+                }
+                sql.append(") ");
+            }
+        }
+        if (filter.method() != null && !filter.method().isBlank()) {
+            sql.append(" AND UPPER(p.payment_method)=? ");
+            values.add(filter.method().strip().toUpperCase(java.util.Locale.ROOT));
+        }
+        if (filter.status() != null && !filter.status().isBlank()) {
+            sql.append(" AND UPPER(p.status)=? ");
+            values.add(filter.status().strip().toUpperCase(java.util.Locale.ROOT));
+        }
+        return sql.toString();
+    }
+
+    private String paymentPageOrder(PaymentFilter filter) {
+        StringBuilder sql = new StringBuilder(" ORDER BY ");
+        for (PaymentOrder order : filter.order()) {
+            String column = switch (order.field()) {
+                case ID -> "p.id";
+                case MEMBER_CODE -> "m.member_code";
+                case MEMBER -> "m.name";
+                case PLAN -> filter.arabic() ? "COALESCE(NULLIF(mp.name_ar,''),mp.name_en,'')"
+                        : "COALESCE(NULLIF(mp.name_en,''),mp.name_ar,'')";
+                case SUBSCRIPTION -> "COALESCE(mm.final_price,0)";
+                case AMOUNT -> "p.amount";
+                case PAID -> PAGE_PAID;
+                case REMAINING -> PAGE_BALANCE;
+                case METHOD -> "p.payment_method";
+                case DATE -> "p.payment_date";
+                case STATUS -> "p.status";
+            };
+            sql.append(column).append(order.ascending() ? " ASC, " : " DESC, ");
+        }
+        return sql.append("p.payment_date DESC,p.id DESC ").toString();
+    }
+
     // =========================================================
     // MEMBER OPTION
     // =========================================================
@@ -640,6 +867,7 @@ public class PaymentRepository {
     public Payment save(
             Payment payment
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         validate(payment);
 
@@ -656,9 +884,10 @@ public class PaymentRepository {
                     reference_number,
                     notes,
                     created_at,
-                    updated_at
+                    updated_at,
+                    submission_id
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
 
@@ -678,6 +907,8 @@ public class PaymentRepository {
                                 Statement.RETURN_GENERATED_KEYS
                         )
         ) {
+
+            validateMembershipOwner(connection, payment);
 
             statement.setLong(
                     1,
@@ -753,6 +984,7 @@ public class PaymentRepository {
             );
 
 
+            statement.setString(11, payment.getSubmissionId());
             statement.executeUpdate();
 
 
@@ -782,6 +1014,9 @@ public class PaymentRepository {
     public void update(
             Payment payment
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
+
+        validate(payment);
 
         if (payment.getId() <= 0) {
 
@@ -789,9 +1024,6 @@ public class PaymentRepository {
                     "Payment ID is required for update."
             );
         }
-
-
-        validate(payment);
 
 
         String sql = """
@@ -818,6 +1050,8 @@ public class PaymentRepository {
                 PreparedStatement statement =
                         connection.prepareStatement(sql)
         ) {
+
+            validateMembershipOwner(connection, payment);
 
             statement.setLong(
                     1,
@@ -1160,6 +1394,7 @@ public class PaymentRepository {
     public void deleteById(
             long id
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         String sql =
                 "DELETE FROM payments WHERE id = ?";
@@ -1702,6 +1937,7 @@ public class PaymentRepository {
             int installments,
             LocalDate firstDueDate
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         if (membershipId <= 0) {
             throw new IllegalArgumentException("Membership ID is required.");
@@ -1810,64 +2046,8 @@ public class PaymentRepository {
     private void ensurePaymentInstallmentsTable(
             Connection connection
     ) throws SQLException {
-
-        if (tableExists(connection, "payment_installments")) {
-            return;
-        }
-
-        String product = connection
-                .getMetaData()
-                .getDatabaseProductName()
-                .toLowerCase();
-
-        String ddl;
-
-        if (product.contains("sql server")) {
-            ddl = """
-                    CREATE TABLE payment_installments (
-                        id BIGINT IDENTITY(1,1) PRIMARY KEY,
-                        membership_id BIGINT NOT NULL,
-                        installment_no INT NOT NULL,
-                        due_date DATE NOT NULL,
-                        amount DECIMAL(18,2) NOT NULL,
-                        status NVARCHAR(30) NOT NULL DEFAULT 'SCHEDULED',
-                        created_at NVARCHAR(30) NULL,
-                        updated_at NVARCHAR(30) NULL
-                    )
-                    """;
-
-        } else if (product.contains("mysql") || product.contains("mariadb")) {
-            ddl = """
-                    CREATE TABLE payment_installments (
-                        id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                        membership_id BIGINT NOT NULL,
-                        installment_no INT NOT NULL,
-                        due_date DATE NOT NULL,
-                        amount DECIMAL(18,2) NOT NULL,
-                        status VARCHAR(30) NOT NULL DEFAULT 'SCHEDULED',
-                        created_at VARCHAR(30),
-                        updated_at VARCHAR(30),
-                        INDEX idx_payment_installments_membership (membership_id)
-                    )
-                    """;
-
-        } else {
-            ddl = """
-                    CREATE TABLE payment_installments (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        membership_id INTEGER NOT NULL,
-                        installment_no INTEGER NOT NULL,
-                        due_date TEXT NOT NULL,
-                        amount NUMERIC NOT NULL,
-                        status TEXT NOT NULL DEFAULT 'SCHEDULED',
-                        created_at TEXT,
-                        updated_at TEXT
-                    )
-                    """;
-        }
-
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(ddl);
+        if (!tableExists(connection, "payment_installments")) {
+            throw new SQLException("Payment schedule schema is missing; run database migrations.");
         }
     }
 
@@ -2081,6 +2261,22 @@ public class PaymentRepository {
     // VALIDATE
     // =========================================================
 
+    private void validateMembershipOwner(Connection connection, Payment payment)
+            throws SQLException {
+        if (payment.getMembershipId() == null) {
+            return;
+        }
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT member_id FROM member_memberships WHERE id = ?")) {
+            statement.setLong(1, payment.getMembershipId());
+            try (ResultSet result = statement.executeQuery()) {
+                if (!result.next() || result.getLong(1) != payment.getMemberId()) {
+                    throw new SQLException("Payment membership must belong to the selected member.");
+                }
+            }
+        }
+    }
+
     private void validate(
             Payment payment
     ) {
@@ -2113,6 +2309,12 @@ public class PaymentRepository {
             );
         }
 
+
+        try {
+            payment.getAmount().setScale(2, java.math.RoundingMode.UNNECESSARY);
+        } catch (ArithmeticException exception) {
+            throw new IllegalArgumentException("Payment amount cannot contain fractions smaller than one currency cent.", exception);
+        }
 
         if (payment.getPaymentMethod() == null
                 || payment

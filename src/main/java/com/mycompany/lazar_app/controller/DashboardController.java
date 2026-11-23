@@ -1,6 +1,7 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.LanguageManager;
+import com.mycompany.lazar_app.ui.PageViewport;
 
 import java.io.IOException;
 
@@ -175,7 +176,7 @@ public class DashboardController {
 
             contentArea
                     .getChildren()
-                    .setAll(view);
+                    .setAll(PageViewport.wrap(view));
 
 
             return true;

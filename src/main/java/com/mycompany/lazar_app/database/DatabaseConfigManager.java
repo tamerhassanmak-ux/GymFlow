@@ -14,6 +14,8 @@ public final class DatabaseConfigManager {
     private static final Path CONFIG_FILE =
             AppPaths.databaseConfigFile();
 
+    private static String sessionPassword;
+
     private DatabaseConfigManager() {
     }
 
@@ -123,12 +125,9 @@ public final class DatabaseConfigManager {
                     )
             );
 
-            config.setPassword(
-                    properties.getProperty(
-                            "password",
-                            ""
-                    )
-            );
+            String environmentPassword = System.getenv("GYMFLOW_DB_PASSWORD");
+            config.setPassword(environmentPassword != null ? environmentPassword
+                    : sessionPassword != null ? sessionPassword : properties.getProperty("password", ""));
 
             config.setEncryptConnection(
                     Boolean.parseBoolean(
@@ -157,6 +156,10 @@ public final class DatabaseConfigManager {
     public static synchronized void save(
             DatabaseConfig config
     ) {
+
+        if (Files.exists(CONFIG_FILE)) {
+            com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
+        }
 
         if (config == null) {
 
@@ -247,20 +250,9 @@ public final class DatabaseConfigManager {
                     )
             );
 
-            /*
-             * SECURITY NOTE:
-             *
-             * Password storage should later be moved to the
-             * operating system credential/keyring service.
-             *
-             * Do not print this value to logs.
-             */
-            properties.setProperty(
-                    "password",
-                    nullToEmpty(
-                            config.getPassword()
-                    )
-            );
+            // Remote passwords are supplied by the launcher environment or kept
+            // in memory for this session. Never serialize them into properties.
+
 
             properties.setProperty(
                     "encryptConnection",
@@ -273,14 +265,9 @@ public final class DatabaseConfigManager {
             // WRITE FILE
             // -------------------------------------------------
 
-            try (OutputStream output =
-                         Files.newOutputStream(CONFIG_FILE)) {
-
-                properties.store(
-                        output,
-                        "GymFlow Database Configuration"
-                );
-            }
+            com.mycompany.lazar_app.util.AtomicProperties.write(
+                    CONFIG_FILE, properties, "GymFlow Database Configuration");
+            sessionPassword = nullToEmpty(config.getPassword());
 
         } catch (IOException exception) {
 

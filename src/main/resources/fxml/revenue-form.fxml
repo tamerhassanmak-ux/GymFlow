@@ -23,8 +23,8 @@
         style="-fx-background:#F5F7FB;-fx-background-color:#F5F7FB;">
 
     <content>
-        <VBox spacing="20" alignment="TOP_CENTER"
-              style="-fx-background-color:#F5F7FB;">
+        <VBox spacing="20" alignment="TOP_CENTER" styleClass="app-page"
+              >
 
             <padding>
                 <Insets top="34" right="42" bottom="40" left="42"/>
@@ -35,18 +35,18 @@
                 <VBox spacing="7" maxWidth="1000">
                     <Label fx:id="titleLabel"
                            text="New Revenue"
-                           style="-fx-font-size:30px;-fx-font-weight:bold;-fx-text-fill:#111827;"/>
+                           style="-fx-font-size:30px;-fx-font-weight:bold;" styleClass="ui-text"/>
                     <Label fx:id="subtitleLabel"
                            text="Record the revenue and optionally attach its source document"
-                           style="-fx-font-size:14px;-fx-text-fill:#64748B;"/>
+                           style="-fx-font-size:14px;" styleClass="ui-muted"/>
                 </VBox>
 
                 <VBox spacing="20" maxWidth="1000"
-                      style="-fx-background-color:white;-fx-background-radius:14;-fx-padding:28;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.07),12,0,0,3);">
+                      style="-fx-padding: 28;" styleClass="surface-card">
 
                     <VBox spacing="7">
                         <Label fx:id="nameLabel" text="Revenue Name"
-                               style="-fx-font-weight:bold;-fx-text-fill:#374151;"/>
+                               style="-fx-font-weight:bold;" styleClass="ui-text"/>
                         <TextField fx:id="nameField"
                                    promptText="Example: Beverage sales"
                                    minHeight="44"/>
@@ -55,7 +55,7 @@
                     <HBox spacing="18">
                         <VBox spacing="7" HBox.hgrow="ALWAYS">
                             <Label fx:id="typeLabel" text="Revenue Type"
-                                   style="-fx-font-weight:bold;-fx-text-fill:#374151;"/>
+                                   style="-fx-font-weight:bold;" styleClass="ui-text"/>
                             <ComboBox fx:id="typeComboBox"
                                       editable="true"
                                       maxWidth="Infinity"
@@ -65,7 +65,7 @@
 
                         <VBox spacing="7" HBox.hgrow="ALWAYS">
                             <Label fx:id="amountLabel" text="Amount"
-                                   style="-fx-font-weight:bold;-fx-text-fill:#374151;"/>
+                                   style="-fx-font-weight:bold;" styleClass="ui-text"/>
                             <TextField fx:id="amountField"
                                        promptText="0.00"
                                        minHeight="44"/>
@@ -74,7 +74,7 @@
 
                     <VBox spacing="7">
                         <Label fx:id="dateLabel" text="Revenue Date"
-                               style="-fx-font-weight:bold;-fx-text-fill:#374151;"/>
+                               style="-fx-font-weight:bold;" styleClass="ui-text"/>
                         <DatePicker fx:id="revenueDatePicker"
                                     maxWidth="Infinity"
                                     minHeight="44"/>
@@ -86,12 +86,11 @@
                           style="-fx-background-color:#F8FAFC;-fx-background-radius:10;-fx-padding:18;">
                         <Label fx:id="attachmentTitleLabel"
                                text="Income Source Document"
-                               style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#111827;"/>
+                               style="-fx-font-size:15px;-fx-font-weight:bold;" styleClass="ui-text"/>
 
                         <Label fx:id="attachmentNameLabel"
                                text="No attachment selected"
-                               wrapText="true"
-                               style="-fx-text-fill:#64748B;"/>
+                               wrapText="true" styleClass="ui-muted"/>
 
                         <HBox spacing="10">
                             <Button fx:id="chooseAttachmentButton"
@@ -110,7 +109,7 @@
 
                     <VBox spacing="7">
                         <Label fx:id="notesLabel" text="Notes"
-                               style="-fx-font-weight:bold;-fx-text-fill:#374151;"/>
+                               style="-fx-font-weight:bold;" styleClass="ui-text"/>
                         <TextArea fx:id="notesArea"
                                   promptText="Optional notes..."
                                   prefRowCount="5"
@@ -134,7 +133,7 @@
                                 onAction="#saveRevenue"
                                 minWidth="170"
                                 minHeight="44"
-                                style="-fx-background-color:#F97316;-fx-text-fill:white;-fx-font-weight:bold;-fx-background-radius:9;-fx-cursor:hand;"/>
+                                style="-fx-cursor: hand;" styleClass="primary-button"/>
                     </HBox>
 
                 </VBox>

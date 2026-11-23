@@ -121,6 +121,7 @@ public final class ProgramLicenseManager {
             LocalDate endDate
     ) {
 
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
         validatePeriod(startDate, endDate);
 
         ProgramLicense license = new ProgramLicense();
@@ -138,6 +139,7 @@ public final class ProgramLicenseManager {
     }
 
     public static synchronized ProgramLicense activateLifetime() {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         ProgramLicense license = new ProgramLicense();
         license.setConfigured(true);

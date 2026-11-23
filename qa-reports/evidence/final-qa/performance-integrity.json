@@ -1,0 +1,8 @@
+{
+  "members": 10000,
+  "member_memberships": 10000,
+  "payments": 20000,
+  "check_ins": 50000,
+  "integrity_check": "ok",
+  "foreign_key_violations": 0
+}

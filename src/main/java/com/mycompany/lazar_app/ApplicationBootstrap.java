@@ -75,10 +75,12 @@ public final class ApplicationBootstrap {
                     new FXMLLoader(
                             ApplicationBootstrap.class.getResource(
                                     "/fxml/super-admin-setup.fxml"
-                            )
+                            ), com.mycompany.lazar_app.LanguageManager.getBundle()
                     );
 
             Parent root = loader.load();
+            root.setNodeOrientation(com.mycompany.lazar_app.LanguageManager.isArabic()
+                    ? javafx.geometry.NodeOrientation.RIGHT_TO_LEFT : javafx.geometry.NodeOrientation.LEFT_TO_RIGHT);
 
             Stage stage = new Stage();
             stage.setTitle("Super Admin Setup");
@@ -89,10 +91,10 @@ public final class ApplicationBootstrap {
             }
 
             stage.setScene(new Scene(root));
-            stage.setResizable(false);
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.showAndWait();
+            com.mycompany.lazar_app.ui.WindowManager.showResponsiveAndWait(
+                    stage,
+                    com.mycompany.lazar_app.ui.WindowManager.STANDARD_DIALOG_WIDTH,
+                    com.mycompany.lazar_app.ui.WindowManager.STANDARD_DIALOG_HEIGHT);
 
             if (!SuperAdminAuthService.isConfigured()) {
                 Platform.exit();

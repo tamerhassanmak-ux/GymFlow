@@ -23,10 +23,7 @@ public final class RevenueAttachmentStorage {
             return null;
         }
 
-        Path directory = Path.of(
-                "data",
-                "revenue_attachments"
-        );
+        Path directory = AppPaths.dataDirectory().resolve("revenue_attachments");
 
         Files.createDirectories(directory);
 
@@ -35,14 +32,14 @@ public final class RevenueAttachmentStorage {
         String targetName = "REV-"
                 + LocalDateTime.now().format(FILE_TIME)
                 + "-"
-                + safeName;
+                + java.util.UUID.randomUUID() + "-" + safeName;
 
         Path target = directory.resolve(targetName);
 
         Files.copy(
                 source.toPath(),
                 target,
-                StandardCopyOption.REPLACE_EXISTING
+                StandardCopyOption.COPY_ATTRIBUTES
         );
 
         return target.toString();

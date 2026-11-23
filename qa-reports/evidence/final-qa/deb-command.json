@@ -1,0 +1,15 @@
+[
+  "jpackage",
+  "--type",
+  "deb",
+  "--app-image",
+  "/tmp/gymflow-qc-release-package-3ay_yyvd/output/GymFlowQC",
+  "--name",
+  "GymFlowQC",
+  "--app-version",
+  "1.0.4",
+  "--linux-package-name",
+  "gymflow-qc",
+  "--dest",
+  "/tmp/gymflow-qc-release-package-3ay_yyvd/deb"
+]

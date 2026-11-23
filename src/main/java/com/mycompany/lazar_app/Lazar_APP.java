@@ -238,7 +238,8 @@ public class Lazar_APP extends Application {
                 message
         );
 
-        alert.showAndWait();
+        com.mycompany.lazar_app.ui.WindowManager.showResponsiveDialogAndWait(
+                alert, null, 520, 320);
     }
 
 
@@ -277,7 +278,8 @@ public class Lazar_APP extends Application {
                 message
         );
 
-        alert.showAndWait();
+        com.mycompany.lazar_app.ui.WindowManager.showResponsiveDialogAndWait(
+                alert, null, 520, 320);
     }
 
 

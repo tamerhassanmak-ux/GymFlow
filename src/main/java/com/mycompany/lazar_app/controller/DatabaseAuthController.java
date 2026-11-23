@@ -54,7 +54,7 @@ public class DatabaseAuthController {
             } catch (Exception exception) {
 
                 messageLabel.setText(
-                        "يجب إعداد كلمة مرور السوبر أدمن أولًا."
+                        localized("يجب إعداد كلمة مرور السوبر أدمن أولًا.", "Configure the Super Admin password first.")
                 );
 
                 return;
@@ -74,7 +74,7 @@ public class DatabaseAuthController {
                 || password.isBlank()) {
 
             messageLabel.setText(
-                    "أدخل كلمة مرور السوبر أدمن."
+                    localized("أدخل كلمة مرور السوبر أدمن.", "Enter the Super Admin password.")
             );
 
             passwordField.requestFocus();
@@ -87,10 +87,10 @@ public class DatabaseAuthController {
         // VERIFY PASSWORD
         // -----------------------------------------------------
 
-        if (!SuperAdminAuthService.verify(password)) {
+        if (!com.mycompany.lazar_app.security.AuthorizationService.authenticate(password)) {
 
             messageLabel.setText(
-                    "كلمة مرور السوبر أدمن غير صحيحة."
+                    localized("كلمة مرور السوبر أدمن غير صحيحة.", "Incorrect Super Admin password.")
             );
 
             passwordField.clear();
@@ -184,7 +184,7 @@ public class DatabaseAuthController {
             // -------------------------------------------------
 
             FXMLLoader loader =
-                    new FXMLLoader(resource);
+                    new FXMLLoader(resource, com.mycompany.lazar_app.LanguageManager.getBundle());
 
 
             Parent root =
@@ -255,14 +255,14 @@ public class DatabaseAuthController {
             // SHOW
             // -------------------------------------------------
 
-            stage.show();
+            com.mycompany.lazar_app.ui.WindowManager.showResponsive(stage);
 
 
             // -------------------------------------------------
             // CENTER AFTER SHOW
             // -------------------------------------------------
 
-            stage.centerOnScreen();
+
 
 
             // -------------------------------------------------
@@ -302,5 +302,8 @@ public class DatabaseAuthController {
 
             exception.printStackTrace();
         }
+    }
+    private static String localized(String ar, String en) {
+        return com.mycompany.lazar_app.LanguageManager.isArabic() ? ar : en;
     }
 }

@@ -8,7 +8,7 @@
  <top>
    <VBox spacing="16" style="-fx-padding:22;">
      <Label text="%history.title" style="-fx-font-size:25px;-fx-font-weight:bold;-fx-text-fill:#172033;"/>
-     <Label text="%history.subtitle" style="-fx-font-size:12px;-fx-text-fill:#64748B;"/>
+     <Label text="%history.subtitle" style="-fx-font-size:12px;" styleClass="ui-muted"/>
      <HBox spacing="10" alignment="CENTER_LEFT">
        <TextField fx:id="searchField" promptText="%history.search" prefWidth="270" HBox.hgrow="ALWAYS"/>
        <ComboBox fx:id="rangeFilter" prefWidth="160"/>
@@ -20,7 +20,7 @@
      <HBox spacing="12">
        <VBox spacing="6" style="-fx-background-color:white;-fx-padding:14;-fx-background-radius:10;" HBox.hgrow="ALWAYS"><Label text="%history.total"/><Label fx:id="recordsLabel" text="0" style="-fx-font-size:23px;-fx-font-weight:bold;"/></VBox>
        <VBox spacing="6" style="-fx-background-color:white;-fx-padding:14;-fx-background-radius:10;" HBox.hgrow="ALWAYS"><Label text="%history.inside"/><Label fx:id="insideLabel" text="0" style="-fx-font-size:23px;-fx-font-weight:bold;-fx-text-fill:#16A34A;"/></VBox>
-       <VBox spacing="6" style="-fx-background-color:white;-fx-padding:14;-fx-background-radius:10;" HBox.hgrow="ALWAYS"><Label text="%history.checkedOut"/><Label fx:id="outLabel" text="0" style="-fx-font-size:23px;-fx-font-weight:bold;-fx-text-fill:#64748B;"/></VBox>
+       <VBox spacing="6" style="-fx-background-color:white;-fx-padding:14;-fx-background-radius:10;" HBox.hgrow="ALWAYS"><Label text="%history.checkedOut"/><Label fx:id="outLabel" text="0" style="-fx-font-size:23px;-fx-font-weight:bold;" styleClass="ui-muted"/></VBox>
      </HBox>
      <Label fx:id="feedbackLabel" text="" style="-fx-text-fill:#DC2626;"/>
    </VBox>
@@ -39,5 +39,6 @@
      </columns>
    </TableView>
  </center>
+ <bottom><HBox fx:id="paginationHost"/></bottom>
  <padding><Insets top="0" bottom="24" left="22" right="22"/></padding>
 </BorderPane>

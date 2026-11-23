@@ -2,6 +2,11 @@ package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.ui.dialog.DialogStyler;
 import com.mycompany.lazar_app.ui.WindowManager;
+import com.mycompany.lazar_app.ui.paging.TablePager;
+import com.mycompany.lazar_app.repository.CheckInRepository.AttendanceFilter;
+import com.mycompany.lazar_app.repository.CheckInRepository.AttendanceField;
+import com.mycompany.lazar_app.repository.CheckInRepository.AttendanceOrder;
+import javafx.animation.PauseTransition;
 
 import com.mycompany.lazar_app.LanguageManager;
 import com.mycompany.lazar_app.DashboardContentController;
@@ -34,8 +39,6 @@ import javafx.util.Duration;
 import javafx.beans.property.SimpleStringProperty;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 
 import javafx.fxml.FXML;
 
@@ -76,10 +79,9 @@ public class CheckinController {
     // DATA
     // =========================================================
 
-    private final ObservableList<CheckIn> masterData =
-            FXCollections.observableArrayList();
-
-    private FilteredList<CheckIn> filteredData;
+    private TablePager<CheckIn> pager;
+    @FXML private HBox paginationHost;
+    private final PauseTransition searchDelay = new PauseTransition(Duration.millis(300));
 
 
     // =========================================================
@@ -236,9 +238,7 @@ public class CheckinController {
         idColumn.setCellValueFactory(
                 data ->
                         new SimpleStringProperty(
-                                String.valueOf(
-                                        data.getValue().getId()
-                                )
+                                safe(data.getValue().getMemberCode())
                         )
         );
 
@@ -320,10 +320,15 @@ public class CheckinController {
     // =========================================================
 
     private void configureActionsColumn() {
+        actionsColumn.setMinWidth(330);
+        actionsColumn.setPrefWidth(350);
+        actionsColumn.setSortable(false);
 
         actionsColumn.setCellFactory(
                 column ->
                         new TableCell<>() {
+
+                            private final Button detailsButton = new Button();
 
                             private final Button checkoutButton =
                                     new Button();
@@ -337,6 +342,7 @@ public class CheckinController {
                             private final HBox box =
                                     new HBox(
                                             5,
+                                            detailsButton,
                                             checkoutButton,
                                             notesButton,
                                             deleteButton
@@ -348,6 +354,16 @@ public class CheckinController {
                                 // =================================================
                                 // TEXT
                                 // =================================================
+
+                                detailsButton.setText(LanguageManager.getBundle().getString("checkin.details.open"));
+                                detailsButton.getStyleClass().add("checkin-details-button");
+                                detailsButton.setOnAction(event -> {
+                                    CheckIn record = getCurrentRecord();
+                                    if (record == null) return;
+                                    detailsButton.setDisable(true);
+                                    com.mycompany.lazar_app.ui.dialog.CheckinDetailsDialog.loadAndShow(
+                                            record, getOwnerWindow(), () -> detailsButton.setDisable(false));
+                                });
 
                                 checkoutButton.setText(
                                         LanguageManager.isArabic()
@@ -523,129 +539,49 @@ public class CheckinController {
     // =========================================================
 
     private void configureSearch() {
-
-        filteredData =
-                new FilteredList<>(
-                        masterData,
-                        value -> true
-                );
-
-
-        checkinTable.setItems(
-                filteredData
-        );
-
-
-        searchField.textProperty()
-                .addListener(
-                        (observable, oldValue, newValue) ->
-                                applySearch(
-                                        newValue
-                                )
-                );
+        checkinTable.setItems(FXCollections.observableArrayList());
+        pager = new TablePager<>(checkinTable, paginationHost, (page, size) -> {
+            LocalDate today = LocalDate.now();
+            AttendanceFilter filter = new AttendanceFilter(today, today, searchField.getText(), true, attendanceSort());
+            return () -> checkInRepository.findPage(filter, page, size);
+        }, result -> {
+            var statistics = result.statistics();
+            todayCheckinsLabel.setText(Long.toString(statistics.get("today")));
+            currentlyInsideLabel.setText(Long.toString(statistics.get("todayInside")));
+            checkedOutLabel.setText(Long.toString(statistics.get("todayOut")));
+            activeMembersLabel.setText(Long.toString(statistics.get("activeMembers")));
+            attendanceCountLabel.setText(result.total() + (LanguageManager.isArabic() ? " حضور" : " Check-ins"));
+        }, error -> {
+            error.printStackTrace();
+            attendanceCountLabel.setText(LanguageManager.getBundle().getString("paging.error"));
+        });
+        searchDelay.setOnFinished(event -> pager.first());
+        searchField.textProperty().addListener((observable, before, after) -> searchDelay.playFromStart());
     }
 
-
-    // =========================================================
-    // SEARCH BUTTON
-    // =========================================================
+    private List<AttendanceOrder> attendanceSort() {
+        List<AttendanceOrder> orders = new ArrayList<>();
+        for (TableColumn<CheckIn, ?> column : checkinTable.getSortOrder()) {
+            AttendanceField field = column == idColumn ? AttendanceField.CODE
+                    : column == memberColumn ? AttendanceField.NAME
+                    : column == phoneColumn ? AttendanceField.PHONE
+                    : column == membershipColumn ? (LanguageManager.isArabic() ? AttendanceField.PLAN_AR : AttendanceField.PLAN_EN)
+                    : column == checkinTimeColumn ? AttendanceField.CHECK_IN
+                    : column == checkoutTimeColumn ? AttendanceField.CHECK_OUT
+                    : AttendanceField.STATUS;
+            orders.add(new AttendanceOrder(field, column.getSortType() == TableColumn.SortType.ASCENDING));
+        }
+        return orders;
+    }
 
     @FXML
     private void search() {
-
-        applySearch(
-                searchField.getText()
-        );
+        searchDelay.stop();
+        pager.first();
     }
-
-
-    // =========================================================
-    // APPLY SEARCH
-    // =========================================================
-
-    private void applySearch(
-            String value
-    ) {
-
-        if (filteredData == null) {
-
-            return;
-        }
-
-
-        String search =
-                normalize(
-                        value
-                );
-
-
-        filteredData.setPredicate(
-                record -> {
-
-                    if (search.isBlank()) {
-
-                        return true;
-                    }
-
-
-                    return normalize(
-                            record.getMemberName()
-                    ).contains(search)
-
-                            || normalize(
-                                    record.getMemberCode()
-                            ).contains(search)
-
-                            || normalize(
-                                    record.getPhone()
-                            ).contains(search)
-
-                            || normalize(
-                                    record.getMembershipDisplayName(
-                                            LanguageManager.isArabic()
-                                    )
-                            ).contains(search)
-
-                            || normalize(
-                                    record.getStatus()
-                            ).contains(search);
-                }
-        );
-
-
-        updateAttendanceCount();
-    }
-
-
-    // =========================================================
-    // LOAD DATA
-    // =========================================================
 
     private void loadData() {
-
-        try {
-
-            masterData.setAll(
-                    checkInRepository.findToday()
-            );
-
-
-            updateStatistics();
-
-            updateAttendanceCount();
-
-
-        } catch (SQLException exception) {
-
-            exception.printStackTrace();
-
-
-            showError(
-                    LanguageManager.isArabic()
-                            ? "تعذر تحميل بيانات الحضور."
-                            : "Could not load attendance data."
-            );
-        }
+        if (pager != null) pager.reload();
     }
 
 
@@ -1214,7 +1150,10 @@ public class CheckinController {
                     );
 
 
-            if (usedSessions >= allowedSessions) {
+            // One calendar day consumes one visit, including a same-day re-entry.
+            boolean alreadyCountedToday = checkInRepository.hasCheckInForMembershipOnDate(
+                    membership.getId(), LocalDate.now());
+            if (usedSessions >= allowedSessions && !alreadyCountedToday) {
 
                 showWarning(
                         LanguageManager.isArabic()
@@ -1289,6 +1228,9 @@ public class CheckinController {
             checkInRepository.insert(
                     checkIn
             );
+            Platform.runLater(() -> com.mycompany.lazar_app.ui.dialog.CheckinDetailsDialog.loadAndShow(
+                    member, membership, getOwnerWindow()));
+
 
 
             // =================================================
@@ -1585,95 +1527,6 @@ public class CheckinController {
                             : "Could not delete attendance record."
             );
         }
-    }
-
-
-    // =========================================================
-    // UPDATE STATISTICS
-    // =========================================================
-
-    private void updateStatistics()
-            throws SQLException {
-
-        int today =
-                checkInRepository.countToday();
-
-
-        int inside =
-                checkInRepository.countCurrentlyInside();
-
-
-        int checkedOut =
-                checkInRepository.countCheckedOutToday();
-
-
-        int activeMembers =
-                membershipRepository.countActive();
-
-
-        if (todayCheckinsLabel != null) {
-
-            todayCheckinsLabel.setText(
-                    String.valueOf(
-                            today
-                    )
-            );
-        }
-
-
-        if (currentlyInsideLabel != null) {
-
-            currentlyInsideLabel.setText(
-                    String.valueOf(
-                            inside
-                    )
-            );
-        }
-
-
-        if (checkedOutLabel != null) {
-
-            checkedOutLabel.setText(
-                    String.valueOf(
-                            checkedOut
-                    )
-            );
-        }
-
-
-        if (activeMembersLabel != null) {
-
-            activeMembersLabel.setText(
-                    String.valueOf(
-                            activeMembers
-                    )
-            );
-        }
-    }
-
-
-    // =========================================================
-    // ATTENDANCE COUNT
-    // =========================================================
-
-    private void updateAttendanceCount() {
-
-        if (attendanceCountLabel == null
-                || filteredData == null) {
-
-            return;
-        }
-
-
-        int count =
-                filteredData.size();
-
-
-        attendanceCountLabel.setText(
-                LanguageManager.isArabic()
-                        ? count + " حضور"
-                        : count + " Check-ins"
-        );
     }
 
 

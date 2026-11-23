@@ -200,7 +200,7 @@
 
                         <Label
                                 fx:id="monthlyRevenueLabel"
-                                text="0.00 EGP"
+                                text="0.00"
                                 styleClass="card-value"/>
 
 

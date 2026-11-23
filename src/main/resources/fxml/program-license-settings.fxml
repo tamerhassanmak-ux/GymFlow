@@ -32,14 +32,14 @@
                 text="GymFlow Program License"
                 style="-fx-font-size: 23px;
                        -fx-font-weight: bold;
-                       -fx-text-fill: #111827;"/>
+                       " styleClass="ui-text"/>
 
         <Label
                 fx:id="subtitleLabel"
                 text="These settings are available to the Super Admin only."
                 wrapText="true"
                 style="-fx-font-size: 12px;
-                       -fx-text-fill: #64748B;"/>
+                       " styleClass="ui-muted"/>
     </VBox>
 
     <VBox
@@ -54,7 +54,7 @@
                 fx:id="statusTitleLabel"
                 text="License Status"
                 style="-fx-font-weight: bold;
-                       -fx-text-fill: #334155;"/>
+                       " styleClass="ui-text"/>
 
         <Label
                 fx:id="statusValueLabel"
@@ -76,7 +76,7 @@
                     fx:id="termLabel"
                     text="Program Term"
                     style="-fx-font-weight: bold;
-                           -fx-text-fill: #374151;"/>
+                           " styleClass="ui-text"/>
 
             <ComboBox
                     fx:id="termComboBox"
@@ -91,7 +91,7 @@
                         fx:id="fromLabel"
                         text="From Date"
                         style="-fx-font-weight: bold;
-                               -fx-text-fill: #374151;"/>
+                               " styleClass="ui-text"/>
 
                 <DatePicker
                         fx:id="fromDatePicker"
@@ -104,7 +104,7 @@
                         fx:id="toLabel"
                         text="To Date"
                         style="-fx-font-weight: bold;
-                               -fx-text-fill: #374151;"/>
+                               " styleClass="ui-text"/>
 
                 <DatePicker
                         fx:id="toDatePicker"
@@ -121,7 +121,7 @@
                     fx:id="passwordLabel"
                     text="Super Admin Password"
                     style="-fx-font-weight: bold;
-                           -fx-text-fill: #374151;"/>
+                           " styleClass="ui-text"/>
 
             <PasswordField
                     fx:id="superAdminPasswordField"
@@ -142,25 +142,13 @@
                 fx:id="cancelButton"
                 text="Cancel"
                 prefWidth="145"
-                style="-fx-background-color: white;
-                       -fx-text-fill: #374151;
-                       -fx-border-color: #CBD5E1;
-                       -fx-border-radius: 7;
-                       -fx-background-radius: 7;
-                       -fx-padding: 10 16;
-                       -fx-font-weight: bold;
-                       -fx-cursor: hand;"/>
+                style="-fx-padding: 10 16; -fx-cursor: hand;" styleClass="secondary-button"/>
 
         <Button
                 fx:id="activateButton"
                 text="Save &amp; Activate"
                 prefWidth="190"
-                style="-fx-background-color: #F97316;
-                       -fx-text-fill: white;
-                       -fx-background-radius: 7;
-                       -fx-padding: 10 16;
-                       -fx-font-weight: bold;
-                       -fx-cursor: hand;"/>
+                style="-fx-padding: 10 16; -fx-cursor: hand;" styleClass="primary-button"/>
     </HBox>
 
 </VBox>

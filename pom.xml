@@ -13,7 +13,7 @@
 
     <groupId>com.mycompany</groupId>
     <artifactId>Lazar_APP</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 
     <name>GymFlow</name>
     <description>GymFlow Gym Management System - MAKSOFT Software Solutions</description>
@@ -46,7 +46,33 @@
     <!-- DEPENDENCIES                                          -->
     <!-- ===================================================== -->
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.18.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.25.5</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.12.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.sarxos</groupId>
+            <artifactId>webcam-capture</artifactId>
+            <version>0.3.12</version>
+        </dependency>
 
 
         <!-- ================================================= -->
@@ -112,7 +138,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>12.10.1.jre11</version>
+            <version>12.10.2.jre11</version>
         </dependency>
 
 
@@ -163,6 +189,23 @@
 
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>-Duser.home=${project.build.directory}/qa-home</argLine>
+                    <excludedEnvironmentVariables>
+                        <excludedEnvironmentVariable>GYMFLOW_DB_PASSWORD</excludedEnvironmentVariable>
+                    </excludedEnvironmentVariables>
+                    <environmentVariables>
+                        <XDG_DATA_HOME>${project.build.directory}/qa-data</XDG_DATA_HOME>
+                        <XDG_CONFIG_HOME>${project.build.directory}/qa-config</XDG_CONFIG_HOME>
+                        <LOCALAPPDATA>${project.build.directory}/qa-data</LOCALAPPDATA>
+                        <APPDATA>${project.build.directory}/qa-config</APPDATA>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
 
 
             <!-- ================================================= -->

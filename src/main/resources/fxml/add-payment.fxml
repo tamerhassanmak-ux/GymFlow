@@ -23,10 +23,10 @@
         minHeight="560.0"
         maxWidth="Infinity"
         maxHeight="Infinity"
-        style="-fx-background-color:#F5F7FA;"
+
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.AddPaymentController">
+        fx:controller="com.mycompany.lazar_app.controller.AddPaymentController" styleClass="app-page">
 
     <top>
         <VBox spacing="10" style="-fx-background-color:#FFFFFF;">
@@ -36,12 +36,12 @@
 
             <Label
                     text="%addPayment.title"
-                    style="-fx-font-size:24px;-fx-font-weight:bold;-fx-text-fill:#1F2937;"/>
+                    style="-fx-font-size:24px;-fx-font-weight:bold;" styleClass="ui-text"/>
 
             <Label
                     text="%addPayment.subtitle"
                     wrapText="true"
-                    style="-fx-font-size:13px;-fx-text-fill:#6B7280;"/>
+                    style="-fx-font-size:13px;" styleClass="ui-muted"/>
 
             <Separator/>
         </VBox>
@@ -57,7 +57,7 @@
                 style="-fx-background-color:transparent;-fx-background:#F5F7FA;">
 
             <content>
-                <VBox spacing="18" maxWidth="Infinity" style="-fx-background-color:#F5F7FA;">
+                <VBox spacing="18" maxWidth="Infinity" styleClass="app-page" >
                     <padding>
                         <Insets top="22" right="30" bottom="24" left="30"/>
                     </padding>
@@ -110,22 +110,22 @@
                         <Label
                                 fx:id="financialSummaryTitleLabel"
                                 text="Membership financial summary"
-                                style="-fx-font-size:14px;-fx-font-weight:bold;-fx-text-fill:#111827;"/>
+                                style="-fx-font-size:14px;-fx-font-weight:bold;" styleClass="ui-text"/>
 
                         <HBox spacing="10">
                             <VBox spacing="4" HBox.hgrow="ALWAYS"
                                   style="-fx-background-color:#F9FAFB;-fx-background-radius:8;-fx-padding:10;">
                                 <Label fx:id="membershipAmountCaptionLabel" text="Subscription amount"
-                                       style="-fx-font-size:11px;-fx-text-fill:#6B7280;"/>
-                                <Label fx:id="membershipAmountValueLabel" text="0.00 EGP"
-                                       style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#111827;"/>
+                                       style="-fx-font-size:11px;" styleClass="ui-muted"/>
+                                <Label fx:id="membershipAmountValueLabel" text="0.00"
+                                       style="-fx-font-size:17px;-fx-font-weight:bold;" styleClass="ui-text"/>
                             </VBox>
 
                             <VBox spacing="4" HBox.hgrow="ALWAYS"
                                   style="-fx-background-color:#F0FDF4;-fx-background-radius:8;-fx-padding:10;">
                                 <Label fx:id="paidAmountCaptionLabel" text="Paid"
                                        style="-fx-font-size:11px;-fx-text-fill:#15803D;"/>
-                                <Label fx:id="paidAmountValueLabel" text="0.00 EGP"
+                                <Label fx:id="paidAmountValueLabel" text="0.00"
                                        style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#15803D;"/>
                             </VBox>
 
@@ -133,7 +133,7 @@
                                   style="-fx-background-color:#FFF7ED;-fx-background-radius:8;-fx-padding:10;">
                                 <Label fx:id="balanceCaptionLabel" text="Remaining"
                                        style="-fx-font-size:11px;-fx-text-fill:#C2410C;"/>
-                                <Label fx:id="balanceValueLabel" text="0.00 EGP"
+                                <Label fx:id="balanceValueLabel" text="0.00"
                                        style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#C2410C;"/>
                             </VBox>
                         </HBox>
@@ -162,7 +162,7 @@
                                         fx:id="remainingAfterPaymentLabel"
                                         text=""
                                         wrapText="true"
-                                        style="-fx-font-size:12px;-fx-text-fill:#6B7280;"/>
+                                        style="-fx-font-size:12px;" styleClass="ui-muted"/>
                             </VBox>
 
                             <Label
@@ -255,7 +255,7 @@
                                 fx:id="scheduleHintLabel"
                                 text="The remaining balance will be divided into monthly installments."
                                 wrapText="true"
-                                style="-fx-font-size:12px;-fx-text-fill:#475569;"/>
+                                style="-fx-font-size:12px;" styleClass="ui-text"/>
 
                         <GridPane hgap="14" vgap="10">
                             <columnConstraints>
@@ -275,7 +275,7 @@
 
                             <Label fx:id="installmentAmountCaptionLabel" text="Approx. installment"
                                    GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                            <Label fx:id="installmentAmountValueLabel" text="0.00 EGP"
+                            <Label fx:id="installmentAmountValueLabel" text="0.00"
                                    style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1D4ED8;"
                                    GridPane.rowIndex="2" GridPane.columnIndex="1"/>
                         </GridPane>
@@ -308,7 +308,7 @@
                 <Button
                         text="%addPayment.save"
                         mnemonicParsing="false"
-                        onAction="#savePayment"
+                        fx:id="submitPaymentButton" onAction="#savePayment"
                         prefWidth="160"
                         prefHeight="44"
                         styleClass="primary-button"/>

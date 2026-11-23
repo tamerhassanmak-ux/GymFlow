@@ -233,6 +233,7 @@ public class MembershipPlanRepository {
     public MembershipPlan insert(
             MembershipPlan plan
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         validatePlan(plan);
 
@@ -340,6 +341,7 @@ public class MembershipPlanRepository {
     public boolean update(
             MembershipPlan plan
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         validatePlan(plan);
 
@@ -430,6 +432,7 @@ public class MembershipPlanRepository {
     public boolean delete(
             int planId
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         if (planId <= 0) {
 
@@ -707,7 +710,7 @@ public class MembershipPlanRepository {
             );
         }
 
-        if (plan.getPrice() < 0) {
+        if (!Double.isFinite(plan.getPrice()) || plan.getPrice() < 0) {
 
             throw new IllegalArgumentException(
                     "Membership price cannot be negative."

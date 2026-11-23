@@ -37,6 +37,9 @@ import javafx.scene.layout.VBox;
 
 
 public class DashboardContentController {
+    @FXML private Label dashboardCurrencyBadge;
+    @FXML private Label chartCurrencyBadge;
+
 
     // =========================================================
     // LIVE DASHBOARD INSTANCE
@@ -139,6 +142,10 @@ public class DashboardContentController {
         bundle =
                 LanguageManager.getBundle();
 
+        String currencyCode = com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyCode();
+        if (dashboardCurrencyBadge != null) dashboardCurrencyBadge.setText(currencyCode);
+        if (chartCurrencyBadge != null) chartCurrencyBadge.setText(currencyCode);
+        if (revenueChart != null) revenueChart.getYAxis().setLabel(currencyCode);
         refreshDashboard();
     }
 
@@ -468,10 +475,7 @@ public class DashboardContentController {
 
         revenueChart
                 .getData()
-                .addAll(
-                        revenue,
-                        expenses
-                );
+                .addAll(java.util.List.of(revenue, expenses));
     }
 
 
@@ -1130,7 +1134,7 @@ public class DashboardContentController {
 
         StackPane icon =
                 createAvatar(
-                        "EGP",
+                        com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyCode(),
                         "#ECFDF5",
                         "#059669"
                 );
@@ -1462,9 +1466,7 @@ public class DashboardContentController {
 
 
         String currency =
-                LanguageManager.isArabic()
-                        ? "ج.م"
-                        : "EGP";
+                com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic());
 
 
         return String.format(

@@ -545,12 +545,7 @@
                                     text="Print Card"
                                     onAction="#printMembershipCard"
                                     mnemonicParsing="false"
-                                    style="-fx-background-color: #f97316;
-                                           -fx-text-fill: white;
-                                           -fx-font-weight: bold;
-                                           -fx-background-radius: 8;
-                                           -fx-padding: 9 18;
-                                           -fx-cursor: hand;"/>
+                                    style="-fx-padding: 9 18; -fx-cursor: hand;" styleClass="primary-button"/>
 
                         </HBox>
 

@@ -1377,6 +1377,7 @@ public class MembersController {
     private void deleteMember(
             Member member
     ) {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         if (member == null) {
             return;

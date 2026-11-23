@@ -97,7 +97,8 @@ public class SettingsController {
         settings = AppSettingsManager.load();
         loadSettingsIntoForm();
         configureActions();
-        applyLanguageFromSettings();
+        // Navigation must preserve the locale selected in the dashboard.
+        languageComboBox.setValue(LanguageManager.isArabic() ? "العربية" : "English");
         applyTheme(settings.isDarkMode());
         updateLanguage();
         updateLastBackupLabel();
@@ -156,6 +157,7 @@ public class SettingsController {
     }
 
     private void saveChanges() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
         try {
             int grace = nonNegativeInteger(gracePeriodField, 0);
             int warning = nonNegativeInteger(expiryWarningField, 3);
@@ -241,6 +243,7 @@ public class SettingsController {
     }
 
     private void backupDatabase() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
         DatabaseConfig config = DatabaseConfigManager.load();
         if (config.getType() != DatabaseType.SQLITE) {
             show(Alert.AlertType.INFORMATION,
@@ -269,14 +272,14 @@ public class SettingsController {
         if (target == null) return;
 
         try {
-            Files.copy(source, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            new com.mycompany.lazar_app.database.SqliteBackupService().backup(config, target.toPath());
             settings.setLastBackup(LocalDateTime.now().toString());
             AppSettingsManager.save(settings);
             updateLastBackupLabel();
             show(Alert.AlertType.INFORMATION, ar("نجاح", "Success"),
                     ar("تم إنشاء النسخة الاحتياطية بنجاح.",
                        "Database backup created successfully."));
-        } catch (IOException ex) {
+        } catch (IOException | java.sql.SQLException ex) {
             ex.printStackTrace();
             show(Alert.AlertType.ERROR, ar("خطأ", "Error"),
                     ar("تعذر إنشاء النسخة الاحتياطية.", "Could not create database backup."));
@@ -284,6 +287,7 @@ public class SettingsController {
     }
 
     private void restoreDatabase() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
         DatabaseConfig config = DatabaseConfigManager.load();
         if (config.getType() != DatabaseType.SQLITE) {
             show(Alert.AlertType.INFORMATION, ar("الاستعادة", "Restore"),
@@ -322,23 +326,14 @@ public class SettingsController {
         Path target = Path.of(config.getSqlitePath()).toAbsolutePath().normalize();
 
         try {
-            if (target.getParent() != null) Files.createDirectories(target.getParent());
-
-            Path safety = target.resolveSibling(
-                    "pre-restore-" +
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss")) +
-                    ".db");
-            if (Files.exists(target)) {
-                Files.copy(target, safety, StandardCopyOption.REPLACE_EXISTING);
-            }
-
-            Files.copy(source.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
+            new com.mycompany.lazar_app.database.SqliteBackupService().restore(config, source.toPath());
 
             show(Alert.AlertType.INFORMATION,
                     ar("تمت الاستعادة", "Restore Complete"),
                     ar("تمت استعادة قاعدة البيانات. أغلق GymFlow وافتحه مرة أخرى قبل متابعة العمل.",
                        "Database restored. Close and reopen GymFlow before continuing."));
-        } catch (IOException ex) {
+            javafx.application.Platform.exit();
+        } catch (IOException | java.sql.SQLException ex) {
             ex.printStackTrace();
             show(Alert.AlertType.ERROR, ar("خطأ", "Error"),
                     ar("تعذر استعادة قاعدة البيانات.", "Could not restore database."));
@@ -364,10 +359,21 @@ public class SettingsController {
     }
 
     private void showPasswordManagementInfo() {
-        show(Alert.AlertType.INFORMATION,
-                ar("الأمان", "Security"),
-                ar("تغيير كلمة مرور السوبر أدمن يجب أن يتم من خلال خدمة SuperAdminAuthService بعد إضافة API مخصص لتغيير كلمة المرور. لم يتم تعديل بيانات الدخول بصورة غير آمنة.",
-                   "Super Admin password changes must go through SuperAdminAuthService after adding a dedicated password-change API. Login credentials were not modified insecurely."));
+        try {
+            if (!newPasswordField.getText().equals(confirmPasswordField.getText())) {
+                throw new IllegalArgumentException(ar("كلمتا المرور غير متطابقتين.", "Passwords do not match."));
+            }
+            com.mycompany.lazar_app.security.SuperAdminAuthService.changePassword(
+                    currentPasswordField.getText(), newPasswordField.getText());
+            show(Alert.AlertType.INFORMATION, ar("نجاح", "Success"),
+                    ar("تم تغيير كلمة المرور. يلزم تسجيل الموافقة مجددًا.", "Password changed. Admin approval is required again."));
+        } catch (IllegalArgumentException | SecurityException exception) {
+            show(Alert.AlertType.ERROR, ar("خطأ", "Error"),
+                    ar("تحقق من كلمة المرور الحالية والجديدة (٨ أحرف على الأقل وبحد أقصى ٧٢ بايت).",
+                            "Check the current password and new password (8 characters minimum, 72 bytes maximum)."));
+        } finally {
+            currentPasswordField.clear(); newPasswordField.clear(); confirmPasswordField.clear();
+        }
     }
 
     private int nonNegativeInteger(TextField field, int fallback) {
@@ -764,7 +770,7 @@ public class SettingsController {
                     new FXMLLoader(
                             getClass().getResource(
                                     "/fxml/database-auth.fxml"
-                            )
+                            ), LanguageManager.getBundle()
                     );
 
             Parent root =

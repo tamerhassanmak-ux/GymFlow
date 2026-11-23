@@ -18,8 +18,8 @@
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.mycompany.lazar_app.controller.ExpensesController"
         prefWidth="1200"
-        prefHeight="750"
-        style="-fx-background-color: #f5f7fb;">
+        prefHeight="750" styleClass="app-page"
+        >
 
     <center>
 
@@ -55,8 +55,8 @@
                             fx:id="pageSubtitleLabel"
                             style="
                                 -fx-font-size: 13px;
-                                -fx-text-fill: #6b7280;
-                            "/>
+
+                            " styleClass="ui-muted"/>
 
                 </VBox>
 
@@ -65,13 +65,7 @@
                 <Button
                         fx:id="refreshButton"
                         onAction="#refreshAll"
-                        style="
-                            -fx-background-color: white;
-                            -fx-border-color: #d7dce5;
-                            -fx-border-radius: 8;
-                            -fx-background-radius: 8;
-                            -fx-padding: 10 18;
-                        "/>
+                        style="-fx-padding: 10 18;" styleClass="secondary-button"/>
 
                 <Button
                         fx:id="newExpenseButton"
@@ -102,8 +96,7 @@
                         ">
 
                     <Label
-                            fx:id="totalExpensesTitleLabel"
-                            style="-fx-text-fill: #6b7280;"/>
+                            fx:id="totalExpensesTitleLabel" styleClass="ui-muted"/>
 
                     <Label
                             fx:id="totalExpensesLabel"
@@ -125,8 +118,7 @@
                         ">
 
                     <Label
-                            fx:id="monthExpensesTitleLabel"
-                            style="-fx-text-fill: #6b7280;"/>
+                            fx:id="monthExpensesTitleLabel" styleClass="ui-muted"/>
 
                     <Label
                             fx:id="monthExpensesLabel"
@@ -148,8 +140,7 @@
                         ">
 
                     <Label
-                            fx:id="pendingExpensesTitleLabel"
-                            style="-fx-text-fill: #6b7280;"/>
+                            fx:id="pendingExpensesTitleLabel" styleClass="ui-muted"/>
 
                     <Label
                             fx:id="pendingExpensesLabel"
@@ -171,8 +162,7 @@
                         ">
 
                     <Label
-                            fx:id="transactionsTitleLabel"
-                            style="-fx-text-fill: #6b7280;"/>
+                            fx:id="transactionsTitleLabel" styleClass="ui-muted"/>
 
                     <Label
                             fx:id="transactionsCountLabel"

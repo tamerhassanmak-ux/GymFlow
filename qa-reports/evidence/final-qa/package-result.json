@@ -1,0 +1,7 @@
+{
+  "packaged_jar_matches": true,
+  "sqlite_initialized": true,
+  "fourteen_migrations_completed": true,
+  "startup_exit": "stopped at 12-second first-run smoke boundary",
+  "full_login_or_shutdown_verified": false
+}

@@ -1,0 +1,97 @@
+src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java: ensureSuperAdminConfigured, ensureApplicationReady
+src/main/java/com/mycompany/lazar_app/LanguageManager.java: getBundle, setEnglish, setArabic, isArabic, getCurrentLocale, toggleLanguage
+src/main/java/com/mycompany/lazar_app/Lazar_APP.java: start, main
+src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java: initialize, prepareForAdd, setMemberForEdit, getNewMember, isEditMode
+src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java: initialize, setMembershipForEdit
+src/main/java/com/mycompany/lazar_app/controller/AddPaymentController.java: initialize, toString, fromString, shouldCreateInstallmentSchedule, getScheduleInstallmentCount, getScheduleFirstDueDate, setPaymentForEdit, getPayment, isSaved
+src/main/java/com/mycompany/lazar_app/controller/AttendanceHistoryController.java: initialize
+src/main/java/com/mycompany/lazar_app/controller/CheckinController.java: initialize
+src/main/java/com/mycompany/lazar_app/controller/DashboardContentController.java: initialize, refreshCurrentSummary, loadDashboard, refreshDashboard, refreshSummary
+src/main/java/com/mycompany/lazar_app/controller/DashboardController.java: initialize
+src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java: 
+src/main/java/com/mycompany/lazar_app/controller/DatabaseSettingsController.java: initialize
+src/main/java/com/mycompany/lazar_app/controller/DialogStyler.java: style
+src/main/java/com/mycompany/lazar_app/controller/ExpenseFormController.java: setExpenseService, setExpense, setOnSaved, toString
+src/main/java/com/mycompany/lazar_app/controller/ExpensesController.java: initialize, toString
+src/main/java/com/mycompany/lazar_app/controller/MemberDetailsController.java: initialize, setMember, isMemberEdited, getMember
+src/main/java/com/mycompany/lazar_app/controller/MembersController.java: initialize
+src/main/java/com/mycompany/lazar_app/controller/MembershipPlanFormController.java: initialize, setPlan, isSaved
+src/main/java/com/mycompany/lazar_app/controller/MembershipPlansController.java: initialize, refresh
+src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java: initialize, refresh
+src/main/java/com/mycompany/lazar_app/controller/PaymentsController.java: initialize
+src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java: initialize, setStartupLockMode, isActivated, updateLanguage
+src/main/java/com/mycompany/lazar_app/controller/ReportsController.java: initialize, updateLanguage
+src/main/java/com/mycompany/lazar_app/controller/RevenueFormController.java: initialize, setRevenueRepository, setRevenue, setOnSaved
+src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java: initialize
+src/main/java/com/mycompany/lazar_app/controller/SettingsController.java: initialize, updateLanguage
+src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java: 
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfig.java: getType, setType, getSqlitePath, setSqlitePath, getHost, setHost, getPort, setPort, getDatabaseName, setDatabaseName, getUsername, setUsername, getPassword, setPassword, isEncryptConnection, setEncryptConnection
+src/main/java/com/mycompany/lazar_app/database/DatabaseConfigManager.java: load, save, getConfigFile
+src/main/java/com/mycompany/lazar_app/database/DatabaseInitializer.java: initialize
+src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java: getConnection, getConnection, testConnection
+src/main/java/com/mycompany/lazar_app/database/DatabaseType.java: getDisplayName, toString
+src/main/java/com/mycompany/lazar_app/database/migration/M001CreateMembersTable.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M002CreateMembershipPlansTable.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M003CreateMemberMembershipsTable.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M004CreateCheckInsTable.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M005CreatePaymentsTable.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M006EnsureSessionLimitColumns.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M007CreateExpensesTable.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M008CreateRevenuesTable.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M008MakeMemberPhoneUnique.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/M009EnsureRevenueTables.java: version, description, up
+src/main/java/com/mycompany/lazar_app/database/migration/Migration.java: 
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationRunner.java: migrate, main
+src/main/java/com/mycompany/lazar_app/database/migration/MigrationSupport.java: 
+src/main/java/com/mycompany/lazar_app/license/ProgramLicense.java: isConfigured, setConfigured, isIntegrityValid, setIntegrityValid, getMode, setMode, getStartDate, setStartDate, getEndDate, setEndDate, getLastSeenDate, setLastSeenDate, getUpdatedAt, setUpdatedAt, isLifetime
+src/main/java/com/mycompany/lazar_app/license/ProgramLicenseGate.java: ensureValid
+src/main/java/com/mycompany/lazar_app/license/ProgramLicenseManager.java: load, activatePeriod, activateLifetime, evaluate, isProgramAllowed, recordSuccessfulOpen, daysRemaining, getLicenseFile
+src/main/java/com/mycompany/lazar_app/license/ProgramLicenseStatus.java: isAllowed
+src/main/java/com/mycompany/lazar_app/model/CheckIn.java: isInside, isCheckedOut, getMembershipDisplayName, getId, setId, getMemberId, setMemberId, getMembershipId, setMembershipId, getCheckInTime, setCheckInTime, getCheckOutTime, setCheckOutTime, getStatus, setStatus, getNotes, setNotes, getCreatedAt, setCreatedAt, getUpdatedAt, setUpdatedAt, getMemberCode, setMemberCode, getMemberName, setMemberName, getPhone, setPhone, getMembershipNameAr, setMembershipNameAr, getMembershipNameEn, setMembershipNameEn, toString
+src/main/java/com/mycompany/lazar_app/model/CheckinRecord.java: getId, setId, getMemberId, setMemberId, getCheckinTime, setCheckinTime, getCheckoutTime, setCheckoutTime, isInside
+src/main/java/com/mycompany/lazar_app/model/Expense.java: getId, setId, getExpenseCode, setExpenseCode, getTitle, setTitle, getCategory, setCategory, getAmount, setAmount, getExpenseDate, setExpenseDate, getPaymentMethod, setPaymentMethod, getStatus, setStatus, getReferenceNumber, setReferenceNumber, getBeneficiary, setBeneficiary, getNotes, setNotes, getCreatedAt, setCreatedAt, getUpdatedAt, setUpdatedAt, isPaid, isPending, isCancelled, toString
+src/main/java/com/mycompany/lazar_app/model/Member.java: getId, getMemberCode, getName, getPhone, getWhatsapp, getEmail, getGender, getBirthDate, getMembership, getStartDate, getEndDate, getStatus, getNotes, getPhotoPath, setId, setMemberCode, setName, setPhone, setWhatsapp, setEmail, setGender, setBirthDate, setMembership, setStartDate, setEndDate, setStatus, setNotes, setPhotoPath, isActive, isExpired, getRemainingDays, toString
+src/main/java/com/mycompany/lazar_app/model/MemberMembership.java: getId, setId, getMemberId, setMemberId, getMembershipPlanId, setMembershipPlanId, getStartDate, setStartDate, getEndDate, setEndDate, getAllowedSessions, setAllowedSessions, getPrice, setPrice, getDiscount, setDiscount, getFinalPrice, setFinalPrice, getPlanPriceSnapshot, setPlanPriceSnapshot, getNetAmount, setNetAmount, getStatus, setStatus, getNotes, setNotes, getCreatedAt, setCreatedAt, getUpdatedAt, setUpdatedAt, getMemberCode, setMemberCode, getMemberName, setMemberName, getPlanCode, setPlanCode, getPlanNameAr, setPlanNameAr, getPlanNameEn, setPlanNameEn, isActive, hasStarted, isExpired, isFuture, getRemainingDays, isExpiringSoon, getRemainingSessions, hasRemainingSessions, isSessionLimitReached, canCheckIn, getPlanDisplayName, calculateFinalPrice, toString
+src/main/java/com/mycompany/lazar_app/model/MembershipPlan.java: getId, setId, getCode, setCode, getNameAr, setNameAr, getNameEn, setNameEn, getDurationMonths, setDurationMonths, getMaxSessions, setMaxSessions, getPrice, setPrice, getStatus, setStatus, getDescription, setDescription, getCreatedAt, setCreatedAt, getUpdatedAt, setUpdatedAt, isActive, getDisplayName, hasSessionLimit, hasValidDuration, hasValidSessions, getDisplayInfo, toString
+src/main/java/com/mycompany/lazar_app/model/Payment.java: getId, setId, getMemberId, setMemberId, getMembershipId, setMembershipId, getAmount, setAmount, getPaymentMethod, setPaymentMethod, getStatus, setStatus, getPaymentDate, setPaymentDate, getReferenceNumber, setReferenceNumber, getNotes, setNotes
+src/main/java/com/mycompany/lazar_app/model/Revenue.java: getId, setId, getRevenueCode, setRevenueCode, getName, setName, getRevenueType, setRevenueType, getAmount, setAmount, getRevenueDate, setRevenueDate, getAttachmentPath, setAttachmentPath, getNotes, setNotes, getCreatedAt, setCreatedAt, getUpdatedAt, setUpdatedAt
+src/main/java/com/mycompany/lazar_app/model/dashboard/DashboardExpiration.java: getMembershipId, getMemberId, getMemberCode, getMemberName, getMembershipNameAr, getMembershipNameEn, getEndDate, getDaysRemaining
+src/main/java/com/mycompany/lazar_app/model/dashboard/DashboardMember.java: getId, getMemberCode, getName, getMembership, getStatus, getStartDate
+src/main/java/com/mycompany/lazar_app/model/dashboard/DashboardMembershipData.java: getPlanId, getNameAr, getNameEn, getMembersCount, getDisplayName
+src/main/java/com/mycompany/lazar_app/model/dashboard/DashboardMonthlyData.java: getMonth, getRevenue, setRevenue, getExpenses, setExpenses, getNewMembers, setNewMembers
+src/main/java/com/mycompany/lazar_app/model/dashboard/DashboardPayment.java: getId, getMemberId, getMemberCode, getMemberName, getAmount, getPaymentMethod, getStatus, getPaymentDate
+src/main/java/com/mycompany/lazar_app/model/dashboard/DashboardSummary.java: getActiveMembers, setActiveMembers, getTodayCheckIns, setTodayCheckIns, getExpiringMemberships, setExpiringMemberships, getMonthlyRevenue, setMonthlyRevenue, getPreviousMonthRevenue, setPreviousMonthRevenue, getNewMembersThisMonth, setNewMembersThisMonth, getNewMembersPreviousMonth, setNewMembersPreviousMonth, getRevenueChangePercentage, getMemberChangePercentage
+src/main/java/com/mycompany/lazar_app/model/report/FinancialActivity.java: getDate, getDescription, getType, getAmount, getPaymentMethod, getStatus, isMembershipRevenue, isRevenue, isExpense
+src/main/java/com/mycompany/lazar_app/model/report/MonthlyFinancialSummary.java: getMonth, getRevenue, getExpenses
+src/main/java/com/mycompany/lazar_app/model/report/ReportSummary.java: getNetProfit, getProfitMargin, getTotalRevenue, setTotalRevenue, getMembershipRevenue, setMembershipRevenue, getOtherRevenue, setOtherRevenue, getTotalExpenses, setTotalExpenses, getTransactions, setTransactions, getActiveMembers, setActiveMembers, getNewMembers, setNewMembers
+src/main/java/com/mycompany/lazar_app/model/report/ReportType.java: getDisplayName, toString
+src/main/java/com/mycompany/lazar_app/repository/CheckInRepository.java: AttendanceOrder, AttendanceFilter, findPage, findAll, findById, findToday, autoCheckOutPreviousDays, findOpenByMemberId, insert, update, checkOut, delete, countToday, countCurrentlyInside, countCheckedOutToday, countByMembershipId, hasCheckInForMembershipOnDate
+src/main/java/com/mycompany/lazar_app/repository/DashboardRepository.java: getSummary, getMonthlyData, getMembershipDistribution, getRecentMembers, getUpcomingExpirations, getRecentPayments
+src/main/java/com/mycompany/lazar_app/repository/ExpenseRepository.java: save, update, delete, findAll, findById, search, getTotalExpenses, getTotalExpensesBetween, getPendingAmount, countAll
+src/main/java/com/mycompany/lazar_app/repository/MemberMembershipRepository.java: findAll, findLatestPerMember, findById, findByMemberId, findLatestByMemberId, findCurrentOrLatestByMemberId, findCurrentMembershipByMemberId, findOverlappingMembership, findActive, findExpiringSoon, insert, update, cancel, delete, count, countActive, countExpired, countExpiringSoon, getTotalRevenue, getMonthlyRevenue
+src/main/java/com/mycompany/lazar_app/repository/MemberRepository.java: findAll, findById, findByPhone, findAnotherByPhone, findByMemberCode, findAnotherByMemberCode, insert, update, delete, exists, count
+src/main/java/com/mycompany/lazar_app/repository/MembershipPlanRepository.java: findAll, findActive, findById, findByCode, insert, update, delete, exists, existsByCode, count
+src/main/java/com/mycompany/lazar_app/repository/PagingSql.java: 
+src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java: PaymentOrder, PaymentFilter, memberName, memberCode, planName, finance, findPage, getId, getCode, getName, toString, getId, getMemberId, getPlanNameAr, getPlanNameEn, getStartDate, getEndDate, getStatus, getMembershipAmount, getPaidAmount, getBalanceDue, isFullyPaid, getDisplayName, toString, getMembershipId, getMembershipAmount, getPaidAmount, getBalanceDue, getId, getMembershipId, getInstallmentNo, getDueDate, getAmount, getStatus, findAll, search, save, update, delete, findByMemberId, getTotalPayments, getTotalPaymentsBetween, getTotalByStatus, countAll, deleteById, findMemberOptions, findMembershipOptionsByMemberId, findMemberDisplayName, findMembershipDisplayName, findMembershipFinancialSummary, findPaymentsByMembershipId, findPaymentScheduleByMembershipId, replaceOutstandingSchedule
+src/main/java/com/mycompany/lazar_app/repository/ReportRepository.java: getSummary, getSummary, getFinancialActivity, getFinancialActivity, getMonthlyFinancialSummary, getMonthlyFinancialSummary
+src/main/java/com/mycompany/lazar_app/repository/RevenueRepository.java: findAll, search, save, update, deleteById, findRevenueTypes, getTotalRevenue, getCurrentMonthRevenue, countAll, countRevenueTypes
+src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java: isConfigured, setPassword, verify
+src/main/java/com/mycompany/lazar_app/service/DashboardService.java: getSummary, getMonthlyData, getMembershipDistribution, getRecentMembers, getUpcomingExpirations, getRecentPayments
+src/main/java/com/mycompany/lazar_app/service/ExpenseService.java: addExpense, updateExpense, deleteExpense, getAllExpenses, search, getTotalExpenses, getCurrentMonthExpenses, getPendingAmount, getTransactionCount
+src/main/java/com/mycompany/lazar_app/service/PaymentService.java: addPayment, updatePayment, deletePayment, getAllPayments, getPaymentsByMember, search, getTotalPayments, getCurrentMonthPayments, getPaidTotal, getPendingTotal, getTransactionCount
+src/main/java/com/mycompany/lazar_app/service/ReportService.java: getSummary, getSummary, getRecentActivity, getRecentActivity, getAllActivity, getAllActivity, getMonthlyFinancialSummary, getMonthlyFinancialSummary
+src/main/java/com/mycompany/lazar_app/service/export/ExcelReportExporter.java: export
+src/main/java/com/mycompany/lazar_app/service/export/PdfReportExporter.java: export, onEndPage
+src/main/java/com/mycompany/lazar_app/settings/AppSettings.java: getGymName, setGymName, getPhone, setPhone, getEmail, setEmail, getAddress, setAddress, getLanguage, setLanguage, getCurrency, setCurrency, getDateFormat, setDateFormat, getTimeZone, setTimeZone, getDefaultMembership, setDefaultMembership, getGracePeriodDays, setGracePeriodDays, isAutoExpireMemberships, setAutoExpireMemberships, isRenewBeforeExpiry, setRenewBeforeExpiry, isExpiryAlerts, setExpiryAlerts, isPaymentReminders, setPaymentReminders, isNewMemberNotification, setNewMemberNotification, isExpenseNotifications, setExpenseNotifications, getExpiryWarningDays, setExpiryWarningDays, isDarkMode, setDarkMode, getLastBackup, setLastBackup
+src/main/java/com/mycompany/lazar_app/settings/AppSettingsManager.java: load, save, getCurrencyCode, getCurrencyLabel, getSettingsFile
+src/main/java/com/mycompany/lazar_app/ui/PageViewport.java: wrap
+src/main/java/com/mycompany/lazar_app/ui/WindowManager.java: createModalStage, showMaximizedAndWait, showMaximizedAndWait, showResponsiveAndWait, showResponsive, handle, showMaximized, showResponsiveDialogAndWait
+src/main/java/com/mycompany/lazar_app/ui/dialog/AppDialog.java: success, info, warning, error, duplicatePhone, confirmDelete
+src/main/java/com/mycompany/lazar_app/ui/dialog/CameraCaptureDialog.java: show
+src/main/java/com/mycompany/lazar_app/ui/dialog/CheckinDetailsDialog.java: loadAndShow, loadAndShow
+src/main/java/com/mycompany/lazar_app/ui/paging/PageResult.java: 
+src/main/java/com/mycompany/lazar_app/ui/paging/TablePager.java: first, clear, reload
+src/main/java/com/mycompany/lazar_app/util/AppPaths.java: dataDirectory, configDirectory, databaseFile, backupsDirectory, exportsDirectory, databaseConfigFile, applicationSettingsFile, legacyConfigDirectory, legacyDatabaseConfigFile, legacyApplicationSettingsFile, legacyRelativeDatabaseFile
+src/main/java/com/mycompany/lazar_app/util/MemberCardPrinter.java: isSavedMember, createCard, createQrLabel, printCard, printQrLabel
+src/main/java/com/mycompany/lazar_app/util/QrCodeGenerator.java: generate
+src/main/java/com/mycompany/lazar_app/util/RevenueAttachmentStorage.java: copyToApplicationStorage

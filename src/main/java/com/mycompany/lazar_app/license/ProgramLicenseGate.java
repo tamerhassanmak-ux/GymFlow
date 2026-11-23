@@ -91,12 +91,10 @@ public final class ProgramLicenseGate {
             }
 
             stage.setScene(scene);
-            stage.setResizable(true);
-            stage.setMinWidth(620);
-            stage.setMinHeight(560);
-            stage.sizeToScene();
-            stage.centerOnScreen();
-            stage.showAndWait();
+            com.mycompany.lazar_app.ui.WindowManager.showResponsiveAndWait(
+                    stage,
+                    com.mycompany.lazar_app.ui.WindowManager.STANDARD_DIALOG_WIDTH,
+                    com.mycompany.lazar_app.ui.WindowManager.STANDARD_DIALOG_HEIGHT);
 
             if (!controller.isActivated()) {
                 return false;

@@ -466,6 +466,7 @@ public class MembershipPlanFormController {
 
     @FXML
     private void save() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         String code =
                 safe(

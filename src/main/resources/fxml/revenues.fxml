@@ -16,8 +16,8 @@
         spacing="18"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.RevenuesController"
-        style="-fx-background-color:#F5F7FB;">
+        fx:controller="com.mycompany.lazar_app.controller.RevenuesController" styleClass="app-page"
+        >
 
     <padding>
         <Insets top="24" right="28" bottom="24" left="28"/>
@@ -29,10 +29,10 @@
             <VBox spacing="5">
                 <Label fx:id="titleLabel"
                        text="Revenues"
-                       style="-fx-font-size:27px;-fx-font-weight:bold;-fx-text-fill:#111827;"/>
+                       style="-fx-font-size:27px;-fx-font-weight:bold;" styleClass="ui-text"/>
                 <Label fx:id="subtitleLabel"
                        text="Manage other revenues and source documents"
-                       style="-fx-font-size:13px;-fx-text-fill:#64748B;"/>
+                       style="-fx-font-size:13px;" styleClass="ui-muted"/>
             </VBox>
 
             <Region HBox.hgrow="ALWAYS"/>
@@ -41,39 +41,39 @@
                     text="+ New Revenue"
                     onAction="#openNewRevenue"
                     minHeight="42"
-                    style="-fx-background-color:#F97316;-fx-text-fill:white;-fx-font-weight:bold;-fx-background-radius:9;-fx-padding:10 20;-fx-cursor:hand;"/>
+                    style="-fx-padding: 10 20; -fx-cursor: hand;" styleClass="primary-button"/>
         </HBox>
 
         <HBox spacing="14">
 
             <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
-                  style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:17;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),8,0,0,2);">
+                  style="-fx-padding: 17;" styleClass="surface-card">
                 <Label fx:id="totalTitleLabel" text="Total Other Revenue"
-                       style="-fx-text-fill:#64748B;-fx-font-size:12px;"/>
-                <Label fx:id="totalRevenueLabel" text="0.00 EGP"
+                       style="-fx-font-size:12px;" styleClass="ui-muted"/>
+                <Label fx:id="totalRevenueLabel" text="0.00"
                        style="-fx-text-fill:#16A34A;-fx-font-size:23px;-fx-font-weight:bold;"/>
             </VBox>
 
             <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
-                  style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:17;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),8,0,0,2);">
+                  style="-fx-padding: 17;" styleClass="surface-card">
                 <Label fx:id="monthTitleLabel" text="This Month"
-                       style="-fx-text-fill:#64748B;-fx-font-size:12px;"/>
-                <Label fx:id="monthRevenueLabel" text="0.00 EGP"
+                       style="-fx-font-size:12px;" styleClass="ui-muted"/>
+                <Label fx:id="monthRevenueLabel" text="0.00"
                        style="-fx-text-fill:#2563EB;-fx-font-size:23px;-fx-font-weight:bold;"/>
             </VBox>
 
             <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
-                  style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:17;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),8,0,0,2);">
+                  style="-fx-padding: 17;" styleClass="surface-card">
                 <Label fx:id="transactionsTitleLabel" text="Transactions"
-                       style="-fx-text-fill:#64748B;-fx-font-size:12px;"/>
+                       style="-fx-font-size:12px;" styleClass="ui-muted"/>
                 <Label fx:id="transactionsCountLabel" text="0"
-                       style="-fx-text-fill:#111827;-fx-font-size:23px;-fx-font-weight:bold;"/>
+                       style="-fx-font-size:23px;-fx-font-weight:bold;" styleClass="ui-text"/>
             </VBox>
 
             <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
-                  style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:17;-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.06),8,0,0,2);">
+                  style="-fx-padding: 17;" styleClass="surface-card">
                 <Label fx:id="typesTitleLabel" text="Revenue Types"
-                       style="-fx-text-fill:#64748B;-fx-font-size:12px;"/>
+                       style="-fx-font-size:12px;" styleClass="ui-muted"/>
                 <Label fx:id="typesCountLabel" text="0"
                        style="-fx-text-fill:#F97316;-fx-font-size:23px;-fx-font-weight:bold;"/>
             </VBox>
@@ -98,7 +98,7 @@
                     text="Refresh"
                     onAction="#refreshAll"
                     minHeight="38"
-                    style="-fx-background-color:#111827;-fx-text-fill:white;-fx-font-weight:bold;-fx-background-radius:8;-fx-padding:8 18;-fx-cursor:hand;"/>
+                    style="-fx-padding: 8 18; -fx-cursor: hand;" styleClass="neutral-button"/>
         </HBox>
 
         <VBox spacing="10" VBox.vgrow="ALWAYS"

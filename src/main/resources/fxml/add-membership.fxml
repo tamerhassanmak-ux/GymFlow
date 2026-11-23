@@ -98,13 +98,13 @@
                         GridPane.columnIndex="1"
                         GridPane.rowIndex="0"/>
 
-                
+
                 <TextField
                  fx:id="memberSearchField"
                  maxWidth="Infinity"
                  prefHeight="44.0"
                  promptText="بحث بالاسم أو الباركود"/>
-                
+
 
                 <ComboBox
                         fx:id="memberComboBox"
@@ -272,7 +272,7 @@
 
                 <Label
                         fx:id="finalPriceLabel"
-                        text="0.00 EGP"
+                        text="0.00"
                         styleClass="card-value"/>
 
             </children>

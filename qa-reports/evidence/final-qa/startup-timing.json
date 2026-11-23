@@ -1,0 +1,7 @@
+{
+  "database_ready_ms": 2086.972365999827,
+  "owned_first_run_window_mapped_ms": 3624.830012999155,
+  "poll_interval_ms": 25,
+  "completed_login_or_license_flow": false,
+  "jar_sha256": "79555629903e9ed0d034b5d1f89935e8f29bcd0f524e76f07bf94085f68849f4"
+}

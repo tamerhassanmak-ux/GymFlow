@@ -1,0 +1,9 @@
+{
+  "package": "/tmp/gymflow-qc-release-package-3ay_yyvd/deb/gymflow-qc_1.0.4_amd64.deb",
+  "extracted_launcher": "/tmp/gymflow-qc-release-package-3ay_yyvd/deb-extracted/opt/gymflow-qc/bin/GymFlowQC",
+  "metadata_verified": true,
+  "jar_hash_matches": true,
+  "installed_on_host": false,
+  "extracted_startup_verified": true,
+  "startup_exit": "bounded first-run smoke stopped at 12 seconds"
+}

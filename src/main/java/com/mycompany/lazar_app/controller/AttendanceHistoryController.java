@@ -1,21 +1,23 @@
 package com.mycompany.lazar_app.controller;
 
 import com.mycompany.lazar_app.LanguageManager;
+import com.mycompany.lazar_app.ui.paging.TablePager;
+import com.mycompany.lazar_app.repository.CheckInRepository.AttendanceFilter;
+import com.mycompany.lazar_app.repository.CheckInRepository.AttendanceField;
+import com.mycompany.lazar_app.repository.CheckInRepository.AttendanceOrder;
+import javafx.scene.layout.HBox;
+import java.util.ArrayList;
+import java.util.List;
 import com.mycompany.lazar_app.model.CheckIn;
 import com.mycompany.lazar_app.repository.CheckInRepository;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -38,8 +40,8 @@ public final class AttendanceHistoryController {
     @FXML private Button refreshButton, resetButton;
 
     private final CheckInRepository repository = new CheckInRepository();
-    private final ObservableList<CheckIn> records = FXCollections.observableArrayList();
-    private final FilteredList<CheckIn> visible = new FilteredList<>(records);
+    @FXML private HBox paginationHost;
+    private TablePager<CheckIn> pager;
     private final PauseTransition typingDelay = new PauseTransition(Duration.millis(250));
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -51,11 +53,6 @@ public final class AttendanceHistoryController {
         catch (Exception ex) { return fallback; }
     }
     private String str(String value) { return value == null ? "" : value; }
-    private String normalize(String value) {
-        return str(value).strip().toLowerCase(Locale.ROOT)
-                .replace('أ','ا').replace('إ','ا').replace('آ','ا').replace('ى','ي')
-                .replace('ة','ه').replaceAll("[\\u064B-\\u065F\\u0670]", "");
-    }
     @FXML public void initialize() {
         bundle = LanguageManager.getBundle();
         idColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getId())));
@@ -67,26 +64,44 @@ public final class AttendanceHistoryController {
         membershipColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(str(c.getValue().getMembershipDisplayName(LanguageManager.isArabic()))));
         statusColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(c.getValue().isInside()
                 ? tr("history.status.inside", "Inside") : tr("history.status.out", "Checked out")));
-        historyTable.setItems(visible);
+        historyTable.setItems(FXCollections.observableArrayList());
         historyTable.setPlaceholder(new Label(tr("history.empty", "No attendance records match the filters")));
         rangeFilter.getItems().setAll(tr("history.range.today","Today"), tr("history.range.yesterday","Yesterday"),
                 tr("history.range.week","Last 7 days"), tr("history.range.month","This month"),
                 tr("history.range.all","All dates"), tr("history.range.custom","Custom range"));
         rangeFilter.getSelectionModel().select(0);
         rangeFilter.valueProperty().addListener((obs, oldValue, value) -> {
-            if (value != null) { applyPreset(rangeFilter.getSelectionModel().getSelectedIndex()); filter(); }
+            if (value != null && !applyingPreset) { applyPreset(rangeFilter.getSelectionModel().getSelectedIndex()); filter(); }
         });
         fromDate.valueProperty().addListener((obs, oldValue, value) -> {
-            if (!applyingPreset && rangeFilter.getSelectionModel().getSelectedIndex() != 5) rangeFilter.getSelectionModel().select(5);
+            if (applyingPreset) return;
+            selectCustomRange();
             filter();
         });
         toDate.valueProperty().addListener((obs, oldValue, value) -> {
-            if (!applyingPreset && rangeFilter.getSelectionModel().getSelectedIndex() != 5) rangeFilter.getSelectionModel().select(5);
+            if (applyingPreset) return;
+            selectCustomRange();
             filter();
         });
         typingDelay.setOnFinished(event -> filter());
-        searchField.textProperty().addListener((obs, before, after) -> typingDelay.playFromStart());
+        searchField.textProperty().addListener((obs, before, after) -> {
+            if (!applyingPreset) typingDelay.playFromStart();
+        });
         applyPreset(0);
+        pager = new TablePager<>(historyTable, paginationHost, (page, size) -> {
+            AttendanceFilter request = new AttendanceFilter(fromDate.getValue(), toDate.getValue(),
+                    searchField.getText(), false, attendanceSort());
+            return () -> repository.findPage(request, page, size);
+        }, result -> {
+            feedbackLabel.setText("");
+            recordsLabel.setText(Long.toString(result.total()));
+            insideLabel.setText(Long.toString(result.statistics().get("inside")));
+            outLabel.setText(Long.toString(result.statistics().get("out")));
+        }, error -> {
+            error.printStackTrace();
+            feedbackLabel.setText(tr("history.error", "Unable to load attendance records"));
+            recordsLabel.setText("—"); insideLabel.setText("—"); outLabel.setText("—");
+        });
         refresh();
     }
     private String date(LocalDateTime time) { return time == null ? "—" : time.format(dateFormat); }
@@ -108,48 +123,50 @@ public final class AttendanceHistoryController {
             toDate.setValue(end);
         } finally { applyingPreset = false; }
     }
+    private void selectCustomRange() {
+        applyingPreset = true;
+        try { rangeFilter.getSelectionModel().select(5); }
+        finally { applyingPreset = false; }
+    }
     @FXML private void reset() {
-        searchField.clear();
-        rangeFilter.getSelectionModel().select(0);
+        applyingPreset = true;
+        try {
+            searchField.clear();
+            rangeFilter.getSelectionModel().select(0);
+        } finally { applyingPreset = false; }
         applyPreset(0);
         filter();
     }
     @FXML private void refresh() {
-        try {
-            records.setAll(repository.findAll());
-            feedbackLabel.setText("");
-            filter();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            feedbackLabel.setText(tr("history.error","Unable to load attendance records"));
-            new Alert(Alert.AlertType.ERROR, tr("history.error","Unable to load attendance records")).showAndWait();
-        }
+        if (pager != null) filter();
     }
+
+    private List<AttendanceOrder> attendanceSort() {
+        List<AttendanceOrder> orders = new ArrayList<>();
+        for (TableColumn<CheckIn, ?> column : historyTable.getSortOrder()) {
+            AttendanceField field = column == idColumn ? AttendanceField.ID
+                    : column == codeColumn ? AttendanceField.CODE
+                    : column == nameColumn ? AttendanceField.NAME
+                    : column == membershipColumn ? (LanguageManager.isArabic() ? AttendanceField.PLAN_AR : AttendanceField.PLAN_EN)
+                    : column == outColumn ? AttendanceField.CHECK_OUT
+                    : column == statusColumn ? AttendanceField.STATUS : AttendanceField.CHECK_IN;
+            orders.add(new AttendanceOrder(field, column.getSortType() == TableColumn.SortType.ASCENDING));
+        }
+        return orders;
+    }
+
     private void filter() {
+        typingDelay.stop();
+        if (pager == null || applyingPreset) return;
         LocalDate from = fromDate.getValue();
         LocalDate to = toDate.getValue();
-        String query = normalize(searchField.getText());
         if (from != null && to != null && from.isAfter(to)) {
-            feedbackLabel.setText(tr("history.invalidDate","Start date must not be after end date"));
-            visible.setPredicate(item -> false);
+            pager.clear();
+            feedbackLabel.setText(tr("history.invalidDate", "Start date must not be after end date"));
+            recordsLabel.setText("0"); insideLabel.setText("0"); outLabel.setText("0");
         } else {
             feedbackLabel.setText("");
-            visible.setPredicate(item -> {
-                LocalDateTime checkIn = item.getCheckInTime();
-                if (checkIn == null) return false;
-                LocalDate day = checkIn.toLocalDate();
-                if (from != null && day.isBefore(from)) return false;
-                if (to != null && day.isAfter(to)) return false;
-                if (query.isEmpty()) return true;
-                return normalize(item.getMemberName()).contains(query)
-                        || normalize(item.getMemberCode()).contains(query)
-                        || normalize(item.getPhone()).contains(query);
-            });
+            pager.first();
         }
-        int inside = 0, out = 0;
-        for (CheckIn item : visible) { if (item.isInside()) inside++; else out++; }
-        recordsLabel.setText(String.valueOf(visible.size()));
-        insideLabel.setText(String.valueOf(inside));
-        outLabel.setText(String.valueOf(out));
     }
 }

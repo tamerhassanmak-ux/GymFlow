@@ -568,7 +568,7 @@ public class AddMembershipController {
 
 
         finalPriceLabel.setText(
-                "0.00 ج.م"
+                "0.00 " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(true)
         );
 
 
@@ -668,7 +668,7 @@ public class AddMembershipController {
 
 
         finalPriceLabel.setText(
-                "0.00 EGP"
+                "0.00 " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic())
         );
 
 
@@ -1631,6 +1631,7 @@ public class AddMembershipController {
 
     @FXML
     private void saveMembership() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         Member selectedMember =
                 memberComboBox.getValue();
@@ -2292,9 +2293,7 @@ public class AddMembershipController {
                 );
 
 
-        return LanguageManager.isArabic()
-                ? formatted + " ج.م"
-                : formatted + " EGP";
+        return formatted + " " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic());
     }
 
 

@@ -50,7 +50,7 @@
 
                     <ImageView
                         fx:id="gymLogoImageView"
-                        fitHeight="120.0"
+                        fitHeight="90.0"
                         fitWidth="205.0"
                         pickOnBounds="true"
                         preserveRatio="true"
@@ -189,7 +189,7 @@
                     <ImageView
                         fx:id="systemLogoImageView"
                         fitWidth="145.0"
-                        fitHeight="60.0"
+                        fitHeight="42.0"
                         preserveRatio="true"
                         smooth="true"
                         cache="true"/>
@@ -211,9 +211,9 @@
                     <Label
                         text="Gym Management System"
                         style="
-                            -fx-text-fill: #94A3B8;
+
                             -fx-font-size: 9px;
-                        "/>
+                        " styleClass="ui-muted"/>
 
 
                     <!-- MAKSOFT -->
@@ -233,9 +233,9 @@
                     <Label
                         text="© 2026 MAKSOFT • All Rights Reserved"
                         style="
-                            -fx-text-fill: #64748B;
+
                             -fx-font-size: 8px;
-                        "/>
+                        " styleClass="ui-muted"/>
 
                 </VBox>
 

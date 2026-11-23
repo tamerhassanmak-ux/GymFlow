@@ -625,6 +625,7 @@ public class MemberMembershipRepository {
     public MemberMembership insert(
             MemberMembership membership
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         validateMembershipCore(
                 membership
@@ -803,6 +804,7 @@ public class MemberMembershipRepository {
     public boolean update(
             MemberMembership membership
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         validateMembershipCore(
                 membership
@@ -1028,6 +1030,7 @@ public class MemberMembershipRepository {
     public boolean cancel(
             int membershipId
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         String sql = """
                 UPDATE member_memberships
@@ -1065,6 +1068,7 @@ public class MemberMembershipRepository {
     public boolean delete(
             int membershipId
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         if (membershipId <= 0) {
 
@@ -1896,8 +1900,7 @@ public class MemberMembershipRepository {
         }
 
 
-        if (membership.getDiscount()
-                < 0) {
+        if (!Double.isFinite(membership.getDiscount()) || membership.getDiscount() < 0) {
 
             throw new IllegalArgumentException(
                     "Membership discount cannot be negative."
@@ -1923,8 +1926,7 @@ public class MemberMembershipRepository {
         }
 
 
-        if (membership.getPlanPriceSnapshot()
-                < 0) {
+        if (!Double.isFinite(membership.getPlanPriceSnapshot()) || membership.getPlanPriceSnapshot() < 0) {
 
             throw new IllegalArgumentException(
                     "Membership plan price cannot be negative."
@@ -2104,22 +2106,13 @@ public class MemberMembershipRepository {
         );
 
 
-        statement.setDouble(
-                6,
-                membership.getPlanPriceSnapshot()
-        );
+        statement.setBigDecimal(6, java.math.BigDecimal.valueOf(membership.getPlanPriceSnapshot()));
 
 
-        statement.setDouble(
-                7,
-                membership.getDiscount()
-        );
+        statement.setBigDecimal(7, java.math.BigDecimal.valueOf(membership.getDiscount()));
 
 
-        statement.setDouble(
-                8,
-                membership.getFinalPrice()
-        );
+        statement.setBigDecimal(8, java.math.BigDecimal.valueOf(membership.getFinalPrice()));
 
 
         statement.setString(

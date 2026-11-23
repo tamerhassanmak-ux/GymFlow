@@ -15,7 +15,9 @@
 
 <ScrollPane
     fitToWidth="true"
-    hbarPolicy="NEVER"
+    fitToHeight="false"
+    hbarPolicy="AS_NEEDED"
+    vbarPolicy="AS_NEEDED"
     xmlns="http://javafx.com/javafx/21"
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="com.mycompany.lazar_app.DashboardContentController"
@@ -26,8 +28,10 @@
 
         <VBox
             spacing="20.0"
-            alignment="TOP_LEFT"
-            style="-fx-background-color: #F4F7FB;">
+            minHeight="-Infinity"
+            minWidth="1100.0"
+            alignment="TOP_LEFT" styleClass="app-page"
+            >
 
             <padding>
                 <Insets
@@ -51,14 +55,12 @@
 
                         <Label
                             text="%dashboard.welcome"
-                            style="-fx-font-size: 26px;
-                                   -fx-font-weight: bold;
-                                   -fx-text-fill: #111827;"/>
+                             styleClass="page-title"/>
 
                         <Label
                             text="%dashboard.subtitle"
                             style="-fx-font-size: 13px;
-                                   -fx-text-fill: #64748B;"/>
+                                   " styleClass="ui-muted"/>
 
                     </VBox>
 
@@ -73,12 +75,12 @@
                             text="-"
                             style="-fx-font-size: 13px;
                                    -fx-font-weight: bold;
-                                   -fx-text-fill: #374151;"/>
+                                   " styleClass="ui-text"/>
 
                         <Label
                             text="%app.title"
                             style="-fx-font-size: 11px;
-                                   -fx-text-fill: #94A3B8;"/>
+                                   " styleClass="ui-muted"/>
 
                     </VBox>
 
@@ -96,16 +98,9 @@
 
                     <VBox
                         spacing="7.0"
-                        prefHeight="132.0"
+                        minHeight="-Infinity"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.07),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -113,7 +108,7 @@
                                 text="%dashboard.activeMembers"
                                 style="-fx-font-size: 13px;
                                        -fx-font-weight: bold;
-                                       -fx-text-fill: #64748B;"/>
+                                       " styleClass="ui-muted"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
@@ -140,7 +135,7 @@
                             text="0"
                             style="-fx-font-size: 30px;
                                    -fx-font-weight: bold;
-                                   -fx-text-fill: #111827;"/>
+                                   " styleClass="ui-text"/>
 
                         <HBox
                             spacing="5"
@@ -156,7 +151,7 @@
                             <Label
                                 text="%dashboard.lastMonth"
                                 style="-fx-font-size: 10px;
-                                       -fx-text-fill: #94A3B8;"/>
+                                       " styleClass="ui-muted"/>
 
                         </HBox>
 
@@ -167,16 +162,9 @@
 
                     <VBox
                         spacing="7.0"
-                        prefHeight="132.0"
+                        minHeight="-Infinity"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.07),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -184,7 +172,7 @@
                                 text="%dashboard.checkins"
                                 style="-fx-font-size: 13px;
                                        -fx-font-weight: bold;
-                                       -fx-text-fill: #64748B;"/>
+                                       " styleClass="ui-muted"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
@@ -211,12 +199,12 @@
                             text="0"
                             style="-fx-font-size: 30px;
                                    -fx-font-weight: bold;
-                                   -fx-text-fill: #111827;"/>
+                                   " styleClass="ui-text"/>
 
                         <Label
                             text="%dashboard.today"
                             style="-fx-font-size: 10px;
-                                   -fx-text-fill: #94A3B8;"/>
+                                   " styleClass="ui-muted"/>
 
                     </VBox>
 
@@ -225,16 +213,9 @@
 
                     <VBox
                         spacing="7.0"
-                        prefHeight="132.0"
+                        minHeight="-Infinity"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.07),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -242,7 +223,7 @@
                                 text="%dashboard.expiring"
                                 style="-fx-font-size: 13px;
                                        -fx-font-weight: bold;
-                                       -fx-text-fill: #64748B;"/>
+                                       " styleClass="ui-muted"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
@@ -269,7 +250,7 @@
                             text="0"
                             style="-fx-font-size: 30px;
                                    -fx-font-weight: bold;
-                                   -fx-text-fill: #111827;"/>
+                                   " styleClass="ui-text"/>
 
                         <Label
                             text="%dashboard.next7days"
@@ -284,16 +265,9 @@
 
                     <VBox
                         spacing="7.0"
-                        prefHeight="132.0"
+                        minHeight="-Infinity"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.07),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -301,7 +275,7 @@
                                 text="%dashboard.revenue"
                                 style="-fx-font-size: 13px;
                                        -fx-font-weight: bold;
-                                       -fx-text-fill: #64748B;"/>
+                                       " styleClass="ui-muted"/>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
@@ -314,7 +288,7 @@
                                        -fx-background-radius: 10;">
 
                                 <Label
-                                    text="EGP"
+                                    fx:id="dashboardCurrencyBadge" text=""
                                     style="-fx-font-size: 12px;
                                            -fx-font-weight: bold;
                                            -fx-text-fill: #16A34A;"/>
@@ -325,10 +299,10 @@
 
                         <Label
                             fx:id="monthlyRevenueValueLabel"
-                            text="0 EGP"
+                            text="0"
                             style="-fx-font-size: 25px;
                                    -fx-font-weight: bold;
-                                   -fx-text-fill: #111827;"/>
+                                   " styleClass="ui-text"/>
 
                         <HBox
                             spacing="5"
@@ -344,7 +318,7 @@
                             <Label
                                 text="%dashboard.lastMonth"
                                 style="-fx-font-size: 10px;
-                                       -fx-text-fill: #94A3B8;"/>
+                                       " styleClass="ui-muted"/>
 
                         </HBox>
 
@@ -359,7 +333,7 @@
 
                 <HBox
                     spacing="15.0"
-                    prefHeight="360.0">
+                    minHeight="-Infinity">
 
 
                     <!-- REVENUE / EXPENSES -->
@@ -367,14 +341,7 @@
                     <VBox
                         spacing="8.0"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.06),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -384,29 +351,31 @@
                                     text="%dashboard.revenueExpenses"
                                     style="-fx-font-size: 16px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #111827;"/>
+                                           " styleClass="ui-text"/>
 
                                 <Label
                                     text="%dashboard.last6months"
                                     style="-fx-font-size: 10px;
-                                           -fx-text-fill: #94A3B8;"/>
+                                           " styleClass="ui-muted"/>
 
                             </VBox>
 
                             <Region HBox.hgrow="ALWAYS"/>
 
                             <Label
-                                text="EGP"
+                                fx:id="chartCurrencyBadge" text=""
                                 style="-fx-background-color: #F8FAFC;
                                        -fx-background-radius: 8;
                                        -fx-padding: 5 9;
                                        -fx-font-size: 10px;
                                        -fx-font-weight: bold;
-                                       -fx-text-fill: #64748B;"/>
+                                       " styleClass="ui-muted"/>
 
                         </HBox>
 
                         <BarChart
+                            minHeight="280.0"
+                            prefHeight="320.0"
                             fx:id="revenueChart"
                             animated="false"
                             legendVisible="true"
@@ -422,7 +391,7 @@
 
                             <yAxis>
                                 <NumberAxis
-                                    label="EGP"
+                                    label=""
                                     forceZeroInRange="true"/>
                             </yAxis>
 
@@ -436,14 +405,7 @@
                     <VBox
                         spacing="8.0"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.06),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -453,12 +415,12 @@
                                     text="%dashboard.memberGrowth"
                                     style="-fx-font-size: 16px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #111827;"/>
+                                           " styleClass="ui-text"/>
 
                                 <Label
                                     text="%dashboard.last6months"
                                     style="-fx-font-size: 10px;
-                                           -fx-text-fill: #94A3B8;"/>
+                                           " styleClass="ui-muted"/>
 
                             </VBox>
 
@@ -477,6 +439,8 @@
                         </HBox>
 
                         <LineChart
+                            minHeight="280.0"
+                            prefHeight="320.0"
                             fx:id="memberGrowthChart"
                             animated="false"
                             createSymbols="true"
@@ -504,14 +468,7 @@
                     <VBox
                         spacing="8.0"
                         prefWidth="300.0"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.06),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -521,18 +478,20 @@
                                     text="%dashboard.membershipTypes"
                                     style="-fx-font-size: 16px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #111827;"/>
+                                           " styleClass="ui-text"/>
 
                                 <Label
                                     text="%dashboard.totalMembers"
                                     style="-fx-font-size: 10px;
-                                           -fx-text-fill: #94A3B8;"/>
+                                           " styleClass="ui-muted"/>
 
                             </VBox>
 
                         </HBox>
 
                         <PieChart
+                            minHeight="280.0"
+                            prefHeight="320.0"
                             fx:id="membershipChart"
                             labelsVisible="true"
                             legendVisible="true"
@@ -551,22 +510,16 @@
 
                 <HBox
                     spacing="15.0"
-                    prefHeight="300.0">
+                    minHeight="-Infinity">
 
 
                     <!-- RECENT MEMBERS -->
 
                     <VBox
                         spacing="11.0"
+                        minHeight="-Infinity"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.06),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -576,12 +529,12 @@
                                     text="%dashboard.recentMembers"
                                     style="-fx-font-size: 16px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #111827;"/>
+                                           " styleClass="ui-text"/>
 
                                 <Label
                                     text="%dashboard.totalMembers"
                                     style="-fx-font-size: 9px;
-                                           -fx-text-fill: #94A3B8;"/>
+                                           " styleClass="ui-muted"/>
 
                             </VBox>
 
@@ -598,6 +551,7 @@
                         <VBox
                             fx:id="recentMembersContainer"
                             spacing="8.0"
+                            minHeight="-Infinity"
                             VBox.vgrow="ALWAYS"/>
 
                     </VBox>
@@ -607,15 +561,9 @@
 
                     <VBox
                         spacing="11.0"
+                        minHeight="-Infinity"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.06),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -625,12 +573,12 @@
                                     text="%dashboard.upcomingExpirations"
                                     style="-fx-font-size: 16px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #111827;"/>
+                                           " styleClass="ui-text"/>
 
                                 <Label
                                     text="%dashboard.next7days"
                                     style="-fx-font-size: 9px;
-                                           -fx-text-fill: #94A3B8;"/>
+                                           " styleClass="ui-muted"/>
 
                             </VBox>
 
@@ -647,6 +595,7 @@
                         <VBox
                             fx:id="expirationsContainer"
                             spacing="8.0"
+                            minHeight="-Infinity"
                             VBox.vgrow="ALWAYS"/>
 
                     </VBox>
@@ -656,15 +605,9 @@
 
                     <VBox
                         spacing="11.0"
+                        minHeight="-Infinity"
                         HBox.hgrow="ALWAYS"
-                        style="-fx-background-color: white;
-                               -fx-background-radius: 14;
-                               -fx-padding: 18;
-                               -fx-effect: dropshadow(
-                                   gaussian,
-                                   rgba(15,23,42,0.06),
-                                   12,0,0,3
-                               );">
+                        style="-fx-padding: 18;" styleClass="surface-card">
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -674,12 +617,12 @@
                                     text="%dashboard.recentPayments"
                                     style="-fx-font-size: 16px;
                                            -fx-font-weight: bold;
-                                           -fx-text-fill: #111827;"/>
+                                           " styleClass="ui-text"/>
 
                                 <Label
                                     text="%dashboard.revenue"
                                     style="-fx-font-size: 9px;
-                                           -fx-text-fill: #94A3B8;"/>
+                                           " styleClass="ui-muted"/>
 
                             </VBox>
 
@@ -696,6 +639,7 @@
                         <VBox
                             fx:id="recentPaymentsContainer"
                             spacing="8.0"
+                            minHeight="-Infinity"
                             VBox.vgrow="ALWAYS"/>
 
                     </VBox>

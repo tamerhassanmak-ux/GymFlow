@@ -422,7 +422,7 @@ public class MemberRepository {
 
         if (duplicate.isPresent()) {
             throw new SQLException(
-                    "Duplicate member phone: " + normalizePhone(member.getPhone())
+                    "Duplicate member phone."
             );
         }
 
@@ -438,7 +438,7 @@ public class MemberRepository {
 
             if (duplicateCode.isPresent()) {
                 throw new SQLException(
-                        "Duplicate member code: " + requestedMemberCode
+                        "Duplicate member code."
                 );
             }
         }
@@ -704,7 +704,7 @@ public class MemberRepository {
 
         if (duplicate.isPresent()) {
             throw new SQLException(
-                    "Duplicate member phone: " + normalizePhone(member.getPhone())
+                    "Duplicate member phone."
             );
         }
 
@@ -721,7 +721,7 @@ public class MemberRepository {
 
             if (duplicateCode.isPresent()) {
                 throw new SQLException(
-                        "Duplicate member code: " + requestedMemberCode
+                        "Duplicate member code."
                 );
             }
         }
@@ -852,6 +852,7 @@ public class MemberRepository {
     public boolean delete(
             int memberId
     ) throws SQLException {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         String sql = """
                 DELETE FROM members

@@ -113,12 +113,15 @@ public final class AppDialog {
         Label titleLabel = new Label(title == null ? "" : title);
         titleLabel.getStyleClass().add("app-dialog-title");
         titleLabel.setWrapText(true);
+        titleLabel.setMinHeight(Region.USE_PREF_SIZE);
 
         Label messageLabel = new Label(message == null ? "" : message);
         messageLabel.getStyleClass().add("app-dialog-message");
         messageLabel.setWrapText(true);
+        messageLabel.setMinHeight(Region.USE_PREF_SIZE);
 
         VBox textBox = new VBox(6, titleLabel, messageLabel);
+        textBox.setMinWidth(0);
         HBox.setHgrow(textBox, Priority.ALWAYS);
         HBox header = new HBox(15, icon, textBox);
         header.setAlignment(Pos.CENTER_LEFT);

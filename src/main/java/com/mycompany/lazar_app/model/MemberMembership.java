@@ -751,11 +751,13 @@ public class MemberMembership {
 
     public void calculateFinalPrice() {
 
-        finalPrice =
-                Math.max(
-                        price - discount,
-                        0
-                );
+        if (!Double.isFinite(price) || !Double.isFinite(discount)) {
+            throw new IllegalArgumentException("Membership amounts must be finite.");
+        }
+        finalPrice = java.math.BigDecimal.valueOf(price)
+                .subtract(java.math.BigDecimal.valueOf(discount))
+                .max(java.math.BigDecimal.ZERO)
+                .setScale(2, java.math.RoundingMode.HALF_UP).doubleValue();
     }
 
 

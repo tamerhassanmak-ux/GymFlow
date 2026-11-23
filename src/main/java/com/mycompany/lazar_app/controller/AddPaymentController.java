@@ -1300,7 +1300,7 @@ public class AddPaymentController {
     private String formatMoney(
             BigDecimal amount
     ) {
-        return moneyNumber(amount) + " EGP";
+        return moneyNumber(amount) + " " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic());
     }
 
 
@@ -1705,6 +1705,7 @@ public class AddPaymentController {
 
     @FXML
     private void savePayment() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         /*
          * Important:

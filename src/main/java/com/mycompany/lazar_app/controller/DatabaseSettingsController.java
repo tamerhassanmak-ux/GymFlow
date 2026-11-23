@@ -94,6 +94,7 @@ public class DatabaseSettingsController {
 
     @FXML
     private void handleSave() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
         try {
             DatabaseConfig config = buildConfig();
 
@@ -104,7 +105,9 @@ public class DatabaseSettingsController {
             }
 
             DatabaseConfigManager.save(config);
-            statusLabel.setText("✓ Database configuration saved successfully.");
+            statusLabel.setText(com.mycompany.lazar_app.LanguageManager.isArabic()
+                    ? "✓ تم الحفظ. كلمة مرور قاعدة البيانات لهذه الجلسة فقط؛ استخدم GYMFLOW_DB_PASSWORD عند إعادة التشغيل."
+                    : "✓ Saved. Database password is session-only; set GYMFLOW_DB_PASSWORD for restart.");
             statusLabel.setStyle("-fx-text-fill: #15803D;");
         } catch (Exception e) {
             statusLabel.setText("✕ " + e.getMessage());

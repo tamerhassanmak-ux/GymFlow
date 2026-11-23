@@ -28,13 +28,21 @@ public final class MigrationRunner {
                     new M006EnsureSessionLimitColumns(),
                     new M007CreateExpensesTable(),
                     new M008CreateRevenuesTable(),
-                    new M009EnsureRevenueTables()
+                    new M009EnsureRevenueTables(),
+                    new M010EnforceMemberPhoneUniqueness(),
+                    new M011ProtectFinancialOwnership(),
+                    new M012CreatePaymentInstallments(),
+                    new M013PreventDuplicateSubmissions(),
+                    new M014IndexMembershipLookups()
             );
 
     public static void migrate() throws Exception {
+        migrate(com.mycompany.lazar_app.database.DatabaseConfigManager.load());
+    }
 
-        try (Connection connection =
-                     DatabaseManager.getConnection()) {
+    /** Upgrade an explicitly supplied disposable/staged database without changing active settings. */
+    public static void migrate(com.mycompany.lazar_app.database.DatabaseConfig config) throws Exception {
+        try (Connection connection = DatabaseManager.getConnection(config)) {
 
             boolean oldAutoCommit =
                     connection.getAutoCommit();

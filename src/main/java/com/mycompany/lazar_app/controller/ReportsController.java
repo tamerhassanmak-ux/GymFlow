@@ -403,9 +403,8 @@ public class ReportsController {
         if (amountAxis != null) {
 
             amountAxis.setLabel(
-                    arabic
-                            ? "المبلغ (ج.م)"
-                            : "Amount (EGP)"
+                    (arabic ? "المبلغ (" : "Amount (")
+                            + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(arabic) + ")"
             );
         }
 
@@ -1217,10 +1216,7 @@ public class ReportsController {
 
                 financialChart
                         .getData()
-                        .addAll(
-                                revenueSeries,
-                                expenseSeries
-                        );
+                        .addAll(java.util.List.of(revenueSeries, expenseSeries));
         }
     }
 
@@ -1786,9 +1782,7 @@ public class ReportsController {
         return formatter.format(
                 safeValue
         ) + (
-                LanguageManager.isArabic()
-                        ? " ج.م"
-                        : " EGP"
+                " " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic())
         );
     }
 

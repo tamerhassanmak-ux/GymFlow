@@ -1,0 +1,23 @@
+[
+  "jpackage",
+  "--type",
+  "app-image",
+  "--name",
+  "GymFlowQC",
+  "--app-version",
+  "1.0.4",
+  "--input",
+  "/tmp/gymflow-qc-release-package-3ay_yyvd/input",
+  "--main-jar",
+  "GymFlow.jar",
+  "--main-class",
+  "com.mycompany.lazar_app.Lazar_APP",
+  "--dest",
+  "/tmp/gymflow-qc-release-package-3ay_yyvd/output",
+  "--java-options",
+  "--module-path=$APPDIR/libs",
+  "--java-options",
+  "--add-modules=javafx.controls,javafx.fxml",
+  "--java-options",
+  "--add-reads=org.xerial.sqlitejdbc=slf4j.api"
+]

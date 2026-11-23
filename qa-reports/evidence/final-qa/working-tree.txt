@@ -1,0 +1,89 @@
+ M .github/workflows/build-windows.yml
+ M pom.xml
+ M src/main/java/com/mycompany/lazar_app/ApplicationBootstrap.java
+ M src/main/java/com/mycompany/lazar_app/Lazar_APP.java
+ M src/main/java/com/mycompany/lazar_app/controller/AddMemberController.java
+ M src/main/java/com/mycompany/lazar_app/controller/AddMembershipController.java
+ M src/main/java/com/mycompany/lazar_app/controller/AddPaymentController.java
+ M src/main/java/com/mycompany/lazar_app/controller/AttendanceHistoryController.java
+ M src/main/java/com/mycompany/lazar_app/controller/CheckinController.java
+ M src/main/java/com/mycompany/lazar_app/controller/DashboardContentController.java
+ M src/main/java/com/mycompany/lazar_app/controller/DashboardController.java
+ M src/main/java/com/mycompany/lazar_app/controller/DatabaseAuthController.java
+ M src/main/java/com/mycompany/lazar_app/controller/DatabaseSettingsController.java
+ M src/main/java/com/mycompany/lazar_app/controller/ExpenseFormController.java
+ M src/main/java/com/mycompany/lazar_app/controller/ExpensesController.java
+ M src/main/java/com/mycompany/lazar_app/controller/MembersController.java
+ M src/main/java/com/mycompany/lazar_app/controller/MembershipPlanFormController.java
+ M src/main/java/com/mycompany/lazar_app/controller/MembershipPlansController.java
+ M src/main/java/com/mycompany/lazar_app/controller/MembershipsController.java
+ M src/main/java/com/mycompany/lazar_app/controller/PaymentsController.java
+ M src/main/java/com/mycompany/lazar_app/controller/ProgramLicenseSettingsController.java
+ M src/main/java/com/mycompany/lazar_app/controller/ReportsController.java
+ M src/main/java/com/mycompany/lazar_app/controller/RevenueFormController.java
+ M src/main/java/com/mycompany/lazar_app/controller/RevenuesController.java
+ M src/main/java/com/mycompany/lazar_app/controller/SettingsController.java
+ M src/main/java/com/mycompany/lazar_app/controller/SuperAdminSetupController.java
+ M src/main/java/com/mycompany/lazar_app/database/DatabaseConfig.java
+ M src/main/java/com/mycompany/lazar_app/database/DatabaseConfigManager.java
+ M src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java
+ M src/main/java/com/mycompany/lazar_app/database/migration/MigrationRunner.java
+ M src/main/java/com/mycompany/lazar_app/license/ProgramLicenseGate.java
+ M src/main/java/com/mycompany/lazar_app/license/ProgramLicenseManager.java
+ M src/main/java/com/mycompany/lazar_app/model/MemberMembership.java
+ M src/main/java/com/mycompany/lazar_app/model/Payment.java
+ M src/main/java/com/mycompany/lazar_app/repository/CheckInRepository.java
+ M src/main/java/com/mycompany/lazar_app/repository/ExpenseRepository.java
+ M src/main/java/com/mycompany/lazar_app/repository/MemberMembershipRepository.java
+ M src/main/java/com/mycompany/lazar_app/repository/MemberRepository.java
+ M src/main/java/com/mycompany/lazar_app/repository/MembershipPlanRepository.java
+ M src/main/java/com/mycompany/lazar_app/repository/PaymentRepository.java
+ M src/main/java/com/mycompany/lazar_app/repository/RevenueRepository.java
+ M src/main/java/com/mycompany/lazar_app/security/SuperAdminAuthService.java
+ M src/main/java/com/mycompany/lazar_app/service/export/PdfReportExporter.java
+ M src/main/java/com/mycompany/lazar_app/ui/WindowManager.java
+ M src/main/java/com/mycompany/lazar_app/ui/dialog/AppDialog.java
+ M src/main/java/com/mycompany/lazar_app/util/RevenueAttachmentStorage.java
+ M src/main/resources/css/app.css
+ M src/main/resources/fxml/add-member.fxml
+ M src/main/resources/fxml/add-membership.fxml
+ M src/main/resources/fxml/add-payment.fxml
+ M src/main/resources/fxml/attendance-history.fxml
+ M src/main/resources/fxml/checkin.fxml
+ M src/main/resources/fxml/dashboard-content.fxml
+ M src/main/resources/fxml/dashboard.fxml
+ M src/main/resources/fxml/database-auth.fxml
+ M src/main/resources/fxml/database-settings.fxml
+ M src/main/resources/fxml/expense-form.fxml
+ M src/main/resources/fxml/expenses.fxml
+ M src/main/resources/fxml/member-details.fxml
+ M src/main/resources/fxml/memberships.fxml
+ M src/main/resources/fxml/payments.fxml
+ M src/main/resources/fxml/program-license-settings.fxml
+ M src/main/resources/fxml/reports.fxml
+ M src/main/resources/fxml/revenue-form.fxml
+ M src/main/resources/fxml/revenues.fxml
+ M src/main/resources/fxml/settings.fxml
+ M src/main/resources/fxml/super-admin-setup.fxml
+ M src/main/resources/i18n/messages_ar.properties
+ M src/main/resources/i18n/messages_en.properties
+?? README.txt
+?? RELEASE_REPORT.md
+?? backup-before-1.0.4-20261101-225751/
+?? qa-reports/
+?? src/main/java/com/mycompany/lazar_app/database/SqliteBackupService.java
+?? src/main/java/com/mycompany/lazar_app/database/migration/M010EnforceMemberPhoneUniqueness.java
+?? src/main/java/com/mycompany/lazar_app/database/migration/M011ProtectFinancialOwnership.java
+?? src/main/java/com/mycompany/lazar_app/database/migration/M012CreatePaymentInstallments.java
+?? src/main/java/com/mycompany/lazar_app/database/migration/M013PreventDuplicateSubmissions.java
+?? src/main/java/com/mycompany/lazar_app/database/migration/M014IndexMembershipLookups.java
+?? src/main/java/com/mycompany/lazar_app/repository/PagingSql.java
+?? src/main/java/com/mycompany/lazar_app/security/AuthorizationService.java
+?? src/main/java/com/mycompany/lazar_app/ui/PageViewport.java
+?? src/main/java/com/mycompany/lazar_app/ui/dialog/AdminAccess.java
+?? src/main/java/com/mycompany/lazar_app/ui/dialog/CameraCaptureDialog.java
+?? src/main/java/com/mycompany/lazar_app/ui/dialog/CheckinDetailsDialog.java
+?? src/main/java/com/mycompany/lazar_app/ui/paging/
+?? src/main/java/com/mycompany/lazar_app/util/AtomicProperties.java
+?? src/main/resources/css/checkin-details.css
+?? src/test/

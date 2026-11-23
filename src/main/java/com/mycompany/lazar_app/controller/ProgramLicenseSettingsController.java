@@ -259,7 +259,7 @@ public class ProgramLicenseSettingsController {
                         ? ""
                         : superAdminPasswordField.getText();
 
-        if (!SuperAdminAuthService.verify(password)) {
+        if (!com.mycompany.lazar_app.security.AuthorizationService.authenticate(password)) {
             showMessage(
                     ar(
                             "كلمة مرور السوبر أدمن غير صحيحة.",

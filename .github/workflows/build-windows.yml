@@ -51,6 +51,12 @@ jobs:
         run: |
           mvn --batch-mode clean package
 
+      - name: Run existing isolated workflow regressions
+        shell: powershell
+        run: |
+          python qa-reports/tests/run_legacy.py
+          if ($LASTEXITCODE -ne 0) { throw "Workflow regressions failed" }
+
       - name: Verify Windows JavaFX libraries
         shell: powershell
         run: |
@@ -108,6 +114,7 @@ jobs:
             --win-dir-chooser `
             --java-options '--module-path=$APPDIR/libs' `
             --java-options '--add-modules=javafx.controls,javafx.fxml' `
+            --java-options '--add-reads=org.xerial.sqlitejdbc=slf4j.api' `
             --java-options '-Dfile.encoding=UTF-8'
 
       - name: Show generated installer

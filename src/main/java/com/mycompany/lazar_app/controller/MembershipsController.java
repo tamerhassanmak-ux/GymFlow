@@ -899,7 +899,7 @@ public class MembershipsController {
                     ResourceBundle.getBundle(
                             "i18n.messages",
                             LanguageManager.isArabic()
-                                    ? new Locale("ar")
+                                    ? Locale.forLanguageTag("ar")
                                     : Locale.ENGLISH
                     );
 
@@ -1006,6 +1006,7 @@ public class MembershipsController {
     private void deleteMembership(
             MemberMembership membership
     ) {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         if (membership == null) {
 
@@ -1250,9 +1251,7 @@ public class MembershipsController {
                 );
 
 
-        return LanguageManager.isArabic()
-                ? value + " ج.م"
-                : value + " EGP";
+        return value + " " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic());
     }
 
 

@@ -20,8 +20,8 @@
     maxWidth="Infinity"
     xmlns="http://javafx.com/javafx/21"
     xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="com.mycompany.lazar_app.controller.CheckinController"
-    style="-fx-background-color: #F5F7FA;">
+    fx:controller="com.mycompany.lazar_app.controller.CheckinController" styleClass="app-page"
+    >
 
     <children>
 
@@ -45,14 +45,12 @@
 
                     <Label
                         text="%checkin.title"
-                        style="-fx-font-size:26px;
-                               -fx-font-weight:bold;
-                               -fx-text-fill:#1F2937;"/>
+                         styleClass="page-title"/>
 
                     <Label
                         text="%checkin.subtitle"
                         style="-fx-font-size:13px;
-                               -fx-text-fill:#6B7280;"/>
+                               " styleClass="ui-muted"/>
 
                 </VBox>
 
@@ -62,13 +60,7 @@
                     text="%checkin.addCheckin"
                     mnemonicParsing="false"
                     onAction="#openCheckinDialog"
-                    style="-fx-background-color:#F97316;
-                           -fx-text-fill:white;
-                           -fx-font-size:14px;
-                           -fx-font-weight:bold;
-                           -fx-background-radius:8;
-                           -fx-padding:10 20;
-                           -fx-cursor:hand;"/>
+                    style="-fx-padding: 10 20; -fx-cursor: hand;" styleClass="primary-button"/>
 
             </HBox>
 
@@ -86,8 +78,7 @@
                            -fx-padding:18;">
 
                     <Label
-                        text="%checkin.stats.today"
-                        style="-fx-text-fill:#6B7280;"/>
+                        text="%checkin.stats.today" styleClass="ui-muted"/>
 
                     <Label
                         fx:id="todayCheckinsLabel"
@@ -107,8 +98,7 @@
                            -fx-padding:18;">
 
                     <Label
-                        text="%checkin.stats.currentlyInside"
-                        style="-fx-text-fill:#6B7280;"/>
+                        text="%checkin.stats.currentlyInside" styleClass="ui-muted"/>
 
                     <Label
                         fx:id="currentlyInsideLabel"
@@ -129,8 +119,7 @@
                            -fx-padding:18;">
 
                     <Label
-                        text="%checkin.stats.checkedOut"
-                        style="-fx-text-fill:#6B7280;"/>
+                        text="%checkin.stats.checkedOut" styleClass="ui-muted"/>
 
                     <Label
                         fx:id="checkedOutLabel"
@@ -151,8 +140,7 @@
                            -fx-padding:18;">
 
                     <Label
-                        text="%checkin.stats.activeMembers"
-                        style="-fx-text-fill:#6B7280;"/>
+                        text="%checkin.stats.activeMembers" styleClass="ui-muted"/>
 
                     <Label
                         fx:id="activeMembersLabel"
@@ -183,11 +171,7 @@
                     mnemonicParsing="false"
                     onAction="#search"
                     prefHeight="40"
-                    style="-fx-background-color:#1F2937;
-                           -fx-text-fill:white;
-                           -fx-background-radius:7;
-                           -fx-padding:0 20;
-                           -fx-cursor:hand;"/>
+                    style="-fx-padding: 0 20; -fx-cursor: hand;" styleClass="neutral-button"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
@@ -196,13 +180,7 @@
                     mnemonicParsing="false"
                     onAction="#refresh"
                     prefHeight="40"
-                    style="-fx-background-color:white;
-                           -fx-text-fill:#374151;
-                           -fx-border-color:#D1D5DB;
-                           -fx-border-radius:7;
-                           -fx-background-radius:7;
-                           -fx-padding:0 18;
-                           -fx-cursor:hand;"/>
+                    style="-fx-padding: 0 18; -fx-cursor: hand;" styleClass="secondary-button"/>
 
             </HBox>
 
@@ -227,8 +205,7 @@
 
                     <Label
                         fx:id="attendanceCountLabel"
-                        text="0"
-                        style="-fx-text-fill:#6B7280;"/>
+                        text="0" styleClass="ui-muted"/>
 
                 </HBox>
 
@@ -241,8 +218,9 @@
 
                         <TableColumn
                             fx:id="idColumn"
-                            text="%checkin.table.id"
-                            prefWidth="55"/>
+                            text="%checkin.table.memberCode"
+                            minWidth="130"
+                            prefWidth="150"/>
 
                         <TableColumn
                             fx:id="memberColumn"
@@ -277,11 +255,13 @@
                         <TableColumn
                             fx:id="actionsColumn"
                             text="%checkin.table.actions"
-                            prefWidth="220"/>
+                            prefWidth="350" minWidth="330"/>
 
                     </columns>
 
                 </TableView>
+
+                <HBox fx:id="paginationHost"/>
 
             </VBox>
 

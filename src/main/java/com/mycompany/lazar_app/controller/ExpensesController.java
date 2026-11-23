@@ -903,6 +903,7 @@ public class ExpensesController implements Initializable {
 
     @FXML
     private void handleDeleteExpense() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         Expense selected =
                 expensesTable

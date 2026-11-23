@@ -1,0 +1,27 @@
+diff --git a/src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java b/src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java
+index a63f2f8..c1eddd4 100644
+--- a/src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java
++++ b/src/main/java/com/mycompany/lazar_app/database/DatabaseManager.java
+@@ -41,7 +41,21 @@ public final class DatabaseManager {
+         } catch (Exception e) {
+             throw new SQLException("Could not create SQLite database directory.", e);
+         }
+-        return DriverManager.getConnection("jdbc:sqlite:" + dbPath);
++        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
++        try (var statement = connection.createStatement()) {
++            // These settings are connection scoped, so initialization alone
++            // cannot protect connections opened later by repositories.
++            statement.execute("PRAGMA foreign_keys = ON");
++            statement.execute("PRAGMA busy_timeout = 5000");
++            return connection;
++        } catch (SQLException exception) {
++            try {
++                connection.close();
++            } catch (SQLException closeException) {
++                exception.addSuppressed(closeException);
++            }
++            throw exception;
++        }
+     }
+ 
+     public static boolean testConnection(DatabaseConfig config) {

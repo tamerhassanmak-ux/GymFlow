@@ -1,0 +1,1872 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.mycompany.lazar_app.ReleaseRegressionTest" time="28.491" tests="52" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/home/tamer/NetBeansProjects/Lazar_APP/target/test-classes:/home/tamer/NetBeansProjects/Lazar_APP/target/classes:/home/tamer/.m2/repository/org/junit/jupiter/junit-jupiter/5.12.1/junit-jupiter-5.12.1.jar:/home/tamer/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.12.1/junit-jupiter-api-5.12.1.jar:/home/tamer/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/tamer/.m2/repository/org/junit/platform/junit-platform-commons/1.12.1/junit-platform-commons-1.12.1.jar:/home/tamer/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/tamer/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.12.1/junit-jupiter-params-5.12.1.jar:/home/tamer/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.12.1/junit-jupiter-engine-5.12.1.jar:/home/tamer/.m2/repository/org/junit/platform/junit-platform-engine/1.12.1/junit-platform-engine-1.12.1.jar:/home/tamer/.m2/repository/com/github/sarxos/webcam-capture/0.3.12/webcam-capture-0.3.12.jar:/home/tamer/.m2/repository/com/nativelibs4java/bridj/0.7.0/bridj-0.7.0.jar:/home/tamer/.m2/repository/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2.jar:/home/tamer/.m2/repository/org/openjfx/javafx-controls/21.0.6/javafx-controls-21.0.6.jar:/home/tamer/.m2/repository/org/openjfx/javafx-controls/21.0.6/javafx-controls-21.0.6-linux.jar:/home/tamer/.m2/repository/org/openjfx/javafx-graphics/21.0.6/javafx-graphics-21.0.6.jar:/home/tamer/.m2/repository/org/openjfx/javafx-graphics/21.0.6/javafx-graphics-21.0.6-linux.jar:/home/tamer/.m2/repository/org/openjfx/javafx-base/21.0.6/javafx-base-21.0.6.jar:/home/tamer/.m2/repository/org/openjfx/javafx-base/21.0.6/javafx-base-21.0.6-linux.jar:/home/tamer/.m2/repository/org/openjfx/javafx-fxml/21.0.6/javafx-fxml-21.0.6.jar:/home/tamer/.m2/repository/org/openjfx/javafx-fxml/21.0.6/javafx-fxml-21.0.6-linux.jar:/home/tamer/.m2/repository/com/google/zxing/core/3.5.3/core-3.5.3.jar:/home/tamer/.m2/repository/com/google/zxing/javase/3.5.3/javase-3.5.3.jar:/home/tamer/.m2/repository/com/beust/jcommander/1.82/jcommander-1.82.jar:/home/tamer/.m2/repository/com/github/jai-imageio/jai-imageio-core/1.4.0/jai-imageio-core-1.4.0.jar:/home/tamer/.m2/repository/org/xerial/sqlite-jdbc/3.50.3.0/sqlite-jdbc-3.50.3.0.jar:/home/tamer/.m2/repository/com/mysql/mysql-connector-j/9.4.0/mysql-connector-j-9.4.0.jar:/home/tamer/.m2/repository/com/google/protobuf/protobuf-java/4.31.1/protobuf-java-4.31.1.jar:/home/tamer/.m2/repository/com/microsoft/sqlserver/mssql-jdbc/12.10.2.jre11/mssql-jdbc-12.10.2.jre11.jar:/home/tamer/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/home/tamer/.m2/repository/org/apache/poi/poi-ooxml/5.4.1/poi-ooxml-5.4.1.jar:/home/tamer/.m2/repository/org/apache/poi/poi/5.4.1/poi-5.4.1.jar:/home/tamer/.m2/repository/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar:/home/tamer/.m2/repository/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar:/home/tamer/.m2/repository/com/zaxxer/SparseBitSet/1.3/SparseBitSet-1.3.jar:/home/tamer/.m2/repository/org/apache/poi/poi-ooxml-lite/5.4.1/poi-ooxml-lite-5.4.1.jar:/home/tamer/.m2/repository/org/apache/xmlbeans/xmlbeans/5.3.0/xmlbeans-5.3.0.jar:/home/tamer/.m2/repository/org/apache/commons/commons-compress/1.27.1/commons-compress-1.27.1.jar:/home/tamer/.m2/repository/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar:/home/tamer/.m2/repository/commons-io/commons-io/2.18.0/commons-io-2.18.0.jar:/home/tamer/.m2/repository/com/github/virtuald/curvesapi/1.08/curvesapi-1.08.jar:/home/tamer/.m2/repository/org/apache/logging/log4j/log4j-api/2.25.5/log4j-api-2.25.5.jar:/home/tamer/.m2/repository/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar:/home/tamer/.m2/repository/com/github/librepdf/openpdf/2.0.3/openpdf-2.0.3.jar:"/>
+    <property name="java.vm.vendor" value="Ubuntu"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://ubuntu.com/"/>
+    <property name="user.timezone" value="Africa/Cairo"/>
+    <property name="os.name" value="Linux"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-21-openjdk-amd64/lib"/>
+    <property name="sun.java.command" value="/home/tamer/NetBeansProjects/Lazar_APP/target/surefire/surefirebooter-20261123165808939_3.jar /home/tamer/NetBeansProjects/Lazar_APP/target/surefire 2026-11-23T16-58-08_868-jvmRun1 surefire-20261123165808939_1tmp surefire_0-20261123165808939_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/home/tamer/NetBeansProjects/Lazar_APP/target/test-classes:/home/tamer/NetBeansProjects/Lazar_APP/target/classes:/home/tamer/.m2/repository/org/junit/jupiter/junit-jupiter/5.12.1/junit-jupiter-5.12.1.jar:/home/tamer/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.12.1/junit-jupiter-api-5.12.1.jar:/home/tamer/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/tamer/.m2/repository/org/junit/platform/junit-platform-commons/1.12.1/junit-platform-commons-1.12.1.jar:/home/tamer/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/tamer/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.12.1/junit-jupiter-params-5.12.1.jar:/home/tamer/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.12.1/junit-jupiter-engine-5.12.1.jar:/home/tamer/.m2/repository/org/junit/platform/junit-platform-engine/1.12.1/junit-platform-engine-1.12.1.jar:/home/tamer/.m2/repository/com/github/sarxos/webcam-capture/0.3.12/webcam-capture-0.3.12.jar:/home/tamer/.m2/repository/com/nativelibs4java/bridj/0.7.0/bridj-0.7.0.jar:/home/tamer/.m2/repository/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2.jar:/home/tamer/.m2/repository/org/openjfx/javafx-controls/21.0.6/javafx-controls-21.0.6.jar:/home/tamer/.m2/repository/org/openjfx/javafx-controls/21.0.6/javafx-controls-21.0.6-linux.jar:/home/tamer/.m2/repository/org/openjfx/javafx-graphics/21.0.6/javafx-graphics-21.0.6.jar:/home/tamer/.m2/repository/org/openjfx/javafx-graphics/21.0.6/javafx-graphics-21.0.6-linux.jar:/home/tamer/.m2/repository/org/openjfx/javafx-base/21.0.6/javafx-base-21.0.6.jar:/home/tamer/.m2/repository/org/openjfx/javafx-base/21.0.6/javafx-base-21.0.6-linux.jar:/home/tamer/.m2/repository/org/openjfx/javafx-fxml/21.0.6/javafx-fxml-21.0.6.jar:/home/tamer/.m2/repository/org/openjfx/javafx-fxml/21.0.6/javafx-fxml-21.0.6-linux.jar:/home/tamer/.m2/repository/com/google/zxing/core/3.5.3/core-3.5.3.jar:/home/tamer/.m2/repository/com/google/zxing/javase/3.5.3/javase-3.5.3.jar:/home/tamer/.m2/repository/com/beust/jcommander/1.82/jcommander-1.82.jar:/home/tamer/.m2/repository/com/github/jai-imageio/jai-imageio-core/1.4.0/jai-imageio-core-1.4.0.jar:/home/tamer/.m2/repository/org/xerial/sqlite-jdbc/3.50.3.0/sqlite-jdbc-3.50.3.0.jar:/home/tamer/.m2/repository/com/mysql/mysql-connector-j/9.4.0/mysql-connector-j-9.4.0.jar:/home/tamer/.m2/repository/com/google/protobuf/protobuf-java/4.31.1/protobuf-java-4.31.1.jar:/home/tamer/.m2/repository/com/microsoft/sqlserver/mssql-jdbc/12.10.2.jre11/mssql-jdbc-12.10.2.jre11.jar:/home/tamer/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/home/tamer/.m2/repository/org/apache/poi/poi-ooxml/5.4.1/poi-ooxml-5.4.1.jar:/home/tamer/.m2/repository/org/apache/poi/poi/5.4.1/poi-5.4.1.jar:/home/tamer/.m2/repository/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar:/home/tamer/.m2/repository/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar:/home/tamer/.m2/repository/com/zaxxer/SparseBitSet/1.3/SparseBitSet-1.3.jar:/home/tamer/.m2/repository/org/apache/poi/poi-ooxml-lite/5.4.1/poi-ooxml-lite-5.4.1.jar:/home/tamer/.m2/repository/org/apache/xmlbeans/xmlbeans/5.3.0/xmlbeans-5.3.0.jar:/home/tamer/.m2/repository/org/apache/commons/commons-compress/1.27.1/commons-compress-1.27.1.jar:/home/tamer/.m2/repository/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar:/home/tamer/.m2/repository/commons-io/commons-io/2.18.0/commons-io-2.18.0.jar:/home/tamer/.m2/repository/com/github/virtuald/curvesapi/1.08/curvesapi-1.08.jar:/home/tamer/.m2/repository/org/apache/logging/log4j/log4j-api/2.25.5/log4j-api-2.25.5.jar:/home/tamer/.m2/repository/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar:/home/tamer/.m2/repository/com/github/librepdf/openpdf/2.0.3/openpdf-2.0.3.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/tamer/NetBeansProjects/Lazar_APP/target/qa-home"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2026-04-21"/>
+    <property name="java.home" value="/usr/lib/jvm/java-21-openjdk-amd64"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/home/tamer/NetBeansProjects/Lazar_APP"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="/home/tamer/NetBeansProjects/Lazar_APP/target/surefire/surefirebooter-20261123165808939_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.11+10-1-25.10.2-Ubuntu"/>
+    <property name="user.name" value="tamer"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="6.17.0-41-generic"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/home/tamer/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugs.launchpad.net/ubuntu/+source/openjdk-21"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="21.0.11"/>
+    <property name="user.dir" value="/home/tamer/NetBeansProjects/Lazar_APP"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.vendor" value="Ubuntu"/>
+    <property name="java.vm.version" value="21.0.11+10-1-25.10.2-Ubuntu"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="RI14_backupCannotOverwriteActiveDatabase" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.551">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+    <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+]]></system-err>
+  </testcase>
+  <testcase name="RI35_transactionCannotSilentlySwitchDatabases" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.278">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI09_backupIncludesCommittedWalAndUncommittedRowsAreExcluded" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.28">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI44_validNineMigrationDatabaseUpgradesWithoutRecordLoss" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.301">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI18_operatorCanRegisterAndCheckInMember" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.283">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI34_renewalPreservesFinancialHistory" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.288">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI19_plaintextPasswordNotSerialized" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.274">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI30_orphanInstallmentsAreRejected" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.277">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI26_managedConnectionCloseReleasesPermitOnce" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.293">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[SKIP] 010 enforce_nonblank_member_phone_uniqueness
+[SKIP] 011 protect_financial_membership_ownership
+[SKIP] 012 migrate_payment_installments
+[SKIP] 013 prevent_duplicate_checkins_and_payment_submissions
+[SKIP] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI28_paymentAndScheduleCommitTogether" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.278">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI17_operatorCannotPerformFinancialAdministrativeWrites" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.513">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI15_futureSchemaBackupRejected" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.272">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI21_cannotResetConfiguredPasswordWithoutCurrentPassword" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.74">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI37_atomicConfigWriteKeepsPrivateFileAndRoundTrips" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.27">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI47_migrationStopsOnLegacyDuplicateAttendanceWithoutDeletingIt" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.269">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[SKIP] 010 enforce_nonblank_member_phone_uniqueness
+[SKIP] 011 protect_financial_membership_ownership
+[SKIP] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+]]></system-out>
+  </testcase>
+  <testcase name="RI51_repositorySearchPayloadsDoNotBypassFilters" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.278">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI48_failureAfterRecoveryDeletesRollsBackFinancialData" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.285">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[SKIP] 010 enforce_nonblank_member_phone_uniqueness
+[SKIP] 011 protect_financial_membership_ownership
+[SKIP] 012 migrate_payment_installments
+[SKIP] 013 prevent_duplicate_checkins_and_payment_submissions
+[SKIP] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI06_databaseBlocksDirectCrossOwnerWriteAndReassignment" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.275">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI04_updateRejectsWrongOwnerWithoutChangingPayment" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.274">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI50_environmentCredentialUsedWithoutDisclosure" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.304">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI27_paymentAndScheduleRollbackTogether" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.268">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI24_concurrentFinancialWritesRemainConsistent" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.272">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI31_unrecognizedBackupTriggerIsRejected" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.27">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI41_manySmallPaymentsHaveExactCentBalance" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.278">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI38_repeatPaymentSubmissionCannotDuplicateMoney" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.265">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI52_duplicateValidationDoesNotExposePersonalDataInException" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.263">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI16_installmentRollbackAndMonthEndRounding" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.267">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI45_expiredApprovalAndLogoutDenyFinancialWrites" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.502">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI43_externalWriterBlocksRestoreWithoutDataLoss" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="5.677">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[SKIP] 010 enforce_nonblank_member_phone_uniqueness
+[SKIP] 011 protect_financial_membership_ownership
+[SKIP] 012 migrate_payment_installments
+[SKIP] 013 prevent_duplicate_checkins_and_payment_submissions
+[SKIP] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI07_duplicateNonblankPhonesRejectedAndBlanksAllowed" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.295">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI29_caughtNestedFailureStillRollsBackWholeUnitOfWork" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.269">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI33_nonfiniteCommercialValuesRejected" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.266">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI36_backupMissingGuardOrUniqueIndexIsRejected" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.277">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI02_everyConnectionEnforcesForeignKeys" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.265">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI10_corruptRestorePreservesLiveFinancialData" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.269">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI22_passwordByteLimitAndAtomicChangeRevokesApproval" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="1.925">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI12_restoreCreatesRecoverableSafetySnapshot" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.291">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[SKIP] 010 enforce_nonblank_member_phone_uniqueness
+[SKIP] 011 protect_financial_membership_ownership
+[SKIP] 012 migrate_payment_installments
+[SKIP] 013 prevent_duplicate_checkins_and_payment_submissions
+[SKIP] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[SKIP] 010 enforce_nonblank_member_phone_uniqueness
+[SKIP] 011 protect_financial_membership_ownership
+[SKIP] 012 migrate_payment_installments
+[SKIP] 013 prevent_duplicate_checkins_and_payment_submissions
+[SKIP] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI05_nullUpdatesRejectClearly" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.266">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI11_wrongApplicationDatabaseRejected" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.264">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI01_migrationsAreIdempotent" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.265">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[SKIP] 010 enforce_nonblank_member_phone_uniqueness
+[SKIP] 011 protect_financial_membership_ownership
+[SKIP] 012 migrate_payment_installments
+[SKIP] 013 prevent_duplicate_checkins_and_payment_submissions
+[SKIP] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI03_createRejectsWrongSubscriptionOwner" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.266">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI23_attachmentsUseUserDataDirectoryAndUniqueNames" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.267">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI46_failedTransactionSubmissionCanBeRetriedOnce" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.271">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI32_missingRequiredBackupColumnIsRejected" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.271">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI39_databasePreventsTwoOpenCheckIns" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.266">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI40_subcentPaymentIsRejectedInsteadOfMisreported" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.265">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI13_restoreRefusesActiveManagedConnection" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="5.275">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[SKIP] 010 enforce_nonblank_member_phone_uniqueness
+[SKIP] 011 protect_financial_membership_ownership
+[SKIP] 012 migrate_payment_installments
+[SKIP] 013 prevent_duplicate_checkins_and_payment_submissions
+[SKIP] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI42_connectionFailureDoesNotPoisonLaterConnections" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.302">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI25_failedRevenueInsertRollsBackTypeCreation" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.269">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI49_killedExternalTransactionRecoversCommittedPayments" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.653">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI20_secureTlsDefault" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.268">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+]]></system-out>
+  </testcase>
+  <testcase name="RI08_legacyDuplicateMigrationFailsWithoutDeletingData" classname="com.mycompany.lazar_app.ReleaseRegressionTest" time="0.268">
+    <system-out><![CDATA[[RUN ] 001 create_members
+[ OK ] 001 create_members
+[RUN ] 002 create_membership_plans
+[ OK ] 002 create_membership_plans
+[RUN ] 003 create_member_memberships
+[ OK ] 003 create_member_memberships
+[RUN ] 004 create_check_ins
+[ OK ] 004 create_check_ins
+[RUN ] 005 create_payments
+[ OK ] 005 create_payments
+[RUN ] 006 ensure_session_limit_columns
+[ OK ] 006 ensure_session_limit_columns
+[RUN ] 007 Create expenses table
+[ OK ] 007 Create expenses table
+[RUN ] 008 Create revenues and revenue types tables
+[ OK ] 008 Create revenues and revenue types tables
+[RUN ] 009 Ensure revenue tables exist
+[ OK ] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+[ OK ] 010 enforce_nonblank_member_phone_uniqueness
+[RUN ] 011 protect_financial_membership_ownership
+[ OK ] 011 protect_financial_membership_ownership
+[RUN ] 012 migrate_payment_installments
+[ OK ] 012 migrate_payment_installments
+[RUN ] 013 prevent_duplicate_checkins_and_payment_submissions
+[ OK ] 013 prevent_duplicate_checkins_and_payment_submissions
+[RUN ] 014 index_membership_and_visit_lookups
+[ OK ] 014 index_membership_and_visit_lookups
+Database migrations completed successfully.
+[SKIP] 001 create_members
+[SKIP] 002 create_membership_plans
+[SKIP] 003 create_member_memberships
+[SKIP] 004 create_check_ins
+[SKIP] 005 create_payments
+[SKIP] 006 ensure_session_limit_columns
+[SKIP] 007 Create expenses table
+[SKIP] 008 Create revenues and revenue types tables
+[SKIP] 009 Ensure revenue tables exist
+[RUN ] 010 enforce_nonblank_member_phone_uniqueness
+]]></system-out>
+  </testcase>
+</testsuite>

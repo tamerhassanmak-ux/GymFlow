@@ -612,40 +612,8 @@ public class RevenuesController {
                 );
             }
 
-            /*
-             * Do not maximize the revenue form.
-             *
-             * A normal 1100x760 form is lighter and avoids unnecessary
-             * full-screen rendering / memory pressure on the JavaFX process.
-             */
-            stage.setResizable(
-                    true
-            );
-
-            stage.setMinWidth(
-                    900
-            );
-
-            stage.setMinHeight(
-                    650
-            );
-
-            stage.setOnHidden(
-                    event -> revenueFormStage = null
-            );
-
-            /*
-             * show() is enough with APPLICATION_MODAL. It keeps the owner
-             * disabled while avoiding a nested showAndWait event loop.
-             */
-            stage.show();
-
-            Platform.runLater(
-                    () -> centerStageOverOwner(
-                            stage,
-                            owner
-                    )
-            );
+            stage.setOnHidden(event -> revenueFormStage = null);
+            WindowManager.showResponsive(stage);
 
         } catch (Exception exception) {
 
@@ -1033,6 +1001,7 @@ public class RevenuesController {
 
     private void deleteRevenue(
             Revenue revenue) {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         Alert confirmation =
                 new Alert(
@@ -1167,26 +1136,14 @@ public class RevenuesController {
                         .toAbsolutePath()
                         .normalize();
 
-        Path managedDirectory =
-                Path.of(
-                        "data",
-                        "revenue_attachments"
-                )
-                        .toAbsolutePath()
-                        .normalize();
-
-        if (!attachment.startsWith(
-                managedDirectory
-        )) {
-
-            throw new IllegalStateException(
-                    LanguageManager.isArabic()
-                            ? "المرفق خارج مجلد مرفقات GymFlow، لذلك لم يتم حذفه تلقائيًا: "
-                                    + attachment
-                            : "The attachment is outside the GymFlow attachment directory and was not deleted automatically: "
-                                    + attachment
-            );
-        }
+        Path managedDirectory = com.mycompany.lazar_app.util.AppPaths.dataDirectory()
+                .resolve("revenue_attachments").toAbsolutePath().normalize();
+        Path legacyDirectory = Path.of("data", "revenue_attachments").toAbsolutePath().normalize();
+        if (!Files.exists(attachment)) return;
+        Path actual = attachment.toRealPath();
+        boolean managed = Files.exists(managedDirectory) && actual.startsWith(managedDirectory.toRealPath());
+        boolean legacy = Files.exists(legacyDirectory) && actual.startsWith(legacyDirectory.toRealPath());
+        if (!managed && !legacy) throw new IllegalStateException("Attachment is outside managed storage.");
 
         Files.deleteIfExists(
                 attachment
@@ -1224,7 +1181,7 @@ public class RevenuesController {
         return MONEY_FORMAT.format(
                 amount
         )
-                + " EGP";
+                + " " + com.mycompany.lazar_app.settings.AppSettingsManager.getCurrencyLabel(LanguageManager.isArabic());
     }
 
     private String buttonStyle(

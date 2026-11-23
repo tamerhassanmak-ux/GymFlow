@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 
 public class Payment {
 
+    // Stable for the lifetime of one client submission, including a transaction retry.
+    private final String submissionId = java.util.UUID.randomUUID().toString();
+    public String getSubmissionId() { return submissionId; }
+
     private long id;
     private long memberId;
     private Long membershipId;

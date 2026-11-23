@@ -277,6 +277,7 @@ public class RevenueFormController {
 
     @FXML
     private void saveRevenue() {
+        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         if (revenueRepository == null) {
             showError(

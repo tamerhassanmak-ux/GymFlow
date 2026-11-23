@@ -25,14 +25,14 @@ public class SuperAdminSetupController {
 
         if (password == null || password.length() < 8) {
             messageLabel.setText(
-                    "كلمة المرور يجب ألا تقل عن 8 أحرف."
+                    localized("كلمة المرور يجب ألا تقل عن 8 أحرف.", "Password must contain at least 8 characters.")
             );
             return;
         }
 
         if (!password.equals(confirmation)) {
             messageLabel.setText(
-                    "كلمتا المرور غير متطابقتين."
+                    localized("كلمتا المرور غير متطابقتين.", "Passwords do not match.")
             );
             return;
         }
@@ -54,5 +54,8 @@ public class SuperAdminSetupController {
                     exception.getMessage()
             );
         }
+    }
+    private static String localized(String ar, String en) {
+        return com.mycompany.lazar_app.LanguageManager.isArabic() ? ar : en;
     }
 }

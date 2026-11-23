@@ -1,6 +1,7 @@
 package com.mycompany.lazar_app.ui;
 
 import com.mycompany.lazar_app.LanguageManager;
+import com.mycompany.lazar_app.ui.dialog.DialogStyler;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,13 +12,15 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.Node;
 import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Dialog;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
+import javafx.scene.text.Text;
+import javafx.scene.layout.VBox;
+import javafx.beans.binding.Bindings;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -44,15 +47,8 @@ public final class WindowManager {
      * Keeping this in one place prevents Linux/Ubuntu from opening
      * alerts at inconsistent sizes depending on their text.
      */
-    public static final double STANDARD_DIALOG_WIDTH = 520.0;
-    public static final double STANDARD_DIALOG_HEIGHT = 320.0;
-
-    /*
-     * Calls requesting a normal "small" dialog are normalized to the
-     * standard size above. Larger custom dialogs keep their requested size.
-     */
-    private static final double SMALL_DIALOG_MAX_WIDTH = 650.0;
-    private static final double SMALL_DIALOG_MAX_HEIGHT = 450.0;
+    public static final double STANDARD_DIALOG_WIDTH = 960.0;
+    public static final double STANDARD_DIALOG_HEIGHT = 680.0;
 
     private WindowManager() {
     }
@@ -132,229 +128,142 @@ public final class WindowManager {
             double requestedMinHeight
     ) {
 
-        if (stage == null) {
-            return;
-        }
-
-        prepareRootForResize(stage);
-
-        Rectangle2D bounds =
-                getVisualBounds(stage);
-
-        double minWidth =
-                Math.min(
-                        requestedMinWidth,
-                        bounds.getWidth()
-                );
-
-        double minHeight =
-                Math.min(
-                        requestedMinHeight,
-                        bounds.getHeight()
-                );
-
-        stage.setResizable(true);
-
-        stage.setMinWidth(
-                Math.max(300.0, minWidth)
-        );
-
-        stage.setMinHeight(
-                Math.max(250.0, minHeight)
-        );
-
-        /*
-         * Fill the usable desktop BEFORE showing.
-         *
-         * This is important on Linux. If the window manager delays or
-         * ignores the initial maximize request, the window is still
-         * opened at a correct usable-screen size.
-         */
-        applyVisualBounds(
-                stage,
-                bounds
-        );
-
-        /*
-         * Re-assert maximize AFTER the window becomes visible.
-         *
-         * Some Linux window managers do not reliably honour
-         * setMaximized(true) before the first show.
-         */
-        stage.setOnShown(
-                event ->
-                        Platform.runLater(
-                                () -> {
-
-                                    Rectangle2D shownBounds =
-                                            getVisualBounds(stage);
-
-                                    applyVisualBounds(
-                                            stage,
-                                            shownBounds
-                                    );
-
-                                    stage.setMaximized(
-                                            true
-                                    );
-                                }
-                        )
-        );
-
-        /*
-         * showAndWait MUST be called only once.
-         */
-        stage.showAndWait();
+        // Retained for existing controllers: all modal forms now follow the
+        // same fixed window policy instead of opening maximized.
+        showResponsiveAndWait(stage, STANDARD_DIALOG_WIDTH, STANDARD_DIALOG_HEIGHT);
     }
 
-
-    // =========================================================
-    // SHOW RESPONSIVE DIALOG
-    // =========================================================
-
+    /** Preferred dimensions are retained for source compatibility only. */
     public static void showResponsiveAndWait(
             Stage stage,
             double preferredWidth,
             double preferredHeight
     ) {
+        showFixedStage(stage, true);
+    }
 
-        if (stage == null) {
-            return;
-        }
+    /** Non-blocking variant for controllers that retain the open modal stage. */
+    public static void showResponsive(Stage stage) {
+        showFixedStage(stage, false);
+    }
 
-        prepareRootForResize(stage);
+    private static void showFixedStage(Stage stage, boolean wait) {
+        if (stage == null || stage.getScene() == null) return;
+        prepareModalContent(stage);
+        Rectangle2D bounds = getVisualBounds(stage);
+        double width = modalWidth(bounds);
+        double height = modalHeight(bounds);
+        Runnable geometry = () -> applyFixedModalGeometry(stage, bounds, width, height);
+        geometry.run();
+        javafx.event.EventHandler<WindowEvent> showing = event -> geometry.run();
+        javafx.event.EventHandler<WindowEvent> shown = event -> {
+            geometry.run();
+            Platform.runLater(() -> { if (stage.isShowing()) geometry.run(); });
+        };
+        stage.addEventHandler(WindowEvent.WINDOW_SHOWING, showing);
+        stage.addEventHandler(WindowEvent.WINDOW_SHOWN, shown);
+        stage.addEventHandler(WindowEvent.WINDOW_HIDDEN, new javafx.event.EventHandler<WindowEvent>() {
+            @Override public void handle(WindowEvent event) {
+                stage.removeEventHandler(WindowEvent.WINDOW_SHOWING, showing);
+                stage.removeEventHandler(WindowEvent.WINDOW_SHOWN, shown);
+                stage.removeEventHandler(WindowEvent.WINDOW_HIDDEN, this);
+            }
+        });
+        if (wait) stage.showAndWait();
+        else stage.show();
+    }
 
-        Rectangle2D initialBounds =
-                getVisualBounds(stage);
+    private static double modalWidth(Rectangle2D bounds) {
+        return Math.min(STANDARD_DIALOG_WIDTH, Math.max(1, bounds.getWidth() - 36));
+    }
 
+    private static double modalHeight(Rectangle2D bounds) {
+        return Math.min(STANDARD_DIALOG_HEIGHT, Math.max(1, bounds.getHeight() - 60));
+    }
 
-        /*
-         * Calculate ONE deterministic opening size.
-         *
-         * IMPORTANT:
-         * Do not recalculate the target from stage.getWidth()/getHeight()
-         * after the first show. On Linux/Ubuntu the window manager may
-         * temporarily report a much smaller decorated size during the
-         * first frame. Using that temporary size was the reason a form
-         * sometimes opened correctly and sometimes opened too small.
-         */
-        final double targetWidth =
-                Math.min(
-                        Math.max(
-                                preferredWidth,
-                                520.0
-                        ),
-                        initialBounds.getWidth() * 0.92
-                );
-
-        final double targetHeight =
-                Math.min(
-                        Math.max(
-                                preferredHeight,
-                                420.0
-                        ),
-                        initialBounds.getHeight() * 0.92
-                );
-
-
-        stage.setResizable(true);
-
-        stage.setMinWidth(
-                Math.min(
-                        520.0,
-                        targetWidth
-                )
-        );
-
-        stage.setMinHeight(
-                Math.min(
-                        420.0,
-                        targetHeight
-                )
-        );
-
-
-        /*
-         * Always start in normal-window mode.
-         * This prevents an old maximize state from influencing a new form.
-         */
+    private static void applyFixedModalGeometry(Stage stage, Rectangle2D bounds,
+                                                 double width, double height) {
         stage.setMaximized(false);
         stage.setFullScreen(false);
+        stage.setResizable(false);
+        stage.setMinWidth(width);
+        stage.setMaxWidth(width);
+        stage.setMinHeight(height);
+        stage.setMaxHeight(height);
+        applyStableResponsiveSize(stage, bounds, width, height);
+    }
 
+    private static ScrollPane scrollableContent(Node content) {
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        scroll.setFitToHeight(true);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroll.setMinSize(0, 0);
+        scroll.getStyleClass().add("gymflow-dialog-scroll");
+        if (content instanceof Region region) {
+            // Preserve the form's natural size. The viewport must scroll rather
+            // than compress fields, labels or nested footer buttons to zero.
+            region.setMinHeight(Region.USE_PREF_SIZE);
+            region.setMaxHeight(Double.MAX_VALUE);
+        }
+        return scroll;
+    }
 
-        applyStableResponsiveSize(
-                stage,
-                initialBounds,
-                targetWidth,
-                targetHeight
-        );
-
-
-        /*
-         * Reapply BEFORE the operating system shows the window.
-         */
-        stage.addEventHandler(
-                WindowEvent.WINDOW_SHOWING,
-                event -> {
-
-                    Rectangle2D showingBounds =
-                            getVisualBounds(stage);
-
-                    applyStableResponsiveSize(
-                            stage,
-                            showingBounds,
-                            Math.min(
-                                    targetWidth,
-                                    showingBounds.getWidth() * 0.92
-                            ),
-                            Math.min(
-                                    targetHeight,
-                                    showingBounds.getHeight() * 0.92
-                            )
-                    );
+    private static VBox wrappedMessage(Text text, DialogPane pane,
+                                       javafx.beans.binding.StringExpression source) {
+        // Explicit line breaks avoid bidi renderer clipping of implicitly
+        // wrapped Arabic paragraphs. Unbreakable values remain scrollable.
+        text.textProperty().bind(Bindings.createStringBinding(() -> {
+            double width = Math.max(120, (pane.getWidth() > 56
+                    ? pane.getWidth() : STANDARD_DIALOG_WIDTH) - 64);
+            Text measure = new Text();
+            measure.setFont(text.getFont());
+            StringBuilder result = new StringBuilder();
+            String value = source.get() == null ? "" : source.get();
+            for (String paragraph : value.split("\\R", -1)) {
+                if (!result.isEmpty()) result.append('\n');
+                StringBuilder line = new StringBuilder();
+                for (String word : paragraph.split("\\s+")) {
+                    measure.setText(line.isEmpty() ? word : line + " " + word);
+                    if (!line.isEmpty() && measure.getLayoutBounds().getWidth() > width) {
+                        result.append(line).append('\n');
+                        line.setLength(0);
+                    }
+                    if (!line.isEmpty()) line.append(' ');
+                    line.append(word);
                 }
-        );
+                result.append(line);
+            }
+            return result.toString();
+        }, source, pane.widthProperty(), text.fontProperty()));
+        text.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+        text.setTextAlignment(LanguageManager.isArabic()
+                ? javafx.scene.text.TextAlignment.RIGHT : javafx.scene.text.TextAlignment.LEFT);
+        VBox paragraphs = new VBox(text);
+        paragraphs.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+        paragraphs.setMinWidth(0);
+        paragraphs.setAlignment(LanguageManager.isArabic()
+                ? javafx.geometry.Pos.TOP_RIGHT : javafx.geometry.Pos.TOP_LEFT);
+        return paragraphs;
+    }
 
-
-        /*
-         * Reapply once more AFTER the native Linux window is created.
-         *
-         * This is intentionally based on targetWidth/targetHeight,
-         * NOT stage.getWidth()/stage.getHeight().
-         */
-        stage.addEventHandler(
-                WindowEvent.WINDOW_SHOWN,
-                event ->
-                        Platform.runLater(
-                                () -> {
-
-                                    Rectangle2D shownBounds =
-                                            getVisualBounds(stage);
-
-                                    double finalWidth =
-                                            Math.min(
-                                                    targetWidth,
-                                                    shownBounds.getWidth() * 0.92
-                                            );
-
-                                    double finalHeight =
-                                            Math.min(
-                                                    targetHeight,
-                                                    shownBounds.getHeight() * 0.92
-                                            );
-
-                                    applyStableResponsiveSize(
-                                            stage,
-                                            shownBounds,
-                                            finalWidth,
-                                            finalHeight
-                                    );
-                                }
-                        )
-        );
-
-
-        stage.showAndWait();
+    private static void prepareModalContent(Stage stage) {
+        Scene scene = stage.getScene();
+        Parent content = scene.getRoot();
+        if (content.getStyleClass().contains("gymflow-modal-viewport")) return;
+        applyOrientation(content);
+        ScrollPane viewport = scrollableContent(null);
+        viewport.getStyleClass().add("gymflow-modal-viewport");
+        viewport.setNodeOrientation(content.getNodeOrientation());
+        if (content.getStyleClass().contains("dark-theme")) viewport.getStyleClass().add("dark-theme");
+        scene.setRoot(viewport);
+        viewport.setContent(content);
+        if (content instanceof Region region) region.setMinWidth(Region.USE_PREF_SIZE);
+        var css = WindowManager.class.getResource("/css/app.css");
+        if (css != null && !scene.getStylesheets().contains(css.toExternalForm())) {
+            scene.getStylesheets().add(css.toExternalForm());
+        }
     }
 
 
@@ -741,9 +650,16 @@ public final class WindowManager {
         if (dialog == null) return Optional.empty();
         if (owner != null && dialog.getOwner() == null) dialog.initOwner(owner);
 
-        Rectangle2D bounds = getVisualBoundsForOwner(owner);
+        final Window effectiveOwner = dialog.getOwner();
+        Rectangle2D bounds = getVisualBoundsForOwner(effectiveOwner);
         DialogPane pane = dialog.getDialogPane();
-        pane.getStyleClass().add("gymflow-responsive-dialog");
+        if (!pane.getStyleClass().contains("app-dialog")) {
+            DialogStyler.style(dialog);
+        }
+        applyOrientation(pane);
+        if (!pane.getStyleClass().contains("gymflow-responsive-dialog")) {
+            pane.getStyleClass().add("gymflow-responsive-dialog");
+        }
 
         // Preserve Alert's built-in content text. Clearing it and reparenting
         // its label can result in visually empty alerts on some JavaFX skins.
@@ -757,60 +673,72 @@ public final class WindowManager {
                         ? "حدث خطأ غير متوقع. راجع سجل الأخطاء."
                         : "An unexpected error occurred. Check the error log.");
             }
-        } else {
-            // Scroll long custom forms only, while keeping action buttons visible.
-            Node content = pane.getContent();
-            if (content != null && !(content instanceof ScrollPane)) {
-                ScrollPane scroll = new ScrollPane(content);
-                scroll.setFitToWidth(true);
-                scroll.setFitToHeight(false);
-                scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-                scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                scroll.setPannable(true);
-                scroll.getStyleClass().add("gymflow-dialog-scroll");
-                pane.setContent(scroll);
+            // An explicit content node allows long messages to scroll within
+            // the standard frame, without changing the Alert's text property.
+            if (pane.getContent() == null) {
+                Text message = new Text();
+
+                message.getStyleClass().add("gymflow-dialog-message-text");
+                pane.setContent(wrappedMessage(message, pane, alert.contentTextProperty()));
             }
         }
+        Node header = pane.getHeader();
+        if (header == null && dialog.getHeaderText() != null && !dialog.getHeaderText().isBlank()) {
+            Text heading = new Text();
 
-        boolean smallAlert = dialog instanceof Alert
-                && preferredWidth <= SMALL_DIALOG_MAX_WIDTH
-                && preferredHeight <= SMALL_DIALOG_MAX_HEIGHT;
-        double desiredWidth = smallAlert ? STANDARD_DIALOG_WIDTH : preferredWidth;
-        double desiredHeight = smallAlert ? STANDARD_DIALOG_HEIGHT : preferredHeight;
-        final double width = Math.min(Math.max(desiredWidth, 360.0),
-                Math.max(280.0, bounds.getWidth() - 36.0));
-        final double targetHeight = Math.min(Math.max(desiredHeight, 300.0),
-                Math.max(240.0, bounds.getHeight() - 60.0));
+            heading.getStyleClass().add("gymflow-dialog-heading-text");
+            header = wrappedMessage(heading, pane, dialog.headerTextProperty());
+        }
+        if (header != null && !(header instanceof ScrollPane)) {
+            ScrollPane headerScroll = scrollableContent(header);
+            headerScroll.setMaxHeight(140);
+            headerScroll.setPrefHeight(Region.USE_COMPUTED_SIZE);
+            headerScroll.getStyleClass().add("gymflow-dialog-header-scroll");
+            pane.setHeader(headerScroll);
+        }
+        Node content = pane.getContent();
+        if (content != null && !(content instanceof ScrollPane)) {
+            pane.setContent(scrollableContent(content));
+        } else if (content instanceof ScrollPane scroll) {
+            scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            scroll.setMinSize(0, 0);
+        }
 
-        dialog.setResizable(true);
-        pane.setMinWidth(Math.min(300.0, width));
-        pane.setPrefWidth(width);
-        pane.setMaxWidth(Double.MAX_VALUE);
-        pane.setMinHeight(Region.USE_COMPUTED_SIZE);
-        pane.setPrefHeight(targetHeight);
-        pane.setMaxHeight(Double.MAX_VALUE);
-
-        dialog.addEventHandler(DialogEvent.DIALOG_SHOWN, event -> Platform.runLater(() -> {
-            if (pane.getScene() == null || !(pane.getScene().getWindow() instanceof Stage stage)) return;
-            Rectangle2D screen = getVisualBoundsForOwner(owner != null ? owner : stage);
-            double safeWidth = Math.min(width, Math.max(280.0, screen.getWidth() - 36.0));
-            double safeMaxHeight = Math.max(240.0, screen.getHeight() - 60.0);
-            // CSS/layout can need more vertical room than the originally requested size.
-            // Never force a smaller fixed height over the measured DialogPane.
-            pane.applyCss();
-            pane.layout();
-            double measured = pane.prefHeight(safeWidth) + 32.0;
-            double safeHeight = Math.min(safeMaxHeight, Math.max(targetHeight, measured));
-            stage.setMaximized(false);
-            stage.setFullScreen(false);
-            stage.setResizable(true);
-            stage.setMinWidth(Math.min(300.0, safeWidth));
-            stage.setMinHeight(Math.min(220.0, safeHeight));
-            stage.setWidth(safeWidth);
-            stage.setHeight(safeHeight);
-            centerInsideBounds(stage, screen, safeWidth, safeHeight);
-        }));
-        return dialog.showAndWait();
+        // All modal dialogs use the same outer dimensions, regardless of text,
+        // controller defaults, transparent/native decorations or prior size.
+        final double width = modalWidth(bounds);
+        final double height = modalHeight(bounds);
+        dialog.setResizable(false);
+        pane.setMinSize(0, 0);
+        pane.setPrefSize(width, height);
+        pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        Runnable geometry = () -> {
+            dialog.setWidth(width);
+            dialog.setHeight(height);
+            if (pane.getScene() != null && pane.getScene().getWindow() instanceof Stage stage) {
+                applyFixedModalGeometry(stage, bounds, width, height);
+            }
+        };
+        for (var type : pane.getButtonTypes()) {
+            if (pane.lookupButton(type) instanceof Region button) {
+                button.setMinHeight(Region.USE_PREF_SIZE);
+            }
+        }
+        geometry.run();
+        javafx.event.EventHandler<DialogEvent> showing = event -> geometry.run();
+        javafx.event.EventHandler<DialogEvent> shown = event -> {
+            geometry.run();
+            Platform.runLater(() -> { if (dialog.isShowing()) geometry.run(); });
+        };
+        dialog.addEventHandler(DialogEvent.DIALOG_SHOWING, showing);
+        dialog.addEventHandler(DialogEvent.DIALOG_SHOWN, shown);
+        try {
+            return dialog.showAndWait();
+        } finally {
+            dialog.removeEventHandler(DialogEvent.DIALOG_SHOWING, showing);
+            dialog.removeEventHandler(DialogEvent.DIALOG_SHOWN, shown);
+        }
     }
 
 
