@@ -217,8 +217,14 @@ public class PaymentRepository {
             values.add(filter.method().strip().toUpperCase(java.util.Locale.ROOT));
         }
         if (filter.status() != null && !filter.status().isBlank()) {
-            sql.append(" AND UPPER(p.status)=? ");
-            values.add(filter.status().strip().toUpperCase(java.util.Locale.ROOT));
+            String status = filter.status().strip().toUpperCase(java.util.Locale.ROOT);
+            if ("REMAINING".equals(status)) {
+                sql.append(" AND UPPER(p.status) <> 'CANCELLED' AND ")
+                        .append(PAGE_BALANCE).append(" > 0 ");
+            } else {
+                sql.append(" AND UPPER(p.status)=? ");
+                values.add(status);
+            }
         }
         return sql.toString();
     }
@@ -867,7 +873,6 @@ public class PaymentRepository {
     public Payment save(
             Payment payment
     ) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         validate(payment);
 
@@ -1937,7 +1942,6 @@ public class PaymentRepository {
             int installments,
             LocalDate firstDueDate
     ) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         if (membershipId <= 0) {
             throw new IllegalArgumentException("Membership ID is required.");

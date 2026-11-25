@@ -10,7 +10,6 @@ import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
@@ -51,31 +50,40 @@ public final class TablePager<T> {
         host.getStyleClass().add("table-pagination");
         host.setSpacing(12);
         host.setAlignment(Pos.CENTER_LEFT);
+        position.setWrapText(true);
+        position.setMinWidth(0);
+        position.getStyleClass().add("pagination-position");
+        loading.setWrapText(true);
+        loading.setMinWidth(0);
+        loading.visibleProperty().bind(loading.textProperty().isNotEmpty());
+        loading.managedProperty().bind(loading.visibleProperty());
+        previous.setMinWidth(Region.USE_PREF_SIZE);
+        next.setMinWidth(Region.USE_PREF_SIZE);
+        sizes.setPrefWidth(80);sizes.setMinWidth(70);
         previous.setId("pagingPrevious");
         next.setId("pagingNext");
         sizes.setId("pagingSize");
-        HBox navigation = new HBox(10, previous, position, next);
+        com.mycompany.lazar_app.ui.ResponsiveRow navigation = new com.mycompany.lazar_app.ui.ResponsiveRow();
+        navigation.setSpacing(10);navigation.getChildren().setAll(previous, next);
         navigation.setAlignment(Pos.CENTER_LEFT);
-        HBox pageSizeControls = new HBox(10, new Label(text("paging.size")), sizes);
+        com.mycompany.lazar_app.ui.ResponsiveRow pageSizeControls = new com.mycompany.lazar_app.ui.ResponsiveRow();
+        pageSizeControls.setSpacing(10);
+        Label sizeCaption = new Label(text("paging.size"));
+        sizeCaption.setWrapText(true);
+        sizeCaption.setMinWidth(0);
+        pageSizeControls.getChildren().setAll(sizeCaption, sizes);
         pageSizeControls.setAlignment(Pos.CENTER_LEFT);
-        FlowPane controls = new FlowPane(12, 10, navigation, pageSizeControls, loading);
+        com.mycompany.lazar_app.ui.ResponsiveRow controls = new com.mycompany.lazar_app.ui.ResponsiveRow();
+        controls.setSpacing(12);controls.getChildren().setAll(position, navigation, pageSizeControls, loading);
         controls.setMinWidth(0);
         controls.setMaxWidth(Double.MAX_VALUE);
-        controls.setPrefWrapLength(760);
+
         HBox.setHgrow(controls, Priority.ALWAYS);
         host.setMinWidth(0);
         host.setMinHeight(Region.USE_PREF_SIZE);
         host.getChildren().setAll(controls);
-        // HBox can measure a FlowPane at its preferred wrap width. Explicitly
-        // measure the real footer width so a second line never falls below it.
-        host.prefHeightProperty().bind(javafx.beans.binding.Bindings.createDoubleBinding(() -> {
-            double width = host.getWidth() > 0
-                    ? host.getWidth() - host.getInsets().getLeft() - host.getInsets().getRight()
-                    : controls.getPrefWrapLength();
-            return controls.prefHeight(Math.max(1, width))
-                    + host.getInsets().getTop() + host.getInsets().getBottom();
-        }, host.widthProperty(), host.insetsProperty(), position.textProperty(), loading.textProperty(),
-                position.fontProperty()));
+        // ResponsiveRow measures its height from the width supplied by its parent,
+        // avoiding stale getWidth()-based bindings during a resize.
         previous.setOnAction(e -> { if (index > 0) { index--; reload(); } });
         next.setOnAction(e -> { if (((long) index + 1) * pageSize < total) { index++; reload(); } });
         sizes.valueProperty().addListener((o, before, value) -> {
@@ -140,7 +148,10 @@ public final class TablePager<T> {
         long pages = Math.max(1, (total + pageSize - 1) / pageSize);
         long first = total == 0 ? 0 : (long) index * pageSize + 1;
         long last = Math.min(total, ((long) index + 1) * pageSize);
-        position.setText(String.format(text("paging.position"), index + 1, pages, first, last, total));
+        String description=String.format(text("paging.position"), index + 1, pages, first, last, total);
+        position.setText(total == 0 ? text("paging.empty") : description);
+        position.setAccessibleText(position.getText());
+        position.setTooltip(new Tooltip(position.getText()));
         previous.setDisable(busy || index == 0);
         next.setDisable(busy || ((long) index + 1) * pageSize >= total);
         // Rows remain visible during loading but cannot be acted on with a stale filter.

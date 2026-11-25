@@ -99,7 +99,7 @@ public class RevenueFormController {
 
         Platform.runLater(() -> {
             if (nameField != null) {
-                nameField.requestFocus();
+                com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(nameField);
             }
         });
     }
@@ -277,7 +277,6 @@ public class RevenueFormController {
 
     @FXML
     private void saveRevenue() {
-        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         if (revenueRepository == null) {
             showError(

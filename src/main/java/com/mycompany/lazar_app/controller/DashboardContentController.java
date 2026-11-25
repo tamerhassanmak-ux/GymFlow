@@ -697,7 +697,7 @@ public class DashboardContentController {
     ) {
 
         HBox row =
-                new HBox(10);
+                new com.mycompany.lazar_app.ui.ResponsiveRow(10);
 
 
         row.setAlignment(
@@ -862,7 +862,7 @@ public class DashboardContentController {
     ) {
 
         HBox row =
-                new HBox(10);
+                new com.mycompany.lazar_app.ui.ResponsiveRow(10);
 
 
         row.setAlignment(
@@ -971,7 +971,7 @@ public class DashboardContentController {
     ) {
 
         HBox badge =
-                new HBox(3);
+                new com.mycompany.lazar_app.ui.ResponsiveRow(3);
 
 
         badge.setAlignment(
@@ -1124,7 +1124,7 @@ public class DashboardContentController {
     ) {
 
         HBox row =
-                new HBox(10);
+                new com.mycompany.lazar_app.ui.ResponsiveRow(10);
 
 
         row.setAlignment(

@@ -14,7 +14,7 @@
      * Noto Sans        = English / Numbers
      * Arial            = Safe fallback
      */
-    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Noto Naskh Arabic", "Arial";
     -fx-font-size: 13px;
 
     -fx-background-color: #F5F7FB;
@@ -36,7 +36,7 @@
 .table-view,
 .list-view,
 .tooltip {
-    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Noto Naskh Arabic", "Arial";
 }
 
 
@@ -206,7 +206,7 @@
      * Noto Sans first because KPI values
      * are mainly numbers.
      */
-    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Arial";
+    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Noto Naskh Arabic", "Arial";
 
     -fx-font-size: 28px;
     -fx-font-weight: bold;
@@ -880,7 +880,7 @@
    ========================================================= */
 
 .axis {
-    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Arial";
+    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Noto Naskh Arabic", "Arial";
 
     -fx-tick-label-fill: #64748B;
 
@@ -889,7 +889,7 @@
 
 
 .axis-label {
-    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Noto Naskh Arabic", "Arial";
 
     -fx-text-fill: #64748B;
 
@@ -974,7 +974,7 @@
 /* Pie text */
 
 .chart-pie-label {
-    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Noto Naskh Arabic", "Arial";
 
     -fx-fill: #475569;
 
@@ -999,7 +999,7 @@
 
 
 .chart-legend-item {
-    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Noto Naskh Arabic", "Arial";
 
     -fx-text-fill: #64748B;
 
@@ -1083,7 +1083,7 @@
    ========================================================= */
 
 .arabic {
-    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Arial";
+    -fx-font-family: "Noto Sans Arabic", "Noto Sans", "Noto Naskh Arabic", "Arial";
 }
 
 
@@ -1369,7 +1369,7 @@
 }
 
 .gym-card-membership {
-    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Arial";
+    -fx-font-family: "Noto Sans", "Noto Sans Arabic", "Noto Naskh Arabic", "Arial";
 
     -fx-font-size: 12px;
     -fx-font-weight: bold;
@@ -1505,14 +1505,9 @@
 /* Fixed header/footer sizing */
 
 .member-modal-wide .member-modal-header {
-    -fx-min-height: 72px;
-    -fx-pref-height: 72px;
 }
 
 .member-modal-wide .member-modal-footer {
-    -fx-min-height: 62px;
-    -fx-pref-height: 62px;
-    -fx-max-height: 62px;
 }
 
 /* =========================================================
@@ -1941,7 +1936,7 @@
 }
 .app-dialog-icon {
     -fx-min-width: 50px; -fx-pref-width: 50px; -fx-max-width: 50px;
-    -fx-min-height: 50px; -fx-pref-height: 50px; -fx-max-height: 50px;
+    -fx-min-height: 50px;
     -fx-alignment: CENTER;
     -fx-background-radius: 25;
     -fx-font-size: 25px;
@@ -2434,7 +2429,8 @@
     -fx-border-color: -gf-line;
     -fx-border-radius: 12;
 }
-.table-pagination .label { -fx-text-fill: -gf-muted; -fx-font-size: 12px; }
+.table-pagination .label { -fx-text-fill: -gf-muted; -fx-font-size: 13px; }
+.table-pagination .pagination-position { -fx-text-fill: -gf-ink; -fx-font-weight: bold; }
 .table-pagination .combo-box { -fx-pref-width: 90; }
 .payments-header-scroll,
 .payments-header-scroll > .viewport {
@@ -2463,3 +2459,25 @@
 .payments-horizontal-scroll:horizontal .thumb:hover {
     -fx-background-color: #C94B0C;
 }
+
+/* Responsive forms retain readable typography and a separate action surface. */
+.responsive-form { -fx-min-width: 0; -fx-min-height: 0; }
+.form-header { -fx-padding: 16 24; }
+.persistent-actions {
+    -fx-padding: 12 20;
+    -fx-background-color: -gf-surface;
+    -fx-border-color: -gf-line transparent transparent transparent;
+    -fx-min-height: -1;
+}
+.persistent-actions .button { -fx-min-height: 40; -fx-wrap-text: true; }
+.responsive-content, .responsive-content > .viewport {
+    -fx-background-color: -gf-canvas;
+    -fx-background: -gf-canvas;
+    -fx-padding: 0;
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+}
+.navigation-scroll, .navigation-scroll > .viewport { -fx-background-color: #111827; -fx-padding: 0; }
+/* Bare field labels must not inherit the white text of the navigation column. */
+.responsive-form .label { -fx-text-fill: -gf-ink; }
+.responsive-form .page-subtitle, .responsive-form .ui-muted { -fx-text-fill: -gf-muted; }

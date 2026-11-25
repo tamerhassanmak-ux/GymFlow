@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveGrid?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -20,14 +22,14 @@
 <BorderPane
         prefWidth="760.0"
         prefHeight="650.0"
-        minWidth="640.0"
-        minHeight="520.0"
+
+
         maxWidth="Infinity"
         maxHeight="Infinity"
         style="-fx-background-color:#FFFFFF;"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.MembershipPlanFormController">
+        fx:controller="com.mycompany.lazar_app.controller.MembershipPlanFormController" minWidth="0" minHeight="0">
 
     <!-- =====================================================
          FIXED HEADER
@@ -76,7 +78,7 @@
                     <!-- =================================================
                          BASIC PLAN DATA
                     ================================================== -->
-                    <GridPane
+                    <ResponsiveGrid
                             hgap="20"
                             vgap="8"
                             maxWidth="Infinity">
@@ -235,7 +237,7 @@
                             </VBox>
 
                         </children>
-                    </GridPane>
+                    </ResponsiveGrid>
 
 
                     <Separator/>
@@ -278,7 +280,7 @@
 
             <Separator/>
 
-            <HBox
+            <ResponsiveRow
                     spacing="12"
                     alignment="CENTER_RIGHT">
 
@@ -304,7 +306,7 @@
                         onAction="#save"
                         styleClass="primary-button"/>
 
-            </HBox>
+            </ResponsiveRow>
 
         </VBox>
     </bottom>

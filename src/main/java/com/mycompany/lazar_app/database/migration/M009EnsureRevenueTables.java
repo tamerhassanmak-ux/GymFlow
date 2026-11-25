@@ -155,28 +155,10 @@ public final class M009EnsureRevenueTables implements Migration {
             return;
         }
 
-        try {
-            MigrationSupport.execute(
-                    connection,
-                    "CREATE INDEX idx_revenues_date ON revenues(revenue_date)"
-            );
-        } catch (Exception ignored) {
-        }
+        MigrationSupport.createIndexIfMissing(connection, "revenues", "idx_revenues_date", "revenue_date");
 
-        try {
-            MigrationSupport.execute(
-                    connection,
-                    "CREATE INDEX idx_revenues_type ON revenues(revenue_type)"
-            );
-        } catch (Exception ignored) {
-        }
+        MigrationSupport.createIndexIfMissing(connection, "revenues", "idx_revenues_type", "revenue_type");
 
-        try {
-            MigrationSupport.execute(
-                    connection,
-                    "CREATE INDEX idx_revenues_name ON revenues(name)"
-            );
-        } catch (Exception ignored) {
-        }
+        MigrationSupport.createIndexIfMissing(connection, "revenues", "idx_revenues_name", "name");
     }
 }

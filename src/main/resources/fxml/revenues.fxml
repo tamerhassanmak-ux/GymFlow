@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -17,7 +18,7 @@
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.mycompany.lazar_app.controller.RevenuesController" styleClass="app-page"
-        >
+         minWidth="0" minHeight="0">
 
     <padding>
         <Insets top="24" right="28" bottom="24" left="28"/>
@@ -25,7 +26,7 @@
 
     <children>
 
-        <HBox alignment="CENTER_LEFT" spacing="16">
+        <ResponsiveRow alignment="CENTER_LEFT" spacing="16">
             <VBox spacing="5">
                 <Label fx:id="titleLabel"
                        text="Revenues"
@@ -42,9 +43,9 @@
                     onAction="#openNewRevenue"
                     minHeight="42"
                     style="-fx-padding: 10 20; -fx-cursor: hand;" styleClass="primary-button"/>
-        </HBox>
+        </ResponsiveRow>
 
-        <HBox spacing="14">
+        <ResponsiveRow spacing="14">
 
             <VBox spacing="7" HBox.hgrow="ALWAYS" minHeight="108"
                   style="-fx-padding: 17;" styleClass="surface-card">
@@ -78,9 +79,9 @@
                        style="-fx-text-fill:#F97316;-fx-font-size:23px;-fx-font-weight:bold;"/>
             </VBox>
 
-        </HBox>
+        </ResponsiveRow>
 
-        <HBox spacing="10" alignment="CENTER_LEFT"
+        <ResponsiveRow spacing="10" alignment="CENTER_LEFT"
               style="-fx-background-color:white;-fx-background-radius:11;-fx-padding:13;">
 
             <TextField fx:id="searchField"
@@ -99,7 +100,7 @@
                     onAction="#refreshAll"
                     minHeight="38"
                     style="-fx-padding: 8 18; -fx-cursor: hand;" styleClass="neutral-button"/>
-        </HBox>
+        </ResponsiveRow>
 
         <VBox spacing="10" VBox.vgrow="ALWAYS"
               style="-fx-background-color:white;-fx-background-radius:12;-fx-padding:12;">

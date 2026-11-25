@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveGrid?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -17,14 +19,14 @@
 <BorderPane
         prefWidth="1180.0"
         prefHeight="760.0"
-        minWidth="760.0"
-        minHeight="560.0"
+
+
         maxWidth="Infinity"
         maxHeight="Infinity"
         styleClass="member-details-root"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.MemberDetailsController">
+        fx:controller="com.mycompany.lazar_app.controller.MemberDetailsController" minWidth="0" minHeight="0">
 
     <!-- =====================================================
          HEADER
@@ -38,7 +40,7 @@
                 <Insets top="24" right="32" bottom="24" left="32"/>
             </padding>
 
-            <HBox spacing="22"
+            <ResponsiveRow spacing="22"
                   alignment="CENTER_LEFT">
 
                 <!-- PHOTO -->
@@ -80,7 +82,7 @@
                             text="LZR-000000"
                             styleClass="member-details-code"/>
 
-                    <HBox spacing="10"
+                    <ResponsiveRow spacing="10"
                           alignment="CENTER_LEFT">
 
                         <Label
@@ -93,7 +95,7 @@
                                 text="Active"
                                 styleClass="member-status-badge"/>
 
-                    </HBox>
+                    </ResponsiveRow>
 
                 </VBox>
 
@@ -134,7 +136,7 @@
 
                 </VBox>
 
-            </HBox>
+            </ResponsiveRow>
 
         </VBox>
 
@@ -213,7 +215,7 @@
                                     text="REMAINING"
                                     styleClass="member-kpi-title"/>
 
-                            <HBox spacing="6"
+                            <ResponsiveRow spacing="6"
                                   alignment="BASELINE_LEFT">
 
                                 <Label
@@ -226,7 +228,7 @@
                                         text="Days"
                                         styleClass="member-kpi-unit"/>
 
-                            </HBox>
+                            </ResponsiveRow>
 
                             <Label
                                     fx:id="remainingDescriptionLabel"
@@ -328,7 +330,7 @@
                          INFORMATION
                          ========================================= -->
 
-                    <HBox
+                    <ResponsiveRow
                             spacing="18"
                             fillHeight="true"
                             maxWidth="Infinity">
@@ -348,7 +350,7 @@
                                     prefHeight="1"
                                     styleClass="member-info-separator"/>
 
-                            <GridPane
+                            <ResponsiveGrid
                                     hgap="20"
                                     vgap="18">
 
@@ -421,7 +423,7 @@
                                         GridPane.columnIndex="1"
                                         styleClass="member-field-value"/>
 
-                            </GridPane>
+                            </ResponsiveGrid>
 
                         </VBox>
 
@@ -441,7 +443,7 @@
                                     prefHeight="1"
                                     styleClass="member-info-separator"/>
 
-                            <GridPane
+                            <ResponsiveGrid
                                     hgap="20"
                                     vgap="18">
 
@@ -514,11 +516,11 @@
                                         GridPane.columnIndex="1"
                                         styleClass="member-field-value"/>
 
-                            </GridPane>
+                            </ResponsiveGrid>
 
                         </VBox>
 
-                    </HBox>
+                    </ResponsiveRow>
 
 
                     <!-- =========================================
@@ -529,7 +531,7 @@
                             spacing="14"
                             styleClass="member-info-card">
 
-                        <HBox
+                        <ResponsiveRow
                                 spacing="12"
                                 alignment="CENTER_LEFT">
 
@@ -540,14 +542,9 @@
 
                             <Region HBox.hgrow="ALWAYS"/>
 
-                            <Button
-                                    fx:id="printMembershipCardButton"
-                                    text="Print Card"
-                                    onAction="#printMembershipCard"
-                                    mnemonicParsing="false"
-                                    style="-fx-padding: 9 18; -fx-cursor: hand;" styleClass="primary-button"/>
 
-                        </HBox>
+
+                        </ResponsiveRow>
 
                         <Region
                                 prefHeight="1"
@@ -605,7 +602,7 @@
 
     <bottom>
 
-        <HBox
+        <ResponsiveRow
                 spacing="12"
                 alignment="CENTER_RIGHT"
                 styleClass="member-details-footer">
@@ -614,6 +611,12 @@
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
 
+            <Button
+                                    fx:id="printMembershipCardButton"
+                                    text="Print Card"
+                                    onAction="#printMembershipCard"
+                                    mnemonicParsing="false"
+                                    style="-fx-padding: 9 18; -fx-cursor: hand;" styleClass="primary-button"/>
             <Button
                     text="Edit Member"
                     onAction="#editMember"
@@ -624,7 +627,7 @@
                     onAction="#closeWindow"
                     styleClass="member-details-close-button"/>
 
-        </HBox>
+        </ResponsiveRow>
 
     </bottom>
 

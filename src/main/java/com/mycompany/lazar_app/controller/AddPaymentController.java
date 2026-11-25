@@ -219,7 +219,7 @@ public class AddPaymentController {
                     }
 
                     if (memberComboBox != null) {
-                        memberComboBox.requestFocus();
+                        com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(memberComboBox);
                     }
                 }
         );
@@ -1705,7 +1705,8 @@ public class AddPaymentController {
 
     @FXML
     private void savePayment() {
-        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
+        if (editingPayment != null
+                && !com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         /*
          * Important:
@@ -1868,7 +1869,7 @@ public class AddPaymentController {
             );
 
 
-            memberComboBox.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(memberComboBox);
 
             return false;
         }
@@ -1886,7 +1887,7 @@ public class AddPaymentController {
             );
 
 
-            amountField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(amountField);
 
             return false;
         }
@@ -1913,7 +1914,7 @@ public class AddPaymentController {
                 );
 
 
-                amountField.requestFocus();
+                com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(amountField);
 
                 return false;
             }
@@ -1953,7 +1954,7 @@ public class AddPaymentController {
                                         + moneyNumber(balanceAvailable)
                     );
 
-                    amountField.requestFocus();
+                    com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(amountField);
                     return false;
                 }
             }
@@ -1968,7 +1969,7 @@ public class AddPaymentController {
             );
 
 
-            amountField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(amountField);
 
             return false;
         }

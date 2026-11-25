@@ -128,21 +128,9 @@ public final class DatabaseManager {
 
     private static Connection openConnection(DatabaseConfig config) throws SQLException {
         if (config == null || config.getType() == null) throw new IllegalArgumentException("Database configuration is required.");
-        return switch (config.getType()) {
-            case SQLITE -> connectSQLite(config);
-            case MYSQL -> DriverManager.getConnection(
-                    "jdbc:mysql://" + config.getHost() + ":" + config.getPort()
-                            + "/" + config.getDatabaseName()
-                            + "?sslMode=" + (config.isEncryptConnection() ? "VERIFY_IDENTITY" : "DISABLED")
-                            + "&serverTimezone=UTC",
-                    config.getUsername(), config.getPassword());
-            case SQL_SERVER -> DriverManager.getConnection(
-                    "jdbc:sqlserver://" + config.getHost() + ":" + config.getPort()
-                            + ";databaseName=" + config.getDatabaseName()
-                            + ";encrypt=" + config.isEncryptConnection()
-                            + ";trustServerCertificate=" + (!config.isEncryptConnection()),
-                    config.getUsername(), config.getPassword());
-        };
+        DatabaseConnectionManager.validate(config);
+        if (config.getType() == DatabaseType.SQLITE) return connectSQLite(config);
+        return DatabaseConnectionManager.openServer(config);
     }
 
     private static Connection connectSQLite(DatabaseConfig config) throws SQLException {

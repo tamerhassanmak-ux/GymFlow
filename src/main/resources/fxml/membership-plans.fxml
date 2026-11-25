@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -15,13 +16,13 @@
 <BorderPane
         prefWidth="1200.0"
         prefHeight="760.0"
-        minWidth="0.0"
-        minHeight="0.0"
+
+
         maxWidth="Infinity"
         maxHeight="Infinity"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.MembershipPlansController">
+        fx:controller="com.mycompany.lazar_app.controller.MembershipPlansController" minWidth="0" minHeight="0">
 
     <top>
         <VBox spacing="20.0">
@@ -30,7 +31,7 @@
             </padding>
 
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="15">
+                <ResponsiveRow alignment="CENTER_LEFT" spacing="15">
                     <VBox spacing="5">
                         <Label fx:id="titleLabel" text="Membership Plans" styleClass="page-title"/>
                         <Label fx:id="subtitleLabel" text="Manage membership plans" styleClass="page-subtitle"/>
@@ -43,9 +44,9 @@
                             prefHeight="42"
                             onAction="#addPlan"
                             styleClass="primary-button"/>
-                </HBox>
+                </ResponsiveRow>
 
-                <HBox spacing="15">
+                <ResponsiveRow spacing="15">
                     <VBox spacing="6" prefWidth="200" styleClass="dashboard-card">
                         <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
                         <Label text="Total Plans"/>
@@ -63,9 +64,9 @@
                         <Label text="Inactive"/>
                         <Label fx:id="inactivePlansLabel" text="0" styleClass="card-value"/>
                     </VBox>
-                </HBox>
+                </ResponsiveRow>
 
-                <HBox spacing="12" alignment="CENTER_LEFT">
+                <ResponsiveRow spacing="12" alignment="CENTER_LEFT">
                     <TextField fx:id="searchField"
                                prefWidth="350"
                                prefHeight="40"
@@ -78,7 +79,7 @@
                     <Region HBox.hgrow="ALWAYS"/>
 
                     <Label fx:id="plansCountLabel" text="Results: 0"/>
-                </HBox>
+                </ResponsiveRow>
             </children>
         </VBox>
     </top>

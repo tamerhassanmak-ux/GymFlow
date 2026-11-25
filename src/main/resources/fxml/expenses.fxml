@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -19,7 +20,7 @@
         fx:controller="com.mycompany.lazar_app.controller.ExpensesController"
         prefWidth="1200"
         prefHeight="750" styleClass="app-page"
-        >
+         minWidth="0" minHeight="0">
 
     <center>
 
@@ -37,7 +38,7 @@
             <!-- HEADER -->
             <!-- =============================================== -->
 
-            <HBox
+            <ResponsiveRow
                     alignment="CENTER_LEFT"
                     spacing="15">
 
@@ -78,13 +79,13 @@
                             -fx-padding: 11 20;
                         "/>
 
-            </HBox>
+            </ResponsiveRow>
 
             <!-- =============================================== -->
             <!-- KPI CARDS -->
             <!-- =============================================== -->
 
-            <HBox spacing="15">
+            <ResponsiveRow spacing="15">
 
                 <VBox
                         spacing="8"
@@ -174,13 +175,13 @@
 
                 </VBox>
 
-            </HBox>
+            </ResponsiveRow>
 
             <!-- =============================================== -->
             <!-- SEARCH + FILTERS -->
             <!-- =============================================== -->
 
-            <HBox
+            <ResponsiveRow
                     spacing="10"
                     alignment="CENTER_LEFT">
 
@@ -226,7 +227,7 @@
                             -fx-padding: 9 18;
                         "/>
 
-            </HBox>
+            </ResponsiveRow>
 
             <!-- =============================================== -->
             <!-- TABLE -->

@@ -215,7 +215,7 @@ public class AddMembershipController {
         // Focus search automatically.
         if (memberSearchField != null) {
 
-            memberSearchField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(memberSearchField);
         }
     }
 
@@ -1325,7 +1325,7 @@ public class AddMembershipController {
         );
 
 
-        memberSearchField.requestFocus();
+        com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(memberSearchField);
 
         memberSearchField.selectAll();
     }
@@ -1378,7 +1378,7 @@ public class AddMembershipController {
         }
 
 
-        planComboBox.requestFocus();
+        com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(planComboBox);
     }
 
 
@@ -1631,7 +1631,6 @@ public class AddMembershipController {
 
     @FXML
     private void saveMembership() {
-        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         Member selectedMember =
                 memberComboBox.getValue();
@@ -1661,11 +1660,11 @@ public class AddMembershipController {
 
             if (memberSearchField != null) {
 
-                memberSearchField.requestFocus();
+                com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(memberSearchField);
 
             } else {
 
-                memberComboBox.requestFocus();
+                com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(memberComboBox);
             }
 
 
@@ -1686,7 +1685,7 @@ public class AddMembershipController {
             );
 
 
-            planComboBox.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(planComboBox);
 
             return;
         }
@@ -1704,7 +1703,7 @@ public class AddMembershipController {
                             : "The session limit is not configured for this plan. Please update the membership plan first."
             );
 
-            planComboBox.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(planComboBox);
 
             return;
         }
@@ -1723,7 +1722,7 @@ public class AddMembershipController {
             );
 
 
-            startDatePicker.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(startDatePicker);
 
             return;
         }
@@ -1838,7 +1837,7 @@ public class AddMembershipController {
             );
 
 
-            discountField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(discountField);
 
             return;
         }
@@ -1853,7 +1852,7 @@ public class AddMembershipController {
             );
 
 
-            discountField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(discountField);
 
             return;
         }

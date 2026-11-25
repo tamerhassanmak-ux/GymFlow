@@ -625,7 +625,6 @@ public class MemberMembershipRepository {
     public MemberMembership insert(
             MemberMembership membership
     ) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         validateMembershipCore(
                 membership
@@ -804,7 +803,6 @@ public class MemberMembershipRepository {
     public boolean update(
             MemberMembership membership
     ) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         validateMembershipCore(
                 membership
@@ -1030,7 +1028,6 @@ public class MemberMembershipRepository {
     public boolean cancel(
             int membershipId
     ) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         String sql = """
                 UPDATE member_memberships
@@ -1068,7 +1065,6 @@ public class MemberMembershipRepository {
     public boolean delete(
             int membershipId
     ) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         if (membershipId <= 0) {
 

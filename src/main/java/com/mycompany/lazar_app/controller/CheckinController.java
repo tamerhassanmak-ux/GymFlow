@@ -340,7 +340,7 @@ public class CheckinController {
                                     new Button();
 
                             private final HBox box =
-                                    new HBox(
+                                    new com.mycompany.lazar_app.ui.ResponsiveRow(
                                             5,
                                             detailsButton,
                                             checkoutButton,
@@ -1229,7 +1229,7 @@ public class CheckinController {
                     checkIn
             );
             Platform.runLater(() -> com.mycompany.lazar_app.ui.dialog.CheckinDetailsDialog.loadAndShow(
-                    member, membership, getOwnerWindow()));
+                    checkIn, getOwnerWindow(), () -> { }));
 
 
 

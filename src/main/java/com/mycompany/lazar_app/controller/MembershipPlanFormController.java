@@ -158,7 +158,7 @@ public class MembershipPlanFormController {
 
                     if (codeField != null) {
 
-                        codeField.requestFocus();
+                        com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(codeField);
                     }
                 }
         );
@@ -529,7 +529,7 @@ public class MembershipPlanFormController {
                             : "Plan code is required."
             );
 
-            codeField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(codeField);
 
             return;
         }
@@ -545,7 +545,7 @@ public class MembershipPlanFormController {
                             : "Plan code may contain English letters, numbers, - and _ only."
             );
 
-            codeField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(codeField);
 
             return;
         }
@@ -559,7 +559,7 @@ public class MembershipPlanFormController {
                             : "Arabic name is required."
             );
 
-            nameArField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(nameArField);
 
             return;
         }
@@ -573,7 +573,7 @@ public class MembershipPlanFormController {
                             : "English name is required."
             );
 
-            nameEnField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(nameEnField);
 
             return;
         }
@@ -587,7 +587,7 @@ public class MembershipPlanFormController {
                             : "Membership duration is required."
             );
 
-            durationField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(durationField);
 
             return;
         }
@@ -636,7 +636,7 @@ public class MembershipPlanFormController {
                             : "Maximum sessions is required."
             );
 
-            maxSessionsField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(maxSessionsField);
 
             return;
         }
@@ -661,7 +661,7 @@ public class MembershipPlanFormController {
                             : "Invalid maximum sessions."
             );
 
-            maxSessionsField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(maxSessionsField);
 
             return;
         }
@@ -675,7 +675,7 @@ public class MembershipPlanFormController {
                             : "Maximum sessions must be greater than zero."
             );
 
-            maxSessionsField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(maxSessionsField);
 
             return;
         }
@@ -689,7 +689,7 @@ public class MembershipPlanFormController {
                             : "Price is required."
             );
 
-            priceField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(priceField);
 
             return;
         }
@@ -760,7 +760,7 @@ public class MembershipPlanFormController {
                                     : "Plan code already exists."
                     );
 
-                    codeField.requestFocus();
+                    com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(codeField);
 
                     return;
                 }

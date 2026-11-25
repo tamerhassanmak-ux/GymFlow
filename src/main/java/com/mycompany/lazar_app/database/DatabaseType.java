@@ -3,6 +3,7 @@ package com.mycompany.lazar_app.database;
 public enum DatabaseType {
     SQLITE("SQLite"),
     MYSQL("MySQL"),
+    MARIADB("MariaDB"),
     SQL_SERVER("SQL Server");
 
     private final String displayName;

@@ -16,6 +16,8 @@ import javafx.scene.layout.*;
 import javafx.stage.Window;
 import java.nio.file.*;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /** Loads financial records outside the JavaFX thread, after attendance is saved. */
@@ -29,6 +31,8 @@ public final class CheckinDetailsDialog {
     public static void loadAndShow(CheckIn attendance, Window owner, Runnable finished) {
         int memberId = attendance.getMemberId();
         Integer membershipId = attendance.getMembershipId();
+        LocalDateTime checkInTime = attendance.getCheckInTime();
+        LocalDateTime checkOutTime = attendance.getCheckOutTime();
         Task<Details> task = new Task<>() {
             @Override protected Details call() throws Exception {
                 Member member = new MemberRepository().findById(memberId)
@@ -45,7 +49,7 @@ public final class CheckinDetailsDialog {
             finished.run();
             Details details = task.getValue();
             if (owner == null || owner.isShowing()) {
-                show(details.member(), details.membership(), owner, details.finance(), details.remainingVisits(), details.currency());
+                show(details.member(), details.membership(), owner, details.finance(), details.remainingVisits(), details.currency(), checkInTime, checkOutTime);
             }
         });
         task.setOnFailed(e -> {
@@ -66,7 +70,7 @@ public final class CheckinDetailsDialog {
         task.setOnSucceeded(e -> {
             Details d = task.getValue();
             if (owner == null || owner.isShowing()) show(d.member(), d.membership(), owner,
-                    d.finance(), d.remainingVisits(), d.currency());
+                    d.finance(), d.remainingVisits(), d.currency(), null, null);
         });
         task.setOnFailed(e -> {
             if (owner == null || owner.isShowing())
@@ -105,7 +109,8 @@ public final class CheckinDetailsDialog {
     }
 
     private static void show(Member member, MemberMembership membership, Window owner,
-                             PaymentRepository.MembershipFinancialSummary finance, Integer remainingVisits, String currency) {
+                             PaymentRepository.MembershipFinancialSummary finance, Integer remainingVisits, String currency,
+                             LocalDateTime checkInTime, LocalDateTime checkOutTime) {
         ResourceBundle bundle = LanguageManager.getBundle();
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle(bundle.getString("checkin.details.viewTitle"));
@@ -137,14 +142,14 @@ public final class CheckinDetailsDialog {
             status.getStyleClass().add(membership.isActive() ? "checkin-status-active" : "checkin-status-inactive");
             identity.getChildren().addAll(plan, status);
         }
-        HBox header = new HBox(24, avatar, identity);
+        HBox header = new com.mycompany.lazar_app.ui.ResponsiveRow(24, avatar, identity);
         header.getStyleClass().add("checkin-header");
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         content.getChildren().add(header);
 
         NumberFormat money = NumberFormat.getCurrencyInstance(LanguageManager.getCurrentLocale());
         money.setCurrency(Currency.getInstance(currency));
-        HBox financial = new HBox(12);
+        HBox financial = new com.mycompany.lazar_app.ui.ResponsiveRow(12);
         financial.getStyleClass().add("checkin-financial-summary");
         VBox amountBox = new VBox();
         VBox paidBox = new VBox();
@@ -177,6 +182,11 @@ public final class CheckinDetailsDialog {
             details.getColumnConstraints().add(column);
         }
         int row = 0;
+        if (checkInTime != null || checkOutTime != null) {
+            detail(details, bundle, "checkinTime", formatAttendanceTime(checkInTime), 0, row);
+            detail(details, bundle, "checkoutTime", checkOutTime == null
+                    ? text("checkin.details.checkoutPending") : formatAttendanceTime(checkOutTime), 1, row++);
+        }
         if (membership != null) {
             detail(details, bundle, "member", member.getMemberCode() + " / " + membership.getId(), 0, row);
             detail(details, bundle, "plan", membership.getPlanDisplayName(LanguageManager.isArabic()), 1, row++);
@@ -199,6 +209,10 @@ public final class CheckinDetailsDialog {
         dialog.getDialogPane().setNodeOrientation(content.getNodeOrientation());
         dialog.getDialogPane().getStylesheets().add(CheckinDetailsDialog.class.getResource("/css/checkin-details.css").toExternalForm());
         WindowManager.showResponsiveDialogAndWait(dialog, owner, 640, 720);
+    }
+
+    private static String formatAttendanceTime(LocalDateTime time) {
+        return time == null ? "—" : DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", LanguageManager.getCurrentLocale()).format(time);
     }
 
     private static String formatMoney(NumberFormat format, java.math.BigDecimal amount) {

@@ -8,7 +8,7 @@ import java.util.*;
 
 /** Consistent online SQLite snapshots and validated, SQLite-transactional recovery. */
 public final class SqliteBackupService {
-    private static final Map<String, List<String>> REQUIRED = Map.of(
+    static final Map<String, List<String>> REQUIRED = Map.of(
             "members", List.of("id", "member_code", "name", "phone", "whatsapp", "email", "gender", "birth_date", "membership", "start_date", "end_date", "status", "notes", "photo_path", "created_at", "updated_at"),
             "membership_plans", List.of("id", "code", "name_ar", "name_en", "duration_months", "price", "status", "description", "max_sessions", "created_at", "updated_at"),
             "member_memberships", List.of("id", "member_id", "membership_plan_id", "start_date", "end_date", "price", "discount", "final_price", "status", "notes", "allowed_sessions", "created_at", "updated_at"),

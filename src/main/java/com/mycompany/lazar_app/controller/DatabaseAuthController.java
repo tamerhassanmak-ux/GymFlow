@@ -77,7 +77,7 @@ public class DatabaseAuthController {
                     localized("أدخل كلمة مرور السوبر أدمن.", "Enter the Super Admin password.")
             );
 
-            passwordField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(passwordField);
 
             return;
         }
@@ -95,7 +95,7 @@ public class DatabaseAuthController {
 
             passwordField.clear();
 
-            passwordField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(passwordField);
 
             return;
         }
@@ -245,10 +245,6 @@ public class DatabaseAuthController {
             // -------------------------------------------------
 
             stage.setResizable(true);
-
-            stage.setMinWidth(850);
-
-            stage.setMinHeight(600);
 
 
             // -------------------------------------------------

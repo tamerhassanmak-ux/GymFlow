@@ -13,6 +13,29 @@ public class DatabaseConfig {
     private String password = "";
     private boolean encryptConnection = true;
 
+    private boolean platformCredentialStorage;
+    public boolean isPlatformCredentialStorage() { return platformCredentialStorage; }
+    public void setPlatformCredentialStorage(boolean value) { platformCredentialStorage = value; }
+    private String trustStore = "";
+    private String trustStorePassword = "";
+    private String trustStoreType = "PKCS12";
+    private String rsaPublicKey = "";
+    private int connectTimeoutMillis = 5000;
+    private int socketTimeoutMillis = 15000;
+
+    public String getTrustStore() { return trustStore; }
+    public void setTrustStore(String value) { trustStore = value; }
+    public String getTrustStorePassword() { return trustStorePassword; }
+    public void setTrustStorePassword(String value) { trustStorePassword = value; }
+    public String getTrustStoreType() { return trustStoreType; }
+    public void setTrustStoreType(String value) { trustStoreType = value; }
+    public String getRsaPublicKey() { return rsaPublicKey; }
+    public void setRsaPublicKey(String value) { rsaPublicKey = value; }
+    public int getConnectTimeoutMillis() { return connectTimeoutMillis; }
+    public void setConnectTimeoutMillis(int value) { connectTimeoutMillis = value; }
+    public int getSocketTimeoutMillis() { return socketTimeoutMillis; }
+    public void setSocketTimeoutMillis(int value) { socketTimeoutMillis = value; }
+
     public DatabaseType getType() { return type; }
     public void setType(DatabaseType type) { this.type = type; }
 

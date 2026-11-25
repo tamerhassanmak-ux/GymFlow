@@ -269,7 +269,7 @@ public class ProgramLicenseSettingsController {
             );
 
             superAdminPasswordField.clear();
-            superAdminPasswordField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(superAdminPasswordField);
             return;
         }
 

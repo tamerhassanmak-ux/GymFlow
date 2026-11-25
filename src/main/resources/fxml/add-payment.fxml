@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveGrid?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -19,14 +21,14 @@
 <BorderPane
         prefWidth="820.0"
         prefHeight="780.0"
-        minWidth="680.0"
-        minHeight="560.0"
+
+
         maxWidth="Infinity"
         maxHeight="Infinity"
 
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.AddPaymentController" styleClass="app-page">
+        fx:controller="com.mycompany.lazar_app.controller.AddPaymentController" styleClass="app-page" minWidth="0" minHeight="0">
 
     <top>
         <VBox spacing="10" style="-fx-background-color:#FFFFFF;">
@@ -62,7 +64,7 @@
                         <Insets top="22" right="30" bottom="24" left="30"/>
                     </padding>
 
-                    <GridPane hgap="18" vgap="16" maxWidth="Infinity">
+                    <ResponsiveGrid hgap="18" vgap="16" maxWidth="Infinity">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="30" halignment="RIGHT"/>
                             <ColumnConstraints percentWidth="70" hgrow="ALWAYS" fillWidth="true"/>
@@ -97,7 +99,7 @@
                                     GridPane.rowIndex="1"
                                     GridPane.columnIndex="1"/>
                         </children>
-                    </GridPane>
+                    </ResponsiveGrid>
 
                     <!-- Financial snapshot for the selected membership -->
                     <VBox
@@ -112,7 +114,7 @@
                                 text="Membership financial summary"
                                 style="-fx-font-size:14px;-fx-font-weight:bold;" styleClass="ui-text"/>
 
-                        <HBox spacing="10">
+                        <ResponsiveRow spacing="10">
                             <VBox spacing="4" HBox.hgrow="ALWAYS"
                                   style="-fx-background-color:#F9FAFB;-fx-background-radius:8;-fx-padding:10;">
                                 <Label fx:id="membershipAmountCaptionLabel" text="Subscription amount"
@@ -136,10 +138,10 @@
                                 <Label fx:id="balanceValueLabel" text="0.00"
                                        style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#C2410C;"/>
                             </VBox>
-                        </HBox>
+                        </ResponsiveRow>
                     </VBox>
 
-                    <GridPane hgap="18" vgap="16" maxWidth="Infinity">
+                    <ResponsiveGrid hgap="18" vgap="16" maxWidth="Infinity">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="30" halignment="RIGHT"/>
                             <ColumnConstraints percentWidth="70" hgrow="ALWAYS" fillWidth="true"/>
@@ -236,7 +238,7 @@
                                     GridPane.rowIndex="5"
                                     GridPane.columnIndex="1"/>
                         </children>
-                    </GridPane>
+                    </ResponsiveGrid>
 
                     <!-- Only appears when a PAID payment leaves a remaining balance -->
                     <VBox
@@ -257,7 +259,7 @@
                                 wrapText="true"
                                 style="-fx-font-size:12px;" styleClass="ui-text"/>
 
-                        <GridPane hgap="14" vgap="10">
+                        <ResponsiveGrid hgap="14" vgap="10">
                             <columnConstraints>
                                 <ColumnConstraints percentWidth="32"/>
                                 <ColumnConstraints percentWidth="68" hgrow="ALWAYS"/>
@@ -278,7 +280,7 @@
                             <Label fx:id="installmentAmountValueLabel" text="0.00"
                                    style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1D4ED8;"
                                    GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                        </GridPane>
+                        </ResponsiveGrid>
                     </VBox>
 
                 </VBox>
@@ -290,7 +292,7 @@
         <VBox style="-fx-background-color:#FFFFFF;">
             <Separator/>
 
-            <HBox spacing="12" alignment="CENTER_RIGHT">
+            <ResponsiveRow spacing="12" alignment="CENTER_RIGHT">
                 <padding>
                     <Insets top="16" right="30" bottom="18" left="30"/>
                 </padding>
@@ -312,7 +314,7 @@
                         prefWidth="160"
                         prefHeight="44"
                         styleClass="primary-button"/>
-            </HBox>
+            </ResponsiveRow>
         </VBox>
     </bottom>
 

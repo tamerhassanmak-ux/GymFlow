@@ -44,6 +44,23 @@ public final class MigrationRunner {
     public static void migrate(com.mycompany.lazar_app.database.DatabaseConfig config) throws Exception {
         try (Connection connection = DatabaseManager.getConnection(config)) {
 
+            // Read the ledger before any DDL, reject future/unknown versions.
+            boolean ledgerExists = MigrationSupport.tableExists(connection, "schema_migrations");
+            var known = MIGRATIONS.stream().map(Migration::version).collect(java.util.stream.Collectors.toSet());
+            if (known.size() != MIGRATIONS.size()) throw new IllegalStateException("Duplicate migration versions.");
+            if (ledgerExists) {
+                try (Statement statement = connection.createStatement();
+                     ResultSet rows = statement.executeQuery("SELECT version FROM schema_migrations")) {
+                    while (rows.next()) if (!known.contains(rows.getString(1)))
+                        throw new java.sql.SQLException("Database has an unsupported migration version.", "GF002");
+                }
+            }
+            boolean pending = !ledgerExists;
+            if (ledgerExists) for (Migration migration : MIGRATIONS)
+                if (!isApplied(connection, migration.version())) pending = true;
+            if (!pending) return;
+            com.mycompany.lazar_app.database.DatabaseMigrationManager.beforeChanges(connection, config);
+
             boolean oldAutoCommit =
                     connection.getAutoCommit();
 
@@ -61,6 +78,7 @@ public final class MigrationRunner {
                             connection,
                             migration.version())) {
 
+                        com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "skip");
                         System.out.println(
                                 "[SKIP] "
                                         + migration.version()
@@ -71,6 +89,7 @@ public final class MigrationRunner {
                         continue;
                     }
 
+                    com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "run");
                     System.out.println(
                             "[RUN ] "
                                     + migration.version()
@@ -88,6 +107,7 @@ public final class MigrationRunner {
                         );
 
                         connection.commit();
+                        com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "ok");
 
                         System.out.println(
                                 "[ OK ] "
@@ -97,6 +117,7 @@ public final class MigrationRunner {
                         );
 
                     } catch (Exception migrationException) {
+                        com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "failed");
 
                         connection.rollback();
 
@@ -288,12 +309,7 @@ public final class MigrationRunner {
 
         } catch (Exception e) {
 
-            System.err.println(
-                    "Migration error: "
-                            + e.getMessage()
-            );
-
-            e.printStackTrace();
+            com.mycompany.lazar_app.database.DatabaseDiagnostics.failure(e);
 
             System.exit(1);
         }

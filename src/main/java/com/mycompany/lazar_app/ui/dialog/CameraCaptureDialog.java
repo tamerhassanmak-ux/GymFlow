@@ -28,20 +28,23 @@ public final class CameraCaptureDialog {
         preview.setFitWidth(480); preview.setFitHeight(340); preview.setPreserveRatio(true);
         Label message = new Label(texts.getString("addMember.opening"));
         message.setWrapText(true);
-        Button capture = new Button(texts.getString("addMember.capture"));
+        ButtonType captureType=new ButtonType(texts.getString("addMember.capture"),ButtonBar.ButtonData.OTHER);
+        dialog.getDialogPane().getButtonTypes().setAll(captureType,ButtonType.CANCEL);
+        Button capture = (Button)dialog.getDialogPane().lookupButton(captureType);
         capture.setDisable(true);
-        VBox content = new VBox(14, preview, message, capture);
+        VBox content = new VBox(14, preview, message);
         content.setNodeOrientation(LanguageManager.isArabic()
                 ? javafx.geometry.NodeOrientation.RIGHT_TO_LEFT : javafx.geometry.NodeOrientation.LEFT_TO_RIGHT);
         dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+        preview.fitWidthProperty().bind(javafx.beans.binding.Bindings.createDoubleBinding(
+                ()->Math.min(480,Math.max(1,dialog.getDialogPane().getWidth()-64)),dialog.getDialogPane().widthProperty()));
         ExecutorService worker = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "member-camera"); t.setDaemon(true); return t;
         });
         AtomicBoolean closed = new AtomicBoolean();
         AtomicBoolean requested = new AtomicBoolean();
         AtomicBoolean pending = new AtomicBoolean();
-        capture.setOnAction(e -> { capture.setDisable(true); requested.set(true); });
+        capture.addEventFilter(javafx.event.ActionEvent.ACTION,e -> { e.consume(); capture.setDisable(true); requested.set(true); });
         dialog.setOnHidden(e -> { closed.set(true); worker.shutdown(); });
         worker.submit(() -> {
             Webcam camera = null;
@@ -52,7 +55,7 @@ public final class CameraCaptureDialog {
                     BufferedImage frame = camera.getImage();
                     if (frame == null) { Thread.sleep(80); continue; }
                     if (requested.getAndSet(false)) {
-                        Path directory = Path.of("data", "member-photos").toAbsolutePath();
+                        Path directory = com.mycompany.lazar_app.util.AppPaths.dataDirectory().resolve("member-photos");
                         Files.createDirectories(directory);
                         Path file = Files.createTempFile(directory, "member-", ".png");
                         try {

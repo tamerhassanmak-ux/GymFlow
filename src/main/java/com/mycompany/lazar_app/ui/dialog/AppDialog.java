@@ -89,7 +89,7 @@ public final class AppDialog {
                                 Node extraContent, boolean confirmation) {
         boolean ar = LanguageManager.isArabic();
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.initStyle(StageStyle.DECORATED);
         dialog.initModality(Modality.APPLICATION_MODAL);
         if (owner != null) dialog.initOwner(owner);
 
@@ -97,8 +97,8 @@ public final class AppDialog {
         pane.getStyleClass().addAll("app-dialog", "app-dialog-" + type.name().toLowerCase());
         pane.setNodeOrientation(ar ? NodeOrientation.RIGHT_TO_LEFT : NodeOrientation.LEFT_TO_RIGHT);
         /*
-         * Keep every normal GymFlow message at the same professional size.
-         * WindowManager will also enforce this on the native Stage.
+         * Supply a starting size; WindowManager bounds the native window
+         * and preserves user resizing with a persistent action bar.
          */
         // Responsive size is managed centrally, never lock the pane height.
         pane.setPrefWidth(WindowManager.STANDARD_DIALOG_WIDTH);
@@ -123,7 +123,7 @@ public final class AppDialog {
         VBox textBox = new VBox(6, titleLabel, messageLabel);
         textBox.setMinWidth(0);
         HBox.setHgrow(textBox, Priority.ALWAYS);
-        HBox header = new HBox(15, icon, textBox);
+        HBox header = new com.mycompany.lazar_app.ui.ResponsiveRow(15, icon, textBox);
         header.setAlignment(Pos.CENTER_LEFT);
         header.getStyleClass().add("app-dialog-header");
 

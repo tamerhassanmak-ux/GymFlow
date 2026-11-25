@@ -1,68 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<VBox
-    xmlns="http://javafx.com/javafx/21"
-    xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="com.mycompany.lazar_app.controller.SuperAdminSetupController"
-    prefWidth="500"
-    spacing="16"
-    style="-fx-background-color: white;">
-
-    <padding>
-        <Insets
-            top="30"
-            right="32"
-            bottom="30"
-            left="32"/>
-    </padding>
-
-    <Label styleClass="ui-text"
-        text="%setup.title"
-        style="
-            -fx-font-size: 24px;
-            -fx-font-weight: bold;
-
-        "/>
-
-    <Label styleClass="ui-text"
-        text="%setup.description"
-        wrapText="true"/>
-
-    <Label styleClass="ui-text"
-        text="%setup.password"
-        style="-fx-font-weight: bold;"/>
-
-    <PasswordField
-        fx:id="passwordField"
-        promptText="%setup.minimum"
-        prefHeight="42"/>
-
-    <Label styleClass="ui-text"
-        text="%setup.confirm"
-        style="-fx-font-weight: bold;"/>
-
-    <PasswordField
-        fx:id="confirmPasswordField"
-        promptText="%setup.reenter"
-        prefHeight="42"/>
-
-    <Label styleClass="ui-text"
-        fx:id="messageLabel"
-        wrapText="true"
-        style="-fx-text-fill: #DC2626;"/>
-
-    <HBox alignment="CENTER_RIGHT">
-
-        <Button
-            text="%setup.save"
-            defaultButton="true"
-            onAction="#handleSave"
-            style="-fx-padding: 10 22;" styleClass="primary-button"/>
-
-    </HBox>
-
-</VBox>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.lazar_app.controller.SuperAdminSetupController" prefWidth="500" style="-fx-background-color: white;" styleClass=" responsive-form" minWidth="0" minHeight="0">
+    <top>
+        <Label styleClass="ui-text form-header" text="%setup.title" style="             -fx-font-size: 24px;             -fx-font-weight: bold;          " />
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" minWidth="0" minHeight="0" styleClass="responsive-content">
+            <content>
+                <VBox spacing="16" style="-fx-background-color: white;">
+                    <padding>
+                        <Insets top="30" right="32" bottom="30" left="32" />
+                    </padding>
+                    <Label styleClass="ui-text" text="%setup.description" wrapText="true" />
+                    <Label styleClass="ui-text" text="%setup.password" style="-fx-font-weight: bold;" />
+                    <PasswordField fx:id="passwordField" promptText="%setup.minimum" prefHeight="42" />
+                    <Label styleClass="ui-text" text="%setup.confirm" style="-fx-font-weight: bold;" />
+                    <PasswordField fx:id="confirmPasswordField" promptText="%setup.reenter" prefHeight="42" />
+                    <Label styleClass="ui-text" fx:id="messageLabel" wrapText="true" style="-fx-text-fill: #DC2626;" />
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <ResponsiveRow alignment="CENTER_RIGHT" styleClass=" persistent-actions">
+            <Button text="%common.cancel" onAction="#handleCancel" cancelButton="true" />
+            <Button text="%setup.save" defaultButton="true" onAction="#handleSave" style="-fx-padding: 10 22;" styleClass="primary-button" />
+        </ResponsiveRow>
+    </bottom>
+</BorderPane>

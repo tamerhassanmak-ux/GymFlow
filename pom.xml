@@ -13,7 +13,7 @@
 
     <groupId>com.mycompany</groupId>
     <artifactId>Lazar_APP</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.7</version>
 
     <name>GymFlow</name>
     <description>GymFlow Gym Management System - MAKSOFT Software Solutions</description>
@@ -36,7 +36,7 @@
         <openpdf.version>2.0.3</openpdf.version>
 
         <main.class>
-            com.mycompany.lazar_app.Lazar_APP
+            com.mycompany.lazar_app.Launcher
         </main.class>
 
     </properties>
@@ -62,6 +62,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.5.3</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -197,6 +202,7 @@
                     <argLine>-Duser.home=${project.build.directory}/qa-home</argLine>
                     <excludedEnvironmentVariables>
                         <excludedEnvironmentVariable>GYMFLOW_DB_PASSWORD</excludedEnvironmentVariable>
+                        <excludedEnvironmentVariable>GYMFLOW_DB_TRUSTSTORE_PASSWORD</excludedEnvironmentVariable>
                     </excludedEnvironmentVariables>
                     <environmentVariables>
                         <XDG_DATA_HOME>${project.build.directory}/qa-data</XDG_DATA_HOME>
@@ -341,4 +347,34 @@
     </build>
 
 
+    <profiles>
+        <profile>
+            <id>database-integration</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.testcontainers</groupId><artifactId>testcontainers</artifactId><version>1.20.6</version><scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build><plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId><artifactId>build-helper-maven-plugin</artifactId><version>3.6.1</version>
+                    <executions><execution><id>integration-source</id><phase>generate-test-sources</phase><goals><goal>add-test-source</goal></goals>
+                    <configuration><sources><source>src/it/java</source></sources></configuration></execution></executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId><artifactId>maven-failsafe-plugin</artifactId><version>3.5.3</version>
+                    <configuration>
+                        <argLine>-Duser.home=${project.build.directory}/qa-home</argLine>
+                        <environmentVariables>
+                            <XDG_DATA_HOME>${project.build.directory}/qa-data</XDG_DATA_HOME>
+                            <XDG_CONFIG_HOME>${project.build.directory}/qa-config</XDG_CONFIG_HOME>
+                            <LOCALAPPDATA>${project.build.directory}/qa-data</LOCALAPPDATA>
+                            <APPDATA>${project.build.directory}/qa-config</APPDATA>
+                        </environmentVariables>
+                    </configuration>
+                    <executions><execution><goals><goal>integration-test</goal><goal>verify</goal></goals></execution></executions>
+                </plugin>
+            </plugins></build>
+        </profile>
+    </profiles>
 </project>

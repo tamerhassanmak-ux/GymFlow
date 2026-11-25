@@ -852,7 +852,6 @@ public class MemberRepository {
     public boolean delete(
             int memberId
     ) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         String sql = """
                 DELETE FROM members

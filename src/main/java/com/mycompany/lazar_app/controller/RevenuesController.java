@@ -348,7 +348,7 @@ public class RevenuesController {
                             );
 
                     private final HBox box =
-                            new HBox(
+                            new com.mycompany.lazar_app.ui.ResponsiveRow(
                                     6,
                                     editButton,
                                     fileButton,
@@ -526,6 +526,7 @@ public class RevenuesController {
         if (revenueFormStage != null
                 && revenueFormStage.isShowing()) {
 
+            revenueFormStage.setMaximized(true);
             revenueFormStage.toFront();
             revenueFormStage.requestFocus();
 
@@ -613,7 +614,7 @@ public class RevenuesController {
             }
 
             stage.setOnHidden(event -> revenueFormStage = null);
-            WindowManager.showResponsive(stage);
+            WindowManager.showMaximized(stage);
 
         } catch (Exception exception) {
 
@@ -1001,7 +1002,6 @@ public class RevenuesController {
 
     private void deleteRevenue(
             Revenue revenue) {
-        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         Alert confirmation =
                 new Alert(

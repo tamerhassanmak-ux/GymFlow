@@ -189,17 +189,7 @@ public class PaymentsController {
 
     @FXML
     public void initialize() {
-        // The header may scroll on shorter screens, while the table's bottom
-        // scrollbar and page navigation retain their own visible space.
-        paymentsHeaderViewport.maxHeightProperty().bind(javafx.beans.binding.Bindings.createDoubleBinding(() -> {
-            double height = paymentsPage.getHeight();
-            double footerWidth = Math.max(1, paymentsPage.getWidth()
-                    - paymentsPage.getInsets().getLeft() - paymentsPage.getInsets().getRight());
-            double footerHeight = Math.max(paymentsFooter.getHeight(), paymentsFooter.prefHeight(footerWidth));
-            // Reserve space for the table, its horizontal bar, footer and page margins.
-            return Math.max(0, Math.min(height * 0.42, height - footerHeight - 280));
-        }, paymentsPage.heightProperty(), paymentsPage.widthProperty(), paymentsFooter.heightProperty()));
-
+        // The shared responsive layout reserves header/body/footer space.
         configureFilters();
 
         configureTable();
@@ -244,6 +234,7 @@ public class PaymentsController {
                     .getItems()
                     .addAll(
                             "جميع الحالات",
+                            "متبقي",
                             "مدفوع",
                             "معلق",
                             "ملغي"
@@ -265,6 +256,7 @@ public class PaymentsController {
                     .getItems()
                     .addAll(
                             "All Status",
+                            "Remaining",
                             "Paid",
                             "Pending",
                             "Cancelled"
@@ -675,7 +667,7 @@ public class PaymentsController {
                             );
 
                     private final HBox box =
-                            new HBox(
+                            new com.mycompany.lazar_app.ui.ResponsiveRow(
                                     6,
                                     detailsButton,
                                     editButton,
@@ -1191,7 +1183,7 @@ public class PaymentsController {
             VBox content = new VBox(16);
             content.setPadding(new Insets(18, 24, 18, 24));
 
-            HBox cards = new HBox(12);
+            HBox cards = new com.mycompany.lazar_app.ui.ResponsiveRow(12);
             cards.getChildren().addAll(
                     createFinancialCard(
                             LanguageManager.isArabic()
@@ -1306,13 +1298,13 @@ public class PaymentsController {
             if (LanguageManager.isArabic()) {
                 // LTR container + reversed children keeps the selected
                 // "Actual Payments" button physically on the far right.
-                detailsViewBar = new HBox(
+                detailsViewBar = new com.mycompany.lazar_app.ui.ResponsiveRow(
                         8.0,
                         remainingScheduleButton,
                         actualPaymentsButton
                 );
             } else {
-                detailsViewBar = new HBox(
+                detailsViewBar = new com.mycompany.lazar_app.ui.ResponsiveRow(
                         8.0,
                         actualPaymentsButton,
                         remainingScheduleButton
@@ -1401,7 +1393,7 @@ public class PaymentsController {
                     + "-fx-cursor:hand;"
             );
 
-            HBox footer = new HBox(closeButton);
+            HBox footer = new com.mycompany.lazar_app.ui.ResponsiveRow(closeButton);
             footer.setAlignment(Pos.CENTER_RIGHT);
             footer.setPadding(new Insets(12, 24, 18, 24));
             footer.setStyle("-fx-background-color:white;");
@@ -1979,6 +1971,8 @@ public class PaymentsController {
 
 
         return switch (value) {
+
+            case "متبقي", "Remaining" -> "REMAINING";
 
             case "مدفوع",
                  "Paid" ->

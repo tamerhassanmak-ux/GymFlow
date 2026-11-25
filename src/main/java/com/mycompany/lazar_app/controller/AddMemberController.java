@@ -743,7 +743,7 @@ public class AddMemberController {
                             : "Member code must not exceed 30 characters."
             );
 
-            memberCodeField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(memberCodeField);
             memberCodeField.selectAll();
 
             return false;
@@ -1215,7 +1215,7 @@ private void saveMember() {
                 )
         );
 
-        nameField.requestFocus();
+        com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(nameField);
 
         return;
     }
@@ -1233,7 +1233,7 @@ private void saveMember() {
                 )
         );
 
-        phoneField.requestFocus();
+        com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(phoneField);
 
         return;
     }
@@ -1269,7 +1269,7 @@ private void saveMember() {
                     duplicateMember.get()
             );
 
-            phoneField.requestFocus();
+            com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(phoneField);
             phoneField.selectAll();
 
             return;
@@ -1335,7 +1335,7 @@ private void saveMember() {
                                 : "This member/QR code is already assigned to another member. Enter a different code."
                 );
 
-                memberCodeField.requestFocus();
+                com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(memberCodeField);
                 memberCodeField.selectAll();
 
                 return;
@@ -1376,7 +1376,7 @@ private void saveMember() {
                 )
         );
 
-        statusComboBox.requestFocus();
+        com.mycompany.lazar_app.ui.ResponsiveLayouts.focusInvalid(statusComboBox);
 
         return;
     }

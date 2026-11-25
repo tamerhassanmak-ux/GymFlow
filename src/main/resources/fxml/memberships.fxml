@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -18,7 +19,7 @@
         styleClass="members-page"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.MembershipsController">
+        fx:controller="com.mycompany.lazar_app.controller.MembershipsController" minWidth="0" minHeight="0">
 
     <!-- =========================================
          PAGE PADDING
@@ -39,7 +40,7 @@
              HEADER
         ========================================== -->
 
-        <HBox
+        <ResponsiveRow
                 alignment="CENTER_LEFT"
                 spacing="15.0">
 
@@ -74,14 +75,14 @@
 
             </children>
 
-        </HBox>
+        </ResponsiveRow>
 
 
         <!-- =========================================
              STATISTICS
         ========================================== -->
 
-        <HBox spacing="15.0">
+        <ResponsiveRow spacing="15.0">
 
             <children>
 
@@ -214,14 +215,14 @@
 
             </children>
 
-        </HBox>
+        </ResponsiveRow>
 
 
         <!-- =========================================
              SEARCH AND FILTERS
         ========================================== -->
 
-        <HBox
+        <ResponsiveRow
                 alignment="CENTER_LEFT"
                 spacing="12.0"
                 styleClass="members-toolbar">
@@ -267,7 +268,7 @@
 
             </children>
 
-        </HBox>
+        </ResponsiveRow>
 
 
         <!-- =========================================
@@ -356,7 +357,7 @@
              FOOTER
         ========================================== -->
 
-        <HBox
+        <ResponsiveRow
                 alignment="CENTER_LEFT"
                 spacing="10.0">
 
@@ -376,7 +377,7 @@
 
             </children>
 
-        </HBox>
+        </ResponsiveRow>
 
     </children>
 

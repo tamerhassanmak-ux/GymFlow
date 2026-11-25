@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -15,10 +16,10 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="paymentsPage" minHeight="0" minWidth="0" prefHeight="720" prefWidth="1100"
+<BorderPane fx:id="paymentsPage" prefHeight="720" prefWidth="1100"
         xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.mycompany.lazar_app.controller.PaymentsController"
-        styleClass="app-page,bounded-page">
+        styleClass="app-page,bounded-page" minWidth="0" minHeight="0">
     <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
     <top>
         <ScrollPane fx:id="paymentsHeaderViewport" fitToWidth="true" fitToHeight="false"
@@ -27,7 +28,7 @@
         <content>
         <VBox spacing="16" minWidth="0" minHeight="-Infinity">
             <padding><Insets bottom="16"/></padding>
-            <HBox alignment="CENTER_LEFT" spacing="15">
+            <ResponsiveRow alignment="CENTER_LEFT" spacing="15">
                 <VBox spacing="5">
                     <Label
                             text="%payments.title"
@@ -44,9 +45,9 @@
                         mnemonicParsing="false"
                         onAction="#openNewPayment"
                         style="-fx-padding: 10 20; -fx-cursor: hand;" styleClass="primary-button"/>
-            </HBox>
+            </ResponsiveRow>
 
-            <HBox spacing="15" minWidth="0">
+            <ResponsiveRow spacing="15" minWidth="0">
                 <VBox spacing="8" minWidth="0" prefWidth="210" HBox.hgrow="ALWAYS"
                       style="-fx-padding: 18;" styleClass="surface-card">
                     <Label text="%payments.stats.total" style="-fx-font-size: 13px; " styleClass="ui-muted"/>
@@ -74,7 +75,7 @@
                     <Label wrapText="true" minWidth="0" fx:id="pendingPaymentsLabel" text="0.00"
                            style="-fx-font-size: 23px;-fx-font-weight: bold;-fx-text-fill: #DC2626;"/>
                 </VBox>
-            </HBox>
+            </ResponsiveRow>
 
             <FlowPane alignment="CENTER_LEFT" hgap="10" vgap="10" minWidth="0">
                 <TextField fx:id="searchField" promptText="%payments.search" prefHeight="40" prefWidth="280"/>
@@ -95,13 +96,13 @@
     <center>
             <VBox spacing="12" minWidth="0" minHeight="0" style="-fx-padding: 16;" styleClass="surface-card">
 
-                <HBox alignment="CENTER_LEFT">
+                <ResponsiveRow alignment="CENTER_LEFT">
                     <Label text="%payments.history"
                            style="-fx-font-size: 17px;-fx-font-weight: bold;" styleClass="ui-text"/>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Label fx:id="transactionsCountLabel" text="0"
                            style="-fx-font-size: 12px;" styleClass="ui-muted"/>
-                </HBox>
+                </ResponsiveRow>
 
                 <!-- Native TableView horizontal/vertical scrollbars.
                      The table stays viewport-sized, while the sum of column
@@ -127,15 +128,15 @@
             </VBox>
     </center>
     <bottom>
-        <VBox fx:id="paymentsFooter" spacing="10" minWidth="0" minHeight="-Infinity">
+        <VBox fx:id="paymentsFooter" spacing="10" minWidth="0">
             <BorderPane.margin><Insets top="12"/></BorderPane.margin>
-            <HBox spacing="12" alignment="CENTER_LEFT" minWidth="0" minHeight="30">
+            <ResponsiveRow spacing="12" alignment="CENTER_LEFT" minWidth="0" minHeight="30">
                 <Label text="%payments.table.horizontalScroll" styleClass="ui-muted"/>
                 <ScrollBar fx:id="paymentsHorizontalScroll" orientation="HORIZONTAL"
                            nodeOrientation="LEFT_TO_RIGHT" minWidth="80" prefHeight="24" minHeight="24"
                            HBox.hgrow="ALWAYS" styleClass="payments-horizontal-scroll"/>
-            </HBox>
-            <HBox fx:id="paginationHost" minWidth="0" minHeight="-Infinity"/>
+            </ResponsiveRow>
+            <ResponsiveRow fx:id="paginationHost" minWidth="0" minHeight="-Infinity"/>
         </VBox>
     </bottom>
 </BorderPane>

@@ -55,6 +55,7 @@ public class SuperAdminSetupController {
             );
         }
     }
+    @FXML private void handleCancel() { ((Stage)passwordField.getScene().getWindow()).close(); }
     private static String localized(String ar, String en) {
         return com.mycompany.lazar_app.LanguageManager.isArabic() ? ar : en;
     }

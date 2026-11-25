@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -19,14 +20,14 @@
 <BorderPane
         prefWidth="1400.0"
         prefHeight="820.0"
-        minWidth="850.0"
-        minHeight="600.0"
+
+
         maxWidth="Infinity"
         maxHeight="Infinity"
         styleClass="member-modal,member-modal-wide"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.mycompany.lazar_app.controller.AddMemberController">
+        fx:controller="com.mycompany.lazar_app.controller.AddMemberController" minWidth="0" minHeight="0">
 
     <!-- =====================================================
          HEADER
@@ -78,7 +79,7 @@
 
             <content>
 
-                <HBox
+                <ResponsiveRow
                         spacing="24.0"
                         alignment="TOP_LEFT"
                         styleClass="member-modal-body">
@@ -105,7 +106,7 @@
                              PHOTO + MEMBER CODE + NAME
                              ============================================= -->
 
-                        <HBox
+                        <ResponsiveRow
                                 spacing="20.0"
                                 alignment="TOP_LEFT">
 
@@ -167,7 +168,7 @@
                                             text="%addMember.memberCode"
                                             styleClass="form-label"/>
 
-                                    <HBox spacing="8.0" maxWidth="Infinity">
+                                    <ResponsiveRow spacing="8.0" maxWidth="Infinity">
 
                                         <TextField
                                                 fx:id="memberCodeField"
@@ -187,7 +188,7 @@
                                                 minWidth="145.0"
                                                 styleClass="secondary-button"/>
 
-                                    </HBox>
+                                    </ResponsiveRow>
 
                                     <Label
                                             fx:id="memberCodeHintLabel"
@@ -217,14 +218,14 @@
 
                             </VBox>
 
-                        </HBox>
+                        </ResponsiveRow>
 
 
                         <!-- =============================================
                              PHONE + WHATSAPP
                              ============================================= -->
 
-                        <HBox spacing="16.0" maxWidth="Infinity" fillHeight="true">
+                        <ResponsiveRow spacing="16.0" maxWidth="Infinity" fillHeight="true">
 
 
                             <!-- PHONE -->
@@ -266,7 +267,7 @@
 
                             </VBox>
 
-                        </HBox>
+                        </ResponsiveRow>
 
 
                         <!-- =============================================
@@ -293,7 +294,7 @@
                              GENDER + BIRTH DATE + MEMBER STATUS
                              ============================================= -->
 
-                        <HBox spacing="16.0" maxWidth="Infinity" fillHeight="true">
+                        <ResponsiveRow spacing="16.0" maxWidth="Infinity" fillHeight="true">
 
                             <!-- GENDER -->
 
@@ -355,7 +356,7 @@
 
                             </VBox>
 
-                        </HBox>
+                        </ResponsiveRow>
 
 
                         <!-- =============================================
@@ -468,7 +469,7 @@
                                  MEMBER CARD
                                  ========================================= -->
 
-                            <HBox
+                            <ResponsiveRow
                                     fx:id="membershipCard"
                                     prefHeight="220.0"
                                     minHeight="220.0"
@@ -592,14 +593,14 @@
 
                                 </VBox>
 
-                            </HBox>
+                            </ResponsiveRow>
 
 
                             <!-- =========================================
                                  PRINT BUTTONS
                                  ========================================= -->
 
-                            <HBox spacing="10.0" maxWidth="Infinity">
+                            <ResponsiveRow spacing="10.0" maxWidth="Infinity">
 
                                 <Button
                                         text="%addMember.printCard"
@@ -620,13 +621,13 @@
                                         HBox.hgrow="ALWAYS"
                                         styleClass="secondary-button"/>
 
-                            </HBox>
+                            </ResponsiveRow>
 
                         </VBox>
 
                     </VBox>
 
-                </HBox>
+                </ResponsiveRow>
 
             </content>
 
@@ -641,12 +642,12 @@
 
     <bottom>
 
-        <HBox
+        <ResponsiveRow
                 alignment="CENTER_RIGHT"
                 spacing="12.0"
-                minHeight="62.0"
-                prefHeight="62.0"
-                maxHeight="62.0"
+
+
+
                 styleClass="member-modal-footer">
 
             <padding>
@@ -678,7 +679,7 @@
                     prefWidth="170.0"
                     styleClass="primary-button"/>
 
-        </HBox>
+        </ResponsiveRow>
 
     </bottom>
 

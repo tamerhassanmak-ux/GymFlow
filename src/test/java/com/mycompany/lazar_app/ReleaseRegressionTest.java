@@ -146,16 +146,57 @@ class ReleaseRegressionTest {
     @Test void RI17_operatorCannotPerformFinancialAdministrativeWrites() throws Exception {
         AuthorizationService.logout();
         assertEquals(AuthorizationService.Role.OPERATOR,AuthorizationService.currentRole());
-        assertThrows(SecurityException.class,()->payments.save(payment(1,1L)));
+        assertNotNull(payments.save(payment(1,1L)));
         assertThrows(SecurityException.class,()->payments.deleteById(1));
-        assertThrows(SecurityException.class,()->new RevenueRepository().save(new Revenue()));
-        assertThrows(SecurityException.class,()->new ExpenseRepository().save(new Expense()));
         assertThrows(SecurityException.class,()->new MembershipPlanRepository().delete(1));
-        assertThrows(SecurityException.class,()->new MemberMembershipRepository().cancel(1));
         assertThrows(SecurityException.class,()->DatabaseConfigManager.save(config));
         assertThrows(SecurityException.class,()->backups.backup(config,directory.resolve("denied.db")));
         assertThrows(SecurityException.class,()->backups.restore(config,directory.resolve("denied.db")));
         assertFalse(AuthorizationService.authenticate("wrong"));assertEquals(AuthorizationService.Role.OPERATOR,AuthorizationService.currentRole());
+    }
+    @Test void operatorCanAddUpdateAndDeleteRevenue() throws Exception {
+        AuthorizationService.logout();
+        RevenueRepository repository=new RevenueRepository();
+        Revenue revenue=new Revenue();
+        revenue.setName("Operator revenue");revenue.setRevenueType("Other");
+        revenue.setAmount(BigDecimal.TEN);revenue.setRevenueDate(LocalDate.now());
+        repository.save(revenue);
+        assertTrue(revenue.getId()>0);
+        assertEquals(1,scalar("SELECT count(*) FROM revenues"));
+        revenue.setName("Updated revenue");repository.update(revenue);
+        assertEquals(1,scalar("SELECT count(*) FROM revenues WHERE name='Updated revenue'"));
+        repository.deleteById(revenue.getId());assertEquals(0,scalar("SELECT count(*) FROM revenues"));
+    }
+    @Test void operatorCanAddUpdateAndDeleteExpense() throws Exception {
+        AuthorizationService.logout();
+        ExpenseRepository repository=new ExpenseRepository();
+        Expense expense=new Expense();expense.setTitle("Operator expense");expense.setCategory("Other");
+        expense.setAmount(BigDecimal.TEN);expense.setExpenseDate(LocalDate.now());
+        expense.setPaymentMethod("CASH");expense.setStatus("PAID");repository.save(expense);
+        assertTrue(expense.getId()>0);
+        expense.setTitle("Updated expense");repository.update(expense);
+        assertEquals(1,scalar("SELECT count(*) FROM expenses WHERE title='Updated expense'"));
+        repository.delete(expense.getId());
+        assertEquals(0,scalar("SELECT count(*) FROM expenses"));
+    }
+    @Test void operatorCanManageMembersAndTheirMemberships() throws Exception {
+        AuthorizationService.logout();
+        MemberRepository members=new MemberRepository();
+        Member member=new Member(0,"OPERATOR","New member","01000000003","","","",null,"",null,null,"Active","","");
+        members.insert(member);assertTrue(member.getId()>0);
+        member.setName("Updated member");assertTrue(members.update(member));
+        assertEquals("Updated member",members.findById(member.getId()).orElseThrow().getName());
+        MemberMembershipRepository memberships=new MemberMembershipRepository();
+        MemberMembership membership=new MemberMembership();membership.setMemberId(member.getId());
+        membership.setMembershipPlanId(1);membership.setStartDate(LocalDate.now());
+        membership.setEndDate(LocalDate.now().plusMonths(1));membership.setStatus("Active");
+        memberships.insert(membership);assertTrue(membership.getId()>0);
+        membership.setEndDate(LocalDate.now().plusMonths(2));assertTrue(memberships.update(membership));
+        assertEquals(membership.getEndDate(),memberships.findById(membership.getId()).orElseThrow().getEndDate());
+        assertTrue(memberships.cancel(membership.getId()));
+        assertTrue(memberships.delete(membership.getId()));
+        assertTrue(members.delete(member.getId()));
+        assertTrue(members.findById(member.getId()).isEmpty());
     }
     @Test void RI18_operatorCanRegisterAndCheckInMember() throws Exception {
         AuthorizationService.logout();
@@ -321,10 +362,33 @@ class ReleaseRegressionTest {
             MigrationRunner.migrate();assertEquals(1,new PaymentRepository().countAll());assertEquals(0,new PaymentRepository().getTotalPayments().compareTo(new BigDecimal("12.34")));
         } finally {DatabaseConfigManager.save(config);}
     }
-    @Test void RI45_expiredApprovalAndLogoutDenyFinancialWrites() throws Exception {
+    @Test void RI45_paymentEntryAllowedButUpdatesAndDeletesRequireApproval() throws Exception {
         var field=AuthorizationService.class.getDeclaredField("approvedUntil");field.setAccessible(true);field.setLong(null,System.nanoTime()-1);
-        assertEquals(AuthorizationService.Role.OPERATOR,AuthorizationService.currentRole());assertThrows(SecurityException.class,()->payments.save(payment(1,1L)));
-        assertTrue(AuthorizationService.authenticate(PASSWORD));AuthorizationService.logout();assertThrows(SecurityException.class,()->payments.save(payment(1,1L)));
+        assertEquals(AuthorizationService.Role.OPERATOR,AuthorizationService.currentRole());
+        Payment entered=payments.save(payment(1,1L));
+        payments.replaceOutstandingSchedule(1,new BigDecimal("74.50"),2,LocalDate.now());
+        assertThrows(SecurityException.class,()->payments.update(entered));
+        assertTrue(AuthorizationService.authenticate(PASSWORD));AuthorizationService.logout();
+        assertNotNull(payments.save(payment(1,1L)));
+        assertThrows(SecurityException.class,()->payments.delete(entered.getId()));
+    }
+    @Test void remainingFilterUsesBalanceAndPendingFilterUsesReceiptStatus() throws Exception {
+        Payment partial=payments.save(payment(1,1L));
+        Payment pending=payment(2,null);pending.setStatus("PENDING");pending=payments.save(pending);
+        Payment cancelled=payment(1,1L);cancelled.setStatus("CANCELLED");payments.save(cancelled);
+        payments.save(payment(2,null));
+        var remaining=new PaymentRepository.PaymentFilter(null,null,"REMAINING",false,List.of());
+        var pendingFilter=new PaymentRepository.PaymentFilter(null,null,"PENDING",true,List.of());
+        var page=payments.findPage(remaining,0,50);
+        assertEquals(1,page.total());assertEquals(partial.getId(),page.items().getFirst().getId());
+        assertEquals(0,page.amounts().get("pending").compareTo(new BigDecimal("74.50")));
+        page=payments.findPage(pendingFilter,0,50);
+        assertEquals(1,page.total());assertEquals(pending.getId(),page.items().getFirst().getId());
+        assertEquals(0,payments.findPage(new PaymentRepository.PaymentFilter("missing",null,"REMAINING",true,List.of()),0,50).total());
+        assertEquals(0,payments.findPage(new PaymentRepository.PaymentFilter(null,"CARD","REMAINING",false,List.of()),0,50).total());
+        Payment balance=payment(1,1L);balance.setAmount(new BigDecimal("74.50"));payments.save(balance);
+        assertEquals(0,payments.findPage(remaining,0,50).total());
+        assertEquals(1,payments.findPage(pendingFilter,0,50).total());
     }
     @Test void RI46_failedTransactionSubmissionCanBeRetriedOnce() throws Exception {
         Payment p=payment(1,1L);assertThrows(Exception.class,()->DatabaseManager.inTransaction(()->{payments.save(p);throw new SQLException("injected workflow failure");}));

@@ -19,62 +19,31 @@ public class Lazar_APP extends Application {
 
     @Override
     public void start(Stage stage) {
+        try (var font = Lazar_APP.class.getResourceAsStream("/fonts/NotoNaskhArabic-Regular.ttf")) {
+            if (font != null) javafx.scene.text.Font.loadFont(font, 14);
+        } catch (java.io.IOException ignored) { /* The platform fallback remains available. */ }
 
-        // =====================================================
-        // 1. DATABASE INITIALIZATION
-        // =====================================================
+        javafx.scene.control.Label progress = new javafx.scene.control.Label("جاري تجهيز قاعدة البيانات… / Preparing database…");
+        stage.setScene(new Scene(new javafx.scene.layout.StackPane(progress), 740, 240));
+        stage.setTitle("GymFlow 1.0.7");
+        com.mycompany.lazar_app.ui.WindowManager.showResponsive(stage, 740, 300);
+        javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<>() {
+            @Override protected Void call() throws Exception {
+                com.mycompany.lazar_app.database.DatabaseStartup.prepare();
+                return null;
+            }
+        };
+        task.setOnSucceeded(event -> openApplication(stage));
+        task.setOnFailed(event -> {
+            com.mycompany.lazar_app.database.DatabaseDiagnostics.failure(task.getException());
+            com.mycompany.lazar_app.ui.DatabaseRecoveryWindow.show(stage, task.getException(), () -> start(stage));
+        });
+        Thread worker = new Thread(task, "gymflow-startup");
+        worker.setDaemon(true);
+        worker.start();
+    }
 
-        try {
-
-            /*
-             * يقوم بتهيئة قاعدة البيانات والاتصال.
-             *
-             * SQLite هو الاختيار الافتراضي.
-             *
-             * يجب أن تكون مسؤولية DatabaseInitializer هنا:
-             *
-             * - قراءة إعدادات قاعدة البيانات.
-             * - تجهيز الاتصال.
-             * - إنشاء ملف SQLite عند الحاجة.
-             *
-             * إنشاء وتحديث جداول النظام أصبح مسؤولية
-             * MigrationRunner.
-             */
-
-            DatabaseInitializer.initialize();
-
-
-            // =================================================
-            // 2. DATABASE MIGRATIONS
-            // =================================================
-
-            /*
-             * يقوم بتشغيل الـ migrations غير المنفذة فقط.
-             *
-             * مثال:
-             *
-             * 001 create_members
-             * 002 create_membership_plans
-             * 003 create_member_memberships
-             * 004 create_check_ins
-             * 005 create_payments
-             * 006 ensure_session_limit_columns
-             *
-             * الـ migrations المنفذة سابقًا سيتم تخطيها.
-             */
-
-            MigrationRunner.migrate();
-
-        } catch (Exception exception) {
-
-            exception.printStackTrace();
-
-            showDatabaseError(exception);
-
-            return;
-        }
-
-
+    private void openApplication(Stage stage) {
         // =====================================================
         // 3. LOAD APPLICATION UI
         // =====================================================
@@ -164,31 +133,9 @@ public class Lazar_APP extends Application {
             // WINDOW SIZE
             // =================================================
 
-            stage.setMinWidth(1200);
-            stage.setMinHeight(700);
-
-            stage.setMaximized(true);
-
-
-            // =================================================
-            // SHOW APPLICATION
-            // =================================================
-
-            stage.show();
-
-
-            // =================================================
-            // 4. FIRST RUN / SUPER ADMIN SETUP
-            // =================================================
-
-            /*
-             * عند أول تشغيل فقط:
-             *
-             * إذا لم تكن هناك كلمة مرور Super Admin
-             * ستظهر نافذة إنشاء كلمة المرور.
-             *
-             * بعد إنشائها لن تظهر النافذة مرة أخرى.
-             */
+            com.mycompany.lazar_app.ui.WindowManager.remember(stage, "main");
+            com.mycompany.lazar_app.ui.WindowManager.showResponsive(stage, 1400, 850);
+            com.mycompany.lazar_app.ui.WindowManager.enableFullScreen(stage);
 
             ApplicationBootstrap
                     .ensureSuperAdminConfigured(stage);
@@ -196,92 +143,21 @@ public class Lazar_APP extends Application {
 
         } catch (Exception exception) {
 
-            exception.printStackTrace();
-
             showApplicationError(exception);
         }
     }
 
 
-    // =========================================================
-    // DATABASE ERROR
-    // =========================================================
-
-    private void showDatabaseError(
-            Exception exception) {
-
-        Alert alert = new Alert(
-                Alert.AlertType.ERROR
-        );
-
-        alert.setTitle(
-                "Database Error"
-        );
-
-        alert.setHeaderText(
-                "Unable to initialize database"
-        );
-
-        String message =
-                exception.getMessage();
-
-        if (message == null
-                || message.isBlank()) {
-
-            message =
-                    exception
-                            .getClass()
-                            .getSimpleName();
-        }
-
-        alert.setContentText(
-                message
-        );
-
-        com.mycompany.lazar_app.ui.WindowManager.showResponsiveDialogAndWait(
-                alert, null, 520, 320);
+    private void showApplicationError(Exception exception) {
+        com.mycompany.lazar_app.database.DatabaseDiagnostics.failure(exception);
+        // Startup UI/service failures use the same explicit recovery controls.
+        // Retrying only reruns readiness; it never resubmits a financial operation.
+        // The current stage remains alive while diagnostics are displayed.
+        Stage stage = javafx.stage.Window.getWindows().stream()
+                .filter(window -> window instanceof Stage && window.isShowing())
+                .map(window -> (Stage)window).findFirst().orElseGet(Stage::new);
+        com.mycompany.lazar_app.ui.DatabaseRecoveryWindow.show(stage, exception, () -> start(stage));
     }
-
-
-    // =========================================================
-    // APPLICATION ERROR
-    // =========================================================
-
-    private void showApplicationError(
-            Exception exception) {
-
-        Alert alert = new Alert(
-                Alert.AlertType.ERROR
-        );
-
-        alert.setTitle(
-                "Application Error"
-        );
-
-        alert.setHeaderText(
-                "Unable to start Lazar Gym"
-        );
-
-        String message =
-                exception.getMessage();
-
-        if (message == null
-                || message.isBlank()) {
-
-            message =
-                    exception
-                            .getClass()
-                            .getSimpleName();
-        }
-
-        alert.setContentText(
-                message
-        );
-
-        com.mycompany.lazar_app.ui.WindowManager.showResponsiveDialogAndWait(
-                alert, null, 520, 320);
-    }
-
 
     // =========================================================
     // MAIN

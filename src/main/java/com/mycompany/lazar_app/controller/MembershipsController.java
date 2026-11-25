@@ -367,7 +367,7 @@ public class MembershipsController {
                                     );
 
                             private final HBox buttons =
-                                    new HBox(
+                                    new com.mycompany.lazar_app.ui.ResponsiveRow(
                                             8.0,
                                             editButton,
                                             deleteButton
@@ -1006,7 +1006,6 @@ public class MembershipsController {
     private void deleteMembership(
             MemberMembership membership
     ) {
-        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         if (membership == null) {
 

@@ -139,7 +139,6 @@ public class RevenueRepository {
     }
 
     public Revenue save(Revenue revenue) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
         if (revenue == null) throw new IllegalArgumentException("Revenue is required.");
 
         validate(revenue);
@@ -228,7 +227,6 @@ public class RevenueRepository {
     }
 
     public void update(Revenue revenue) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
         if (revenue == null) throw new IllegalArgumentException("Revenue is required.");
 
         if (revenue == null || revenue.getId() <= 0) {
@@ -307,7 +305,6 @@ public class RevenueRepository {
     }
 
     public void deleteById(long id) throws SQLException {
-        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
 
         String sql = "DELETE FROM revenues WHERE id = ?";
 

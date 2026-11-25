@@ -289,7 +289,7 @@ public class MembersController {
                                     );
 
                             private final HBox actionsBox =
-                                    new HBox(
+                                    new com.mycompany.lazar_app.ui.ResponsiveRow(
                                             6,
                                             viewButton,
                                             editButton,
@@ -652,7 +652,7 @@ public class MembersController {
 
 
         HBox buttons =
-                new HBox(
+                new com.mycompany.lazar_app.ui.ResponsiveRow(
                         10,
                         printButton,
                         closeButton
@@ -665,23 +665,13 @@ public class MembersController {
         );
 
 
-        VBox root =
-                new VBox(
-                        22,
-                        heading,
-                        card,
-                        buttons
-                );
-
-        root.setPadding(
-                new Insets(
-                        28
-                )
-        );
-
-        root.setAlignment(
-                Pos.CENTER
-        );
+        javafx.scene.control.ScrollPane preview = new javafx.scene.control.ScrollPane(card);
+        preview.getStyleClass().add("document-preview");
+        preview.setHbarPolicy(javafx.scene.control.ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        javafx.scene.layout.BorderPane root = new javafx.scene.layout.BorderPane();
+        root.setTop(heading);root.setCenter(preview);root.setBottom(buttons);
+        buttons.getStyleClass().add("persistent-actions");
+        root.setPadding(new Insets(20));
 
         root.setStyle(
                 "-fx-background-color: #f8fafc;"
@@ -1310,14 +1300,10 @@ public class MembersController {
         }
 
         /*
-         * Open Add/Edit Member at the maximum usable screen size.
-         * setMaximized(true) lets the operating system use the full
-         * visual desktop while respecting the taskbar / desktop panel.
+         * WindowManager selects safe initial bounds and retains native
+         * resize/maximize/restore controls for Add/Edit Member.
          */
         stage.setResizable(true);
-        stage.setMinWidth(850.0);
-        stage.setMinHeight(600.0);
-        stage.setMaximized(true);
     }
     // =========================================================
     // CENTER STAGE ON OWNER
@@ -1377,7 +1363,6 @@ public class MembersController {
     private void deleteMember(
             Member member
     ) {
-        if (!com.mycompany.lazar_app.ui.dialog.AdminAccess.ensure()) return;
 
         if (member == null) {
             return;
@@ -1525,14 +1510,10 @@ public class MembersController {
         }
 
         /*
-         * Always open Member Details maximized.
-         * This removes the inconsistent fixed-size behaviour and gives
-         * the responsive FXML the complete usable screen area.
+         * Member Details follows the shared responsive window policy;
+         * the user can maximize or restore without reloading its controller.
          */
         stage.setResizable(true);
-        stage.setMinWidth(760.0);
-        stage.setMinHeight(560.0);
-        stage.setMaximized(true);
     }
 
 

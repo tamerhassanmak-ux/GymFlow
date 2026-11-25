@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import com.mycompany.lazar_app.ui.ResponsiveRow?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<!--<BorderPane xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.lazar_app.controller.DatabaseSettingsController"
-            prefWidth="1000" prefHeight="700" styleClass="app-page"
-            >-->
+
 
   <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.mycompany.lazar_app.controller.DatabaseSettingsController"
             prefWidth="1000"
             prefHeight="700"
-            minWidth="800"
-            minHeight="600" styleClass="app-page"
+            minWidth="0"
+            minHeight="0" styleClass="app-page"
             >
     <top>
         <VBox spacing="5" style="-fx-background-color: white;">
@@ -40,16 +37,16 @@
                     <VBox fx:id="sqlitePane" spacing="10"
                           style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
                         <Label styleClass="ui-text" text="%database.sqlite" style="-fx-font-size: 17px; -fx-font-weight: bold;"/>
-                        <HBox spacing="10">
+                        <ResponsiveRow spacing="10">
                             <TextField fx:id="sqlitePathField" HBox.hgrow="ALWAYS"/>
                             <Button text="%database.browse" onAction="#handleBrowse"/>
-                        </HBox>
+                        </ResponsiveRow>
                     </VBox>
 
                     <VBox fx:id="serverPane" spacing="14"
                           style="-fx-background-color: white; -fx-padding: 22; -fx-background-radius: 10;">
                         <Label styleClass="ui-text" text="%database.server" style="-fx-font-size: 17px; -fx-font-weight: bold;"/>
-                        <HBox spacing="12">
+                        <ResponsiveRow spacing="12">
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
                                 <Label styleClass="ui-text" text="%database.host"/>
                                 <TextField fx:id="hostField"/>
@@ -58,12 +55,12 @@
                                 <Label styleClass="ui-text" text="%database.port"/>
                                 <TextField fx:id="portField"/>
                             </VBox>
-                        </HBox>
+                        </ResponsiveRow>
                         <VBox spacing="5">
                             <Label styleClass="ui-text" text="%database.name"/>
                             <TextField fx:id="databaseNameField"/>
                         </VBox>
-                        <HBox spacing="12">
+                        <ResponsiveRow spacing="12">
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
                                 <Label styleClass="ui-text" text="%database.username"/>
                                 <TextField fx:id="usernameField"/>
@@ -72,8 +69,17 @@
                                 <Label styleClass="ui-text" text="%database.password"/>
                                 <PasswordField fx:id="passwordField"/>
                             </VBox>
-                        </HBox>
+                        </ResponsiveRow>
+                        <CheckBox fx:id="platformCredentialCheckBox" text="%database.platformCredentials"/>
                         <CheckBox fx:id="encryptCheckBox" text="%database.encrypt"/>
+                        <Label text="%database.tlsPolicy" wrapText="true"/>
+                        <Label text="%database.truststore"/>
+                        <TextField fx:id="trustStoreField"/>
+                        <ComboBox fx:id="trustStoreTypeCombo"/>
+                        <Label text="%database.truststorePassword"/>
+                        <PasswordField fx:id="trustStorePasswordField"/>
+                        <Label text="%database.rsaPublicKey"/>
+                        <TextField fx:id="rsaPublicKeyField"/>
                     </VBox>
 
                     <Label styleClass="ui-text" fx:id="statusLabel" wrapText="true"/>
@@ -82,11 +88,11 @@
         </ScrollPane>
     </center>
     <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT"
+        <ResponsiveRow spacing="10" alignment="CENTER_RIGHT"
               style="-fx-background-color: white; -fx-padding: 18 30;">
-            <Button text="%database.test" onAction="#handleTestConnection"/>
-            <Button text="%database.save" onAction="#handleSave"
+            <Button fx:id="testButton" text="%database.test" onAction="#handleTestConnection"/>
+            <Button fx:id="saveButton" text="%database.save" onAction="#handleSave"
                      styleClass="primary-button"/>
-        </HBox>
+        </ResponsiveRow>
     </bottom>
 </BorderPane>

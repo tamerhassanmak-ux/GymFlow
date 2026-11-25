@@ -15,6 +15,8 @@ public final class DatabaseConfigManager {
             AppPaths.databaseConfigFile();
 
     private static String sessionPassword;
+    private static String sessionTrustStorePassword;
+    private static String sessionProfile;
 
     private DatabaseConfigManager() {
     }
@@ -23,7 +25,12 @@ public final class DatabaseConfigManager {
     // LOAD DATABASE CONFIGURATION
     // =========================================================
 
-    public static synchronized DatabaseConfig load() {
+    public static synchronized DatabaseConfig load() { return read(true); }
+
+    /** Recovery may inspect existing fields without opening the vault or relaxing active connection validation. */
+    public static synchronized DatabaseConfig loadForEditing() { return read(false); }
+
+    private static DatabaseConfig read(boolean active) {
 
         DatabaseConfig config = new DatabaseConfig();
 
@@ -41,6 +48,11 @@ public final class DatabaseConfigManager {
          */
 
         if (!Files.exists(CONFIG_FILE)) {
+            if (Files.exists(AppPaths.legacyDatabaseConfigFile()) || Files.exists(AppPaths.legacyRelativeDatabaseFile())
+                    || Files.exists(AppPaths.databaseFile())) {
+                throw new IllegalStateException("Existing database/configuration detected without active settings. Explicit administrator recovery is required.");
+            }
+
 
             /*
              * DatabaseConfig already contains the correct
@@ -64,10 +76,7 @@ public final class DatabaseConfigManager {
 
             config.setType(
                     parseType(
-                            properties.getProperty(
-                                    "type",
-                                    "SQLITE"
-                            )
+                            properties.getProperty("type", "")
                     )
             );
 
@@ -125,12 +134,16 @@ public final class DatabaseConfigManager {
                     )
             );
 
+            if (!profileIdentity(config).equals(sessionProfile)) {
+                sessionPassword = null;
+                sessionTrustStorePassword = null;
+            }
             String environmentPassword = System.getenv("GYMFLOW_DB_PASSWORD");
             config.setPassword(environmentPassword != null ? environmentPassword
                     : sessionPassword != null ? sessionPassword : properties.getProperty("password", ""));
 
             config.setEncryptConnection(
-                    Boolean.parseBoolean(
+                    parseBoolean(
                             properties.getProperty(
                                     "encryptConnection",
                                     "true"
@@ -138,6 +151,27 @@ public final class DatabaseConfigManager {
                     )
             );
 
+            config.setTrustStore(properties.getProperty("trustStore", ""));
+            config.setTrustStoreType(properties.getProperty("trustStoreType", "PKCS12"));
+            config.setRsaPublicKey(properties.getProperty("rsaPublicKey", ""));
+            String environmentTrustPassword = System.getenv("GYMFLOW_DB_TRUSTSTORE_PASSWORD");
+            config.setTrustStorePassword(environmentTrustPassword != null ? environmentTrustPassword
+                    : sessionTrustStorePassword != null ? sessionTrustStorePassword : "");
+            config.setConnectTimeoutMillis(Integer.parseInt(properties.getProperty("connectTimeoutMillis", "5000")));
+            config.setSocketTimeoutMillis(Integer.parseInt(properties.getProperty("socketTimeoutMillis", "15000")));
+            config.setPlatformCredentialStorage(parseBoolean(properties.getProperty("platformCredentialStorage", "false")));
+            if (active && config.isPlatformCredentialStorage() && ((environmentPassword == null && sessionPassword == null)
+                    || (!config.getTrustStore().isBlank() && sessionTrustStorePassword == null
+                    && System.getenv("GYMFLOW_DB_TRUSTSTORE_PASSWORD") == null))) {
+                PlatformCredentialStore.Secrets secrets = PlatformCredentialStore.load(config);
+                if (environmentPassword == null && sessionPassword == null) {
+                    sessionPassword = secrets.password(); config.setPassword(sessionPassword);
+                }
+                if (sessionTrustStorePassword == null && System.getenv("GYMFLOW_DB_TRUSTSTORE_PASSWORD") == null)
+                    { sessionTrustStorePassword = secrets.trustStorePassword(); config.setTrustStorePassword(sessionTrustStorePassword); }
+            }
+            sessionProfile = profileIdentity(config);
+            if (active) DatabaseConnectionManager.validate(config);
             return config;
 
         } catch (Exception exception) {
@@ -178,8 +212,15 @@ public final class DatabaseConfigManager {
                 Files.createDirectories(parent);
             }
 
-            Properties properties =
-                    new Properties();
+            DatabaseConnectionManager.validate(config);
+            Properties properties = new Properties();
+            properties.setProperty("platformCredentialStorage", Boolean.toString(config.isPlatformCredentialStorage()));
+            if (config.isPlatformCredentialStorage()) PlatformCredentialStore.save(config);
+            properties.setProperty("trustStore", nullToEmpty(config.getTrustStore()));
+            properties.setProperty("trustStoreType", nullToEmpty(config.getTrustStoreType()));
+            properties.setProperty("rsaPublicKey", nullToEmpty(config.getRsaPublicKey()));
+            properties.setProperty("connectTimeoutMillis", Integer.toString(config.getConnectTimeoutMillis()));
+            properties.setProperty("socketTimeoutMillis", Integer.toString(config.getSocketTimeoutMillis()));
 
             // -------------------------------------------------
             // DATABASE TYPE
@@ -250,8 +291,7 @@ public final class DatabaseConfigManager {
                     )
             );
 
-            // Remote passwords are supplied by the launcher environment or kept
-            // in memory for this session. Never serialize them into properties.
+            // Passwords use the optional platform store or remain session/environment-only.
 
 
             properties.setProperty(
@@ -268,8 +308,10 @@ public final class DatabaseConfigManager {
             com.mycompany.lazar_app.util.AtomicProperties.write(
                     CONFIG_FILE, properties, "GymFlow Database Configuration");
             sessionPassword = nullToEmpty(config.getPassword());
+            sessionTrustStorePassword = nullToEmpty(config.getTrustStorePassword());
+            sessionProfile = profileIdentity(config);
 
-        } catch (IOException exception) {
+        } catch (Exception exception) {
 
             throw new IllegalStateException(
                     "Could not save GymFlow database configuration.",
@@ -298,7 +340,7 @@ public final class DatabaseConfigManager {
         if (value == null
                 || value.isBlank()) {
 
-            return DatabaseType.SQLITE;
+            throw new IllegalArgumentException("Database engine is missing.");
         }
 
         try {
@@ -311,7 +353,7 @@ public final class DatabaseConfigManager {
 
         } catch (IllegalArgumentException exception) {
 
-            return DatabaseType.SQLITE;
+            throw new IllegalArgumentException("Unknown database engine; configuration was not changed.", exception);
         }
     }
 
@@ -340,14 +382,14 @@ public final class DatabaseConfigManager {
             if (port < 1
                     || port > 65535) {
 
-                return fallback;
+                throw new IllegalArgumentException("Port must be between 1 and 65535.");
             }
 
             return port;
 
         } catch (NumberFormatException exception) {
 
-            return fallback;
+            throw new IllegalArgumentException("Invalid database port.", exception);
         }
     }
 
@@ -364,7 +406,7 @@ public final class DatabaseConfigManager {
             return 1433;
         }
 
-        if (type == DatabaseType.MYSQL) {
+        if (type == DatabaseType.MYSQL || type == DatabaseType.MARIADB) {
 
             return 3306;
         }
@@ -379,6 +421,17 @@ public final class DatabaseConfigManager {
     // =========================================================
     // NULL SAFE STRING
     // =========================================================
+
+    private static String profileIdentity(DatabaseConfig config) {
+        return config.getType() + "\n" + config.getHost() + "\n" + config.getPort() + "\n"
+                + config.getDatabaseName() + "\n" + config.getUsername();
+    }
+
+    private static boolean parseBoolean(String value) {
+        if (!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value))
+            throw new IllegalArgumentException("Invalid boolean database setting.");
+        return Boolean.parseBoolean(value);
+    }
 
     private static String nullToEmpty(
             String value
