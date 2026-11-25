@@ -1,0 +1,35 @@
+name: Publish verified Windows release
+on:
+  push:
+    branches: [release/1.0.7]
+    paths: [.github/workflows/publish-release.yml]
+permissions:
+  actions: read
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify source build succeeded for the release tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          build_sha=$(gh run view 45638159247 --json headSha --jq .headSha)
+          tag_sha=$(git ls-remote origin 'refs/tags/v1.0.7^{}' | cut -f1)
+          test "$build_sha" = "$tag_sha"
+          test "$(gh run view 45638159247 --json conclusion --jq .conclusion)" = success
+      - name: Download and verify Windows installers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45638159247 --name GymFlow-v1.0.7-windows --dir windows
+          cd windows
+          sha256sum -c SHA256SUMS
+          mv SHA256SUMS SHA256SUMS-windows.txt
+      - name: Upload Windows installers and publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload v1.0.7 windows/GymFlow-1.0.7.exe windows/GymFlow-1.0.7.msi windows/SHA256SUMS-windows.txt --clobber
+          gh release edit v1.0.7 --draft=false --latest
