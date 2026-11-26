@@ -18,7 +18,7 @@ public final class Launcher {
                 var config = new com.mycompany.lazar_app.database.DatabaseConfig(); config.setSqlitePath(file.toString());
                 com.mycompany.lazar_app.database.DatabaseHealthCheck.check(config);
             } finally { java.nio.file.Files.deleteIfExists(file); }
-            System.out.println("GymFlow 1.0.7 runtime self-test passed (drivers, resources, SQLite)");
+            System.out.println("GymFlow 1.0.8 runtime self-test passed (drivers, resources, SQLite)");
             return;
         }
         Lazar_APP.main(args);

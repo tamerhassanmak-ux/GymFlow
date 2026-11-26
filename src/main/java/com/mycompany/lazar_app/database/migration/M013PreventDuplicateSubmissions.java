@@ -8,7 +8,7 @@ public final class M013PreventDuplicateSubmissions implements Migration {
     public String description() { return "prevent_duplicate_checkins_and_payment_submissions"; }
     public void up(Connection connection) throws Exception {
         try (Statement s=connection.createStatement(); ResultSet r=s.executeQuery("SELECT member_id FROM check_ins WHERE status='IN' AND check_out_time IS NULL GROUP BY member_id HAVING COUNT(*)>1")) {
-            if(r.next()) throw new SQLException("Duplicate open attendance requires administrator review before migration 013; no records changed.");
+            if(r.next()) throw new SQLException("Duplicate open attendance requires administrator review before migration 013; no records changed.", "GF008");
         }
         if(!MigrationSupport.indexExists(connection,"check_ins","idx_check_ins_one_open")) {
             if(MigrationSupport.isMySQL(connection)) {

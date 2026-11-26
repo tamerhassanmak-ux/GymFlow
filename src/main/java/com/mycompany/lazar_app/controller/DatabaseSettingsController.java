@@ -32,12 +32,16 @@ public class DatabaseSettingsController {
     @FXML private Button testButton;
     @FXML private Button saveButton;
     private boolean busy;
+    private boolean applyingConfiguration;
+    private final java.util.Map<DatabaseType, DatabaseConfig> draftProfiles = new java.util.EnumMap<>(DatabaseType.class);
     private boolean restartAfterSave = true;
     private java.util.function.Consumer<Boolean> busyListener = value -> {};
     public void setRecoveryMode() { restartAfterSave = false; }
     public void onBusy(java.util.function.Consumer<Boolean> listener) { busyListener = listener; listener.accept(busy); }
     private void setBusy(boolean value) {
-        busy = value; testButton.setDisable(value); saveButton.setDisable(value); busyListener.accept(value);
+        busy = value; testButton.setDisable(value); saveButton.setDisable(value);
+        databaseTypeCombo.setDisable(value); sqlitePane.setDisable(value); serverPane.setDisable(value);
+        busyListener.accept(value);
     }
     @FXML private CheckBox platformCredentialCheckBox;
 
@@ -46,8 +50,18 @@ public class DatabaseSettingsController {
     public void initialize() {
         databaseTypeCombo.getItems().setAll(DatabaseType.values());
         databaseTypeCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (!applyingConfiguration) {
+                if (oldValue != null) draftProfiles.put(oldValue, captureFields(oldValue));
+                if (newValue != null) {
+                    DatabaseConfig next = draftProfiles.computeIfAbsent(newValue, type -> {
+                        DatabaseConfig defaults = new DatabaseConfig(); defaults.setType(type);
+                        defaults.setPort(type == DatabaseType.SQL_SERVER ? 1433 : 3306);
+                        return defaults;
+                    });
+                    applyConfiguration(next);
+                }
+            }
             updateVisibleFields(newValue);
-            updateDefaultPort(oldValue, newValue);
         });
         trustStoreTypeCombo.getItems().setAll("PKCS12", "JKS");
         loadConfiguration();
@@ -73,20 +87,23 @@ public class DatabaseSettingsController {
     }
 
     private void applyConfiguration(DatabaseConfig c) {
-        platformCredentialCheckBox.setSelected(c.isPlatformCredentialStorage());
-        trustStoreField.setText(c.getTrustStore());
-        trustStorePasswordField.setText(c.getTrustStorePassword());
-        trustStoreTypeCombo.setValue(c.getTrustStoreType());
-        rsaPublicKeyField.setText(c.getRsaPublicKey());
-        databaseTypeCombo.setValue(c.getType());
-        sqlitePathField.setText(c.getSqlitePath());
-        hostField.setText(c.getHost());
-        portField.setText(String.valueOf(c.getPort()));
-        databaseNameField.setText(c.getDatabaseName());
-        usernameField.setText(c.getUsername());
-        passwordField.setText(c.getPassword());
-        encryptCheckBox.setSelected(c.isEncryptConnection());
-        updateVisibleFields(c.getType());
+        applyingConfiguration = true;
+        try {
+            platformCredentialCheckBox.setSelected(c.isPlatformCredentialStorage());
+            trustStoreField.setText(c.getTrustStore());
+            trustStorePasswordField.setText(c.getTrustStorePassword());
+            trustStoreTypeCombo.setValue(c.getTrustStoreType());
+            rsaPublicKeyField.setText(c.getRsaPublicKey());
+            databaseTypeCombo.setValue(c.getType());
+            sqlitePathField.setText(c.getSqlitePath());
+            hostField.setText(c.getHost());
+            portField.setText(String.valueOf(c.getPort()));
+            databaseNameField.setText(c.getDatabaseName());
+            usernameField.setText(c.getUsername());
+            passwordField.setText(c.getPassword());
+            encryptCheckBox.setSelected(c.isEncryptConnection());
+            updateVisibleFields(c.getType());
+        } finally { applyingConfiguration = false; }
     }
 
     private void updateVisibleFields(DatabaseType type) {
@@ -95,11 +112,6 @@ public class DatabaseSettingsController {
         sqlitePane.setManaged(sqlite);
         serverPane.setVisible(!sqlite);
         serverPane.setManaged(!sqlite);
-    }
-
-    private void updateDefaultPort(DatabaseType oldType, DatabaseType newType) {
-        if (newType == null || newType == DatabaseType.SQLITE) return;
-        if (oldType != newType) portField.setText(newType == DatabaseType.SQL_SERVER ? "1433" : "3306");
     }
 
     @FXML
@@ -141,11 +153,13 @@ public class DatabaseSettingsController {
         try { config = buildConfig(); }
         catch (Exception error) { showFailure(error); return; }
         setBusy(true);
-        statusLabel.setText("جاري اختبار الاتصال… / Testing connection…");
+        statusLabel.setText(save
+                ? "جاري تجهيز القاعدة المختارة والتحقق منها قبل التبديل… / Preparing the selected database before switching…"
+                : "جاري اختبار الاتصال… / Testing connection…");
         javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<>() {
             @Override protected Void call() throws Exception {
-                com.mycompany.lazar_app.database.DatabaseHealthCheck.check(config);
-                if (save) DatabaseConfigManager.save(config);
+                if (save) DatabaseConfigManager.activate(config);
+                else com.mycompany.lazar_app.database.DatabaseHealthCheck.check(config);
                 return null;
             }
         };
@@ -155,7 +169,11 @@ public class DatabaseSettingsController {
                     ? "تم الحفظ. أعد الاتصال للمتابعة. / Saved. Retry to continue."
                     : "نجح الاتصال؛ لم تُنفّذ ترحيلات. / Connection successful; no migrations executed.");
             if (save && restartAfterSave) {
-                new com.mycompany.lazar_app.Lazar_APP().start((javafx.stage.Stage) statusLabel.getScene().getWindow());
+                javafx.stage.Stage settings = (javafx.stage.Stage) statusLabel.getScene().getWindow();
+                javafx.stage.Stage main = settings;
+                while (main.getOwner() instanceof javafx.stage.Stage owner) main = owner;
+                if (main != settings) settings.close();
+                new com.mycompany.lazar_app.Lazar_APP().start(main);
             }
         });
         task.setOnFailed(event -> {
@@ -173,17 +191,27 @@ public class DatabaseSettingsController {
     }
 
     private DatabaseConfig buildConfig() {
-        DatabaseConfig c = new DatabaseConfig();
         DatabaseType type = databaseTypeCombo.getValue();
         if (type == null) throw new IllegalArgumentException("Select a database engine.");
-        c.setType(type);
-        c.setSqlitePath(sqlitePathField.getText().trim());
-
+        DatabaseConfig c = captureFields(type);
         if (type != DatabaseType.SQLITE) {
             if (hostField.getText().isBlank()) throw new IllegalArgumentException("Host is required.");
             if (databaseNameField.getText().isBlank()) throw new IllegalArgumentException("Database name is required.");
-            c.setHost(hostField.getText().trim());
             c.setPort(Integer.parseInt(portField.getText().trim()));
+        }
+        com.mycompany.lazar_app.database.DatabaseConnectionManager.validate(c);
+        return c;
+    }
+
+    /** Keep unfinished per-engine form values, including custom ports, while the editor remains open. */
+    private DatabaseConfig captureFields(DatabaseType type) {
+        DatabaseConfig c = new DatabaseConfig(); c.setType(type);
+        c.setSqlitePath(sqlitePathField.getText().trim());
+
+        if (type != DatabaseType.SQLITE) {
+            c.setHost(hostField.getText().trim());
+            try { c.setPort(Integer.parseInt(portField.getText().trim())); }
+            catch (NumberFormatException ignored) { c.setPort(type == DatabaseType.SQL_SERVER ? 1433 : 3306); }
             c.setDatabaseName(databaseNameField.getText().trim());
             c.setUsername(usernameField.getText().trim());
             c.setPassword(passwordField.getText());
@@ -194,7 +222,6 @@ public class DatabaseSettingsController {
             c.setTrustStoreType(trustStoreTypeCombo.getValue());
             c.setRsaPublicKey(rsaPublicKeyField.getText().trim());
         }
-        com.mycompany.lazar_app.database.DatabaseConnectionManager.validate(c);
         return c;
     }
 }

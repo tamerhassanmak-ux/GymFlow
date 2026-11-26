@@ -22,7 +22,7 @@ public final class DatabaseDiagnostics {
         LOG.setUseParentHandlers(false);
         LOG.addHandler(handler);
         initialized = true;
-        LOG.info("event=runtime app=1.0.7 os=" + safe(System.getProperty("os.name"))
+        LOG.info("event=runtime app=1.0.8 os=" + safe(System.getProperty("os.name"))
                 + " java=" + safe(System.getProperty("java.version")));
     }
     private static String safe(String text) { return text == null ? "unknown" : text.replaceAll("[^a-zA-Z0-9 ._/-]", "_"); }
@@ -51,7 +51,7 @@ public final class DatabaseDiagnostics {
     }
     public static void export(Path destination) throws IOException {
         // Fresh allowlisted support summary, excluding configuration and arbitrary application logs.
-        Files.writeString(destination, "GymFlow 1.0.7\nJava=" + safe(System.getProperty("java.version"))
+        Files.writeString(destination, "GymFlow 1.0.8\nJava=" + safe(System.getProperty("java.version"))
                 + "\nOS=" + safe(System.getProperty("os.name")) + "\n");
     }
 }

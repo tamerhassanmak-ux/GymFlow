@@ -39,20 +39,26 @@ class DatabaseCompatibilityIT {
             c.setDatabaseName("gymflow");
             DatabaseHealthCheck.Result versions = DatabaseHealthCheck.check(c);
             System.out.println("TESTED image="+image+" engine="+versions.engine()+" server="+versions.serverVersion()+" driver="+versions.driverVersion());
-            // Production refuses unbacked server DDL. Provision reviewed synthetic fixtures explicitly here.
-            assertThrows(SQLException.class, () -> MigrationRunner.migrate(c));
-            try (Connection con = DatabaseManager.getConnection(c); Statement statement = con.createStatement()) {
-                statement.execute("CREATE TABLE schema_migrations(version VARCHAR(50) PRIMARY KEY, description VARCHAR(255) NOT NULL, applied_at VARCHAR(30) NOT NULL)");
-                Migration[] migrations = {new M001CreateMembersTable(),new M002CreateMembershipPlansTable(),new M003CreateMemberMembershipsTable(),
-                    new M004CreateCheckInsTable(),new M005CreatePaymentsTable(),new M006EnsureSessionLimitColumns(),new M007CreateExpensesTable(),
-                    new M008CreateRevenuesTable(),new M009EnsureRevenueTables(),new M010EnforceMemberPhoneUniqueness(),new M011ProtectFinancialOwnership(),
-                    new M012CreatePaymentInstallments(),new M013PreventDuplicateSubmissions(),new M014IndexMembershipLookups()};
-                for(Migration migration:migrations) {
-                    migration.up(con);
-                    try(PreparedStatement record=con.prepareStatement("INSERT INTO schema_migrations VALUES(?,?,?)")) {
-                        record.setString(1,migration.version());record.setString(2,migration.description());record.setString(3,"2026-11-25"); record.executeUpdate();
+            // SQL Server still requires reviewed provisioning; local MySQL/MariaDB rehearses automatically.
+            if (mssql) {
+                assertThrows(SQLException.class, () -> MigrationRunner.migrate(c));
+                try (Connection con = DatabaseManager.getConnection(c); Statement statement = con.createStatement()) {
+                    statement.execute("CREATE TABLE schema_migrations(version VARCHAR(50) PRIMARY KEY, description VARCHAR(255) NOT NULL, applied_at VARCHAR(30) NOT NULL)");
+                    Migration[] migrations = {new M001CreateMembersTable(),new M002CreateMembershipPlansTable(),new M003CreateMemberMembershipsTable(),
+                        new M004CreateCheckInsTable(),new M005CreatePaymentsTable(),new M006EnsureSessionLimitColumns(),new M007CreateExpensesTable(),
+                        new M008CreateRevenuesTable(),new M009EnsureRevenueTables(),new M010EnforceMemberPhoneUniqueness(),new M011ProtectFinancialOwnership(),
+                        new M012CreatePaymentInstallments(),new M013PreventDuplicateSubmissions(),new M014IndexMembershipLookups()};
+                    for(Migration migration:migrations) {
+                        migration.up(con);
+                        try(PreparedStatement record=con.prepareStatement("INSERT INTO schema_migrations VALUES(?,?,?)")) {
+                            record.setString(1,migration.version());record.setString(2,migration.description());record.setString(3,"2026-11-25"); record.executeUpdate();
+                        }
                     }
                 }
+            } else {
+                MigrationRunner.migrate(c);
+            }
+            try (Connection con = DatabaseManager.getConnection(c); Statement statement = con.createStatement()) {
                 statement.execute("INSERT INTO members(member_code,name,phone) VALUES('SYNTHETIC','Synthetic customer','01000000000')");
             }
             MigrationRunner.migrate(c); // Current ledger causes no DDL and is repeat-safe.

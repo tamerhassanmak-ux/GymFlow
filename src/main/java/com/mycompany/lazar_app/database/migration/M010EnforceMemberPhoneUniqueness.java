@@ -16,7 +16,7 @@ public final class M010EnforceMemberPhoneUniqueness implements Migration {
                 GROUP BY TRIM(phone) HAVING COUNT(*) > 1
                 """)) {
             if (rows.next()) throw new SQLException(
-                    "Duplicate member phones require administrator review before migration 010; no records were changed.");
+                    "Duplicate member phones require administrator review before migration 010; no records were changed.", "GF006");
         }
         if (MigrationSupport.indexExists(connection, "members", "idx_members_phone_nonblank_unique")) return;
         if (MigrationSupport.isSQLite(connection)) {

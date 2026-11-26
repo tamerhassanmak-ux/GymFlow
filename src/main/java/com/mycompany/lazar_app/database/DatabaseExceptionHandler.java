@@ -22,7 +22,7 @@ public final class DatabaseExceptionHandler {
                 if (state.equals("42000") && (sql.getErrorCode() == 1044 || sql.getErrorCode() == 1142)) return Category.PERMISSION;
                 if (t instanceof java.sql.SQLTimeoutException || state.startsWith("HYT")) return Category.TIMEOUT;
                 if (state.startsWith("08")) return Category.NETWORK;
-                if (state.startsWith("42") || state.equals("GF001") || state.equals("GF002")) return Category.SCHEMA;
+                if (state.startsWith("42") || state.equals("GF001") || state.equals("GF002") || state.startsWith("GF00")) return Category.SCHEMA;
             }
             if (t instanceof java.net.SocketTimeoutException) return Category.TIMEOUT;
             if (t instanceof java.net.UnknownHostException || t instanceof java.net.ConnectException) return Category.NETWORK;
@@ -42,7 +42,23 @@ public final class DatabaseExceptionHandler {
         return result.toString();
     }
     public static String message(Throwable failure) {
-        for (Throwable t=failure;t!=null;t=t.getCause()) {
+        Throwable specific = failure;
+        for (Throwable t = failure; t != null; t = t.getCause())
+            if (t instanceof SQLException sql && ("GF005".equals(sql.getSQLState()) || "GF003".equals(sql.getSQLState())
+                    || "GF006".equals(sql.getSQLState()) || "GF007".equals(sql.getSQLState()) || "GF008".equals(sql.getSQLState()))) specific = t;
+        for (Throwable t=specific;t!=null;t=t.getCause()) {
+            if (t instanceof SQLException sql && "GF006".equals(sql.getSQLState()))
+                return "توجد أرقام هاتف مكررة لأعضاء مختلفين. راجعها قبل الترقية؛ لم تُحذف سجلات. / Duplicate member phones require review; no records were deleted.";
+            if (t instanceof SQLException sql && "GF007".equals(sql.getSQLState()))
+                return "توجد مدفوعات أو سجلات حضور مرتبطة بعضو مختلف عن صاحب الاشتراك. يلزم مراجعتها. / Membership ownership conflicts require review.";
+            if (t instanceof SQLException sql && "GF008".equals(sql.getSQLState()))
+                return "يوجد أكثر من تسجيل حضور مفتوح لنفس العضو. راجع السجلات قبل الترقية. / Duplicate open attendance requires review.";
+            if (t instanceof SQLException sql && "GF005".equals(sql.getSQLState()))
+                return "يلزم تثبيت أدوات MySQL/MariaDB للنسخ والاستعادة وإضافتها إلى PATH، ثم أعد المحاولة. / Install native MySQL/MariaDB clients on PATH and retry.";
+            if (t instanceof SQLException sql && "GF003".equals(sql.getSQLState()))
+                return "الترقية التلقائية تدعم اتصال MySQL/MariaDB المحلي دون كائنات مخصصة. يلزم إجراء ترقية معتمد لهذا الاتصال. / This server profile requires a reviewed upgrade.";
+            if (t instanceof SQLException sql && "GF004".equals(sql.getSQLState()))
+                return "تعذر إكمال اختبار النسخة الاحتياطية والترقية المؤقتة. لم تُنفذ الترقية على الأصل. تحقق من صلاحيات النسخ وإنشاء قاعدة مؤقتة وتعارضات البيانات. / Backup/upgrade rehearsal failed; original schema was not upgraded. Check permissions and data conflicts.";
             if (t instanceof SQLException sql && "GF001".equals(sql.getSQLState()))
                 return "توقفت الترقية: يلزم مسار نسخ واستعادة معتمد للخادم. راجع دليل الترقية. / Upgrade stopped: a validated server backup/recovery workflow is required. See UPGRADE_GUIDE.md.";
         }

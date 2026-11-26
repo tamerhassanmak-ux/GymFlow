@@ -37,6 +37,32 @@ class DatabaseWizardUiTest {
             assertNotNull(root.lookup("#testButton"));assertNotNull(root.lookup("#saveButton")); return null;
         });
     }
+    @Test void engineSwitchKeepsDraftCredentialsAndCustomPorts() throws Exception {
+        Wizard root=fx(() -> load(Locale.ENGLISH));
+        long until=System.nanoTime()+TimeUnit.SECONDS.toNanos(8);
+        while(fx(() -> ((Button)root.lookup("#testButton")).isDisabled()) && System.nanoTime()<until)Thread.sleep(20);
+        fx(() -> {
+            assertFalse(((Button)root.lookup("#testButton")).isDisabled());
+            ComboBox<DatabaseType> engines=(ComboBox<DatabaseType>)root.lookup("#databaseTypeCombo");
+            assertEquals(4,engines.getItems().size());
+            engines.setValue(DatabaseType.MYSQL);
+            ((TextField)root.lookup("#portField")).setText("3307");
+            ((TextField)root.lookup("#hostField")).setText("mysql.example");
+            ((PasswordField)root.lookup("#passwordField")).setText("draft-only-secret");
+            engines.setValue(DatabaseType.SQL_SERVER);
+            assertEquals("1433",((TextField)root.lookup("#portField")).getText());
+            assertEquals("",((PasswordField)root.lookup("#passwordField")).getText());
+            engines.setValue(DatabaseType.MARIADB);
+            assertEquals("3306",((TextField)root.lookup("#portField")).getText());
+            engines.setValue(DatabaseType.SQLITE);
+            assertTrue(((javafx.scene.layout.VBox)root.lookup("#sqlitePane")).isVisible());
+            engines.setValue(DatabaseType.MYSQL);
+            assertEquals("3307",((TextField)root.lookup("#portField")).getText());
+            assertEquals("mysql.example",((TextField)root.lookup("#hostField")).getText());
+            assertEquals("draft-only-secret",((PasswordField)root.lookup("#passwordField")).getText());
+            return null;
+        });
+    }
     @Test void stalledMysqlHandshakeDoesNotBlockFxThread() throws Exception {
         try(ServerSocket listener=new ServerSocket(0,1,InetAddress.getByName("127.0.0.1"))) {
             listener.setSoTimeout(10000);

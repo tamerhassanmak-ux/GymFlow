@@ -183,6 +183,13 @@ public final class DatabaseConfigManager {
         }
     }
 
+    /** Keep the active endpoint intact until the administrator's selected database is ready. */
+    public static synchronized void activate(DatabaseConfig candidate) throws Exception {
+        com.mycompany.lazar_app.security.AuthorizationService.requireAdmin();
+        DatabaseStartup.prepare(candidate);
+        save(candidate);
+    }
+
     // =========================================================
     // SAVE DATABASE CONFIGURATION
     // =========================================================

@@ -44,120 +44,135 @@ public final class MigrationRunner {
     public static void migrate(com.mycompany.lazar_app.database.DatabaseConfig config) throws Exception {
         try (Connection connection = DatabaseManager.getConnection(config)) {
 
-            // Read the ledger before any DDL, reject future/unknown versions.
-            boolean ledgerExists = MigrationSupport.tableExists(connection, "schema_migrations");
-            var known = MIGRATIONS.stream().map(Migration::version).collect(java.util.stream.Collectors.toSet());
-            if (known.size() != MIGRATIONS.size()) throw new IllegalStateException("Duplicate migration versions.");
-            if (ledgerExists) {
-                try (Statement statement = connection.createStatement();
-                     ResultSet rows = statement.executeQuery("SELECT version FROM schema_migrations")) {
-                    while (rows.next()) if (!known.contains(rows.getString(1)))
-                        throw new java.sql.SQLException("Database has an unsupported migration version.", "GF002");
-                }
+            try (var lock = com.mycompany.lazar_app.database.ServerUpgradeLock.acquire(connection, config)) {
+                migrateConnection(connection, config, true);
             }
-            boolean pending = !ledgerExists;
-            if (ledgerExists) for (Migration migration : MIGRATIONS)
-                if (!isApplied(connection, migration.version())) pending = true;
-            if (!pending) return;
-            com.mycompany.lazar_app.database.DatabaseMigrationManager.beforeChanges(connection, config);
+        }
+    }
 
-            boolean oldAutoCommit =
-                    connection.getAutoCommit();
+    private static void migrateConnection(Connection connection,
+            com.mycompany.lazar_app.database.DatabaseConfig config, boolean backup) throws Exception {
+        // Read the ledger before any DDL, reject future/unknown versions.
+        boolean ledgerExists = MigrationSupport.tableExists(connection, "schema_migrations");
+        var known = MIGRATIONS.stream().map(Migration::version).collect(java.util.stream.Collectors.toSet());
+        if (known.size() != MIGRATIONS.size()) throw new IllegalStateException("Duplicate migration versions.");
+        if (ledgerExists) {
+            try (Statement statement = connection.createStatement();
+                 ResultSet rows = statement.executeQuery("SELECT version FROM schema_migrations")) {
+                while (rows.next()) if (!known.contains(rows.getString(1)))
+                    throw new java.sql.SQLException("Database has an unsupported migration version.", "GF002");
+            }
+        }
+        boolean pending = !ledgerExists;
+        if (ledgerExists) for (Migration migration : MIGRATIONS)
+            if (!isApplied(connection, migration.version())) pending = true;
+        if (!pending) return;
+        if (backup) {
+            if (config.getType() == com.mycompany.lazar_app.database.DatabaseType.MYSQL
+                    || config.getType() == com.mycompany.lazar_app.database.DatabaseType.MARIADB) {
+                com.mycompany.lazar_app.database.LocalServerUpgrade.prepare(connection, config,
+                        staged -> migrateConnection(staged, config, false));
+            } else {
+                com.mycompany.lazar_app.database.DatabaseMigrationManager.beforeChanges(connection, config);
+            }
+        }
 
-            try {
+        boolean oldAutoCommit =
+                connection.getAutoCommit();
 
-                connection.setAutoCommit(false);
+        try {
 
-                enableSQLiteForeignKeys(connection);
+            connection.setAutoCommit(false);
 
-                createMigrationsTable(connection);
+            enableSQLiteForeignKeys(connection);
 
-                for (Migration migration : MIGRATIONS) {
+            createMigrationsTable(connection);
 
-                    if (isApplied(
-                            connection,
-                            migration.version())) {
+            for (Migration migration : MIGRATIONS) {
 
-                        com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "skip");
-                        System.out.println(
-                                "[SKIP] "
-                                        + migration.version()
-                                        + " "
-                                        + migration.description()
-                        );
+                if (isApplied(
+                        connection,
+                        migration.version())) {
 
-                        continue;
-                    }
-
-                    com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "run");
+                    com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "skip");
                     System.out.println(
-                            "[RUN ] "
+                            "[SKIP] "
                                     + migration.version()
                                     + " "
                                     + migration.description()
                     );
 
-                    try {
-
-                        migration.up(connection);
-
-                        recordMigration(
-                                connection,
-                                migration
-                        );
-
-                        connection.commit();
-                        com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "ok");
-
-                        System.out.println(
-                                "[ OK ] "
-                                        + migration.version()
-                                        + " "
-                                        + migration.description()
-                        );
-
-                    } catch (Exception migrationException) {
-                        com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "failed");
-
-                        connection.rollback();
-
-                        throw new Exception(
-                                "Migration "
-                                        + migration.version()
-                                        + " failed: "
-                                        + migration.description()
-                                        + " -> "
-                                        + migrationException.getMessage(),
-                                migrationException
-                        );
-                    }
+                    continue;
                 }
 
+                com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "run");
                 System.out.println(
-                        "Database migrations completed successfully."
+                        "[RUN ] "
+                                + migration.version()
+                                + " "
+                                + migration.description()
                 );
 
-            } catch (Exception e) {
-
                 try {
-                    connection.rollback();
-                } catch (Exception ignored) {
-                }
 
-                throw new Exception(
-                        "Database migration failed: "
-                                + e.getMessage(),
-                        e
-                );
+                    migration.up(connection);
 
-            } finally {
-
-                try {
-                    connection.setAutoCommit(
-                            oldAutoCommit
+                    recordMigration(
+                            connection,
+                            migration
                     );
-                } catch (Exception ignored) {
+
+                    connection.commit();
+                    com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "ok");
+
+                    System.out.println(
+                            "[ OK ] "
+                                    + migration.version()
+                                    + " "
+                                    + migration.description()
+                    );
+
+                } catch (Exception migrationException) {
+                    com.mycompany.lazar_app.database.DatabaseDiagnostics.migration(migration.version(), "failed");
+
+                    connection.rollback();
+
+                    throw new Exception(
+                            "Migration "
+                                    + migration.version()
+                                    + " failed: "
+                                    + migration.description()
+                                    + " -> "
+                                    + migrationException.getMessage(),
+                            migrationException
+                    );
                 }
+            }
+
+            System.out.println(
+                    "Database migrations completed successfully."
+            );
+
+        } catch (Exception e) {
+
+            try {
+                connection.rollback();
+            } catch (Exception ignored) {
+            }
+
+            throw new Exception(
+                    "Database migration failed: "
+                            + e.getMessage(),
+                    e
+            );
+
+        } finally {
+
+            try {
+                connection.setAutoCommit(
+                        oldAutoCommit
+                );
+            } catch (Exception ignored) {
             }
         }
     }

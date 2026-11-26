@@ -11,7 +11,7 @@ public final class M011ProtectFinancialOwnership implements Migration {
                 SELECT 1 FROM payments p JOIN member_memberships m ON m.id=p.membership_id WHERE p.member_id<>m.member_id
                 UNION ALL SELECT 1 FROM check_ins c JOIN member_memberships m ON m.id=c.membership_id WHERE c.member_id<>m.member_id
                 """)) {
-            if (rows.next()) throw new SQLException("Existing membership ownership conflicts require administrator review; no records changed.");
+            if (rows.next()) throw new SQLException("Existing membership ownership conflicts require administrator review; no records changed.", "GF007");
         }
         if (MigrationSupport.isSQLite(connection)) {
             for (String sql : sqliteTriggers().values()) MigrationSupport.execute(connection, sql);

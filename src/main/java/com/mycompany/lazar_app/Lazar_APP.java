@@ -25,7 +25,7 @@ public class Lazar_APP extends Application {
 
         javafx.scene.control.Label progress = new javafx.scene.control.Label("جاري تجهيز قاعدة البيانات… / Preparing database…");
         stage.setScene(new Scene(new javafx.scene.layout.StackPane(progress), 740, 240));
-        stage.setTitle("GymFlow 1.0.7");
+        stage.setTitle("GymFlow 1.0.8");
         com.mycompany.lazar_app.ui.WindowManager.showResponsive(stage, 740, 300);
         javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<>() {
             @Override protected Void call() throws Exception {

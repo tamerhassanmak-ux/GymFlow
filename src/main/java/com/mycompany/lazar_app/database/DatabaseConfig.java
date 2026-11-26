@@ -8,7 +8,7 @@ public class DatabaseConfig {
     private String sqlitePath = AppPaths.databaseFile().toString();
     private String host = "localhost";
     private int port = 3306;
-    private String databaseName = "lazar_gym";
+    private String databaseName = "gymflow";
     private String username = "";
     private String password = "";
     private boolean encryptConnection = true;
